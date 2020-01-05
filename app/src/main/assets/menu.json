@@ -1,0 +1,1147 @@
+{
+  "categories": [
+    {
+      "categoryId": "B0000",
+      "displayText": "Burgers",
+      "products": [
+        "B1000",
+        "B1001",
+        "B1002",
+        "B1005",
+        "B1013",
+        "B1014",
+        "B1015"
+      ]
+    },
+    {
+      "categoryId": "P0000",
+      "displayText": "Pasta & Rice",
+      "products": [
+        "P1000",
+        "P1001",
+        "R1008",
+        "R1009"
+      ]
+    },
+    {
+      "categoryId": "SQ0000",
+      "displayText": "Squad",
+      "products": [
+      ]
+    },
+    {
+      "categoryId": "S0000",
+      "displayText": "Sides",
+      "products": [
+        "S1000",
+        "S1005",
+        "S1001",
+        "S1003",
+        "S1007",
+        "S1006"
+      ]
+    },
+    {
+      "categoryId": "D0000",
+      "displayText": "Drinks",
+      "products": [
+        "D1008",
+        "D1009",
+        "D1001",
+        "D1007",
+        "D1010",
+        "D1011",
+        "D1012",
+        "D1002",
+        "D1003",
+        "D1004",
+        "D1005",
+        "D1006"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "productId": "B2000",
+      "displayText": "Create Your Own Burger",
+      "price": 0,
+      "receiptText": "CYOB",
+      "modifierId": [
+        "MG1002",
+        "MG1003",
+        "MG1004",
+        "MG1005"
+      ],
+      "relatedBundles": []
+    },
+    {
+      "productId": "B1000",
+      "displayText": "Regular Burger",
+      "price": 45,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [],
+      "relatedBundles": [
+        "MB1000"
+      ]
+    },
+    {
+      "productId": "B1001",
+      "displayText": "Cheese Burger",
+      "price": 55,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [],
+      "relatedBundles": [
+        "MB1001"
+      ]
+    },
+    {
+      "productId": "B1002",
+      "displayText": "Burger With TLC",
+      "price": 70,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [],
+      "relatedBundles": [
+        "MB1002"
+      ]
+    },
+    {
+      "productId": "B1003",
+      "displayText": "Ham and Egg",
+      "price": 42,
+      "modifierId": [],
+      "relatedBundles": [
+        "MB1003"
+      ]
+    },
+    {
+      "productId": "B1004",
+      "displayText": "Hotdog with Cheese",
+      "price": 40,
+      "receiptText": "Hotdog w/ Cheese",
+      "modifierId": [],
+      "relatedBundles": [
+        "MB1004"
+      ]
+    },
+    {
+      "productId": "B1005",
+      "displayText": "Incredible Burger",
+      "price": 185,
+      "receiptText": "Incredible Burg",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "B1006",
+      "displayText": "Super Incredible Burger",
+      "receiptText": "Super Incredible",
+      "price": 299,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "B1007",
+      "displayText": "Bacon Mushroom Burger",
+      "receiptText": "Bacon M.B.",
+      "price": 89,
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1007"
+      ]
+    },
+    {
+      "productId": "B1008",
+      "displayText": "Pizza Burger",
+      "price": 83,
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1008"
+      ]
+    },
+    {
+      "productId": "B1009",
+      "displayText": "Double Cheese Burger",
+      "price": 99,
+      "receiptText": "Double Cheese B.",
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1009"
+      ]
+    },
+    {
+      "productId": "B1010",
+      "displayText": "Swabaconator",
+      "price": 109,
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1010"
+      ]
+    },
+    {
+      "productId": "B1011",
+      "displayText": "Krema De Swabe",
+      "price": 119,
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1011"
+      ]
+    },
+    {
+      "productId": "B1012",
+      "displayText": "4 Seasons of Cheesiness",
+      "price": 122,
+      "receiptText": "4 Seasons Of CH",
+      "modifierId": [
+        "MG1001"
+      ],
+      "relatedBundles": [
+        "MB1012"
+      ]
+    },
+    {
+      "productId": "B1013",
+      "displayText": "Cheesy Overload",
+      "receiptText": "Cheesy Over",
+      "price": 95,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [
+      ],
+      "relatedBundles": [
+        "MB1013"
+      ]
+    },
+    {
+      "productId": "B1014",
+      "displayText": "Ultimate Baconator",
+      "receiptText": "Ultim Bacon",
+      "price": 99,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [
+      ],
+      "relatedBundles": [
+        "MB1014"
+      ]
+    },
+    {
+      "productId": "B1015",
+      "displayText": "Chicken Burger",
+      "receiptText": "Chicken Bgr",
+      "price": 75,
+      "addOn": [
+        "MG1007",
+        "MG1008",
+        "MG1009"
+      ],
+      "modifierId": [
+      ],
+      "relatedBundles": [
+        "MB1015"
+      ]
+    },
+    {
+      "productId": "D1000",
+      "displayText": "Iced Tea",
+      "price": 20,
+      "modifierId": [
+        "MG1000"
+      ],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1001",
+      "displayText": "Coke",
+      "price": 20,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1002",
+      "displayText": "Sprite",
+      "price": 20,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1003",
+      "displayText": "Royal",
+      "price": 20,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1004",
+      "displayText": "1.5L Coke",
+      "price": 90,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1005",
+      "displayText": "1.5L Sprite",
+      "price": 90,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1006",
+      "displayText": "1.5L Royal",
+      "price": 90,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1007",
+      "displayText": "Bottled Water",
+      "price": 15,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1008",
+      "displayText": "Iced Tea",
+      "price": 20,
+      "modifierId": [
+        "MG1000"
+      ],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1009",
+      "displayText": "Pineapple",
+      "price": 20,
+      "modifierId": [
+        "MG1006"
+      ],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1010",
+      "displayText": "Chocolate Milk Tea",
+      "price": 59,
+      "receiptText": "Chocolate MT",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1011",
+      "displayText": "Okinawa Milk Tea",
+      "price": 59,
+      "receiptText": "Okinawa MT",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "D1012",
+      "displayText": "Wintermelon Milk Tea",
+      "price": 59,
+      "receiptText": "Wintermelon MT",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "P1000",
+      "displayText": "Spaghetti",
+      "price": 60,
+      "modifierId": [],
+      "relatedBundles": [
+        "MP1000.1"
+      ]
+    },
+    {
+      "productId": "P1001",
+      "displayText": "Carbonara",
+      "price": 75,
+      "modifierId": [],
+      "relatedBundles": [
+        "MP1001.5"
+      ]
+    },
+    {
+      "productId": "R1000",
+      "displayText": "Longanisa Meal",
+      "price": 59,
+      "receiptText": "Longanisa",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1001",
+      "displayText": "Tapa Meal",
+      "price": 61,
+      "receiptText": "Tapa",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1002",
+      "displayText": "Tocino Meal",
+      "price": 61,
+      "receiptText": "Tocino",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1003",
+      "displayText": "Hotdog Meal",
+      "price": 62,
+      "receiptText": "Hotdog (Rice)",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1004",
+      "displayText": "Spam Meal",
+      "price": 74,
+      "receiptText": "Spam (Rice)",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1005",
+      "displayText": "Shanghai Meal",
+      "price": 82,
+      "receiptText": "Shanghai",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1006",
+      "displayText": "Ham & Bacon Meal",
+      "price": 90,
+      "receiptText": "Ham & B Rice",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1007",
+      "displayText": "Hungarian Sausage Meal",
+      "price": 132,
+      "receiptText": "Hungarian",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "R1008",
+      "displayText": "Burger Steak",
+      "price": 70,
+      "modifierId": [],
+      "relatedBundles": [
+        "MR1008.1"
+      ]
+    },
+    {
+      "productId": "R1009",
+      "displayText": "Chicken Fillet",
+      "price": 75,
+      "modifierId": [],
+      "relatedBundles": [
+        "MR1009.1"
+      ]
+    },
+    {
+      "productId": "S1000",
+      "displayText": "Premium Fries",
+      "price": 57,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1001",
+      "displayText": "Wedges",
+      "price": 62,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1002",
+      "displayText": "Mozarella Sticks",
+      "price": 129,
+      "receiptText": "Mozarella St",
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1003",
+      "displayText": "Fruit Salad",
+      "price": 49,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1004",
+      "displayText": "Swalad",
+      "price": 124,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1005",
+      "displayText": "Buffalo Fries",
+      "price": 55,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1006",
+      "displayText": "Extra Rice",
+      "price": 15,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "S1007",
+      "displayText": "Gravy",
+      "price": 25,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "SQ1000",
+      "displayText": "Buddy Meal",
+      "price": 249,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "SQ1001",
+      "displayText": "Trio Meal",
+      "price": 329,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "SQ1002",
+      "displayText": "Group Meal",
+      "price": 454,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "SQ1003",
+      "displayText": "Family Meal",
+      "price": 755,
+      "modifierId": [],
+      "relatedBundles": []
+    },
+    {
+      "productId": "SQ1004",
+      "displayText": "Super Incredible Family Meal",
+      "price": 739,
+      "receiptText": "S Inc Fam Meal",
+      "modifierId": [],
+      "relatedBundles": []
+    }
+  ],
+  "bundles": [
+    {
+      "bundleId": "MB1000",
+      "displayText": "Regular Burger Meal",
+      "price": 85,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Reg Burger Meal",
+      "baseProduct": "B1000"
+    },
+    {
+      "bundleId": "MB1001",
+      "displayText": "Cheese Burger Meal",
+      "price": 95,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Cheese Burg Meal",
+      "baseProduct": "B1001"
+    },
+    {
+      "bundleId": "MB1002",
+      "displayText": "Burger With TLC Meal",
+      "price": 110,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "TLC Meal",
+      "baseProduct": "B1002"
+    },
+    {
+      "bundleId": "MB1003",
+      "displayText": "Ham and Egg Meal",
+      "price": 82,
+      "productGroups": [
+        "PG1000"
+      ],
+      "baseProduct": "B1003"
+    },
+    {
+      "bundleId": "MB1004",
+      "displayText": "Hotdog with Cheese Meal",
+      "price": 80,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Hotdog w/ C Meal",
+      "baseProduct": "B1004"
+    },
+    {
+      "bundleId": "MB1007",
+      "displayText": "Bacon Mushroom Meal",
+      "price": 129,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Bacon Mus. Meal",
+      "baseProduct": "B1007"
+    },
+    {
+      "bundleId": "MB1008",
+      "displayText": "Pizza Burger Meal",
+      "price": 123,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Pizza Burg Meal",
+      "baseProduct": "B1008"
+    },
+    {
+      "bundleId": "MB1009",
+      "displayText": "Double Cheese Burger Meal",
+      "price": 139,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Dbl Ch B Meal",
+      "baseProduct": "B1009"
+    },
+    {
+      "bundleId": "MB1010",
+      "displayText": "Swabaconator Meal",
+      "price": 149,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Swabaconatr Meal",
+      "baseProduct": "B1010"
+    },
+    {
+      "bundleId": "MB1011",
+      "displayText": "Krema De Swabe Meal",
+      "price": 159,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Krema Meal",
+      "baseProduct": "B1011"
+    },
+    {
+      "bundleId": "MB1012",
+      "displayText": "4 Seasons of Cheesiness Meal",
+      "price": 162,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "4 Seas. Meal",
+      "baseProduct": "B1012"
+    },
+    {
+      "bundleId": "MB1013",
+      "displayText": "Cheesy Overload Meal",
+      "price": 135,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Cheesy O Meal",
+      "baseProduct": "B1013"
+    },
+    {
+      "bundleId": "MB1014",
+      "displayText": "Ultimate Baconator Meal",
+      "price": 139,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Ult Bac Meal",
+      "baseProduct": "B1014"
+    },
+    {
+      "bundleId": "MB1015",
+      "displayText": "Chicken Burger Meal",
+      "price": 120,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Chick Brg Meal",
+      "baseProduct": "B1015"
+    },
+    {
+      "bundleId": "MP1000.1",
+      "displayText": "Spaghetti With Drinks",
+      "price": 80,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Spag w/ D",
+      "baseProduct": "P1000"
+    },
+    {
+      "bundleId": "MP1000.2",
+      "displayText": "Spaghetti With Fries and Drinks",
+      "price": 89,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Spag w/ Fr & D",
+      "baseProduct": "P1000"
+    },
+    {
+      "bundleId": "MP1000.3",
+      "displayText": "Spaghetti With Hotdog and Drinks",
+      "price": 114,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Spag w/ Hot & D",
+      "baseProduct": "P1000"
+    },
+    {
+      "bundleId": "MP1000.4",
+      "displayText": "Spaghetti With Burger and Drinks",
+      "price": 109,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Spag w/ Bur & D",
+      "baseProduct": "P1000"
+    },
+    {
+      "bundleId": "MP1001.5",
+      "displayText": "Carbonara With Drinks",
+      "price": 95,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Carb w/ D",
+      "baseProduct": "P1001"
+    },
+    {
+      "bundleId": "MP1001.6",
+      "displayText": "Carbonara With Fries and Drinks",
+      "price": 104,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Carb w/ Fr & D",
+      "baseProduct": "P1001"
+    },
+    {
+      "bundleId": "MP1000.7",
+      "displayText": "Carbonara With Hotdog and Drinks",
+      "price": 129,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Carb w/ Hot & D",
+      "baseProduct": "P1001"
+    },
+    {
+      "bundleId": "MP1000.8",
+      "displayText": "Carbonara With Burger and Drinks",
+      "price": 124,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Carb w/ Bur & D",
+      "baseProduct": "P1001"
+    },
+    {
+      "bundleId": "MR1008.1",
+      "displayText": "Burger Steak Meal",
+      "price": 90,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Burgr St Meal",
+      "baseProduct": "R1008"
+    },
+    {
+      "bundleId": "MR1009.1",
+      "displayText": "Chicken Fillet Meal",
+      "price": 95,
+      "productGroups": [
+        "PG1000"
+      ],
+      "receiptText": "Chk Fil Meal",
+      "baseProduct": "R1009"
+    }
+  ],
+  "modifierGroups": [
+    {
+      "modifierGroupId": "MG1000",
+      "action": "on",
+      "displayName": "Size",
+      "defaultSelection": "M1000.1",
+      "options": [
+        {
+          "modifierId": "M1000.1",
+          "displayText": "Regular",
+          "receiptText": "Reg Iced Tea",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1000.2",
+          "displayText": "Large",
+          "receiptText": "Large Iced Tea",
+          "priceDelta": 10
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1001",
+      "displayName": "Bun",
+      "action": "on",
+      "defaultSelection": "M1001.0",
+      "options": [
+        {
+          "modifierId": "M1001.0",
+          "displayText": "Black Bun",
+          "shortName": "Black",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1001.1",
+          "displayText": "Green Bun",
+          "shortName": "Green",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1001.2",
+          "displayText": "Red Bun",
+          "shortName": "Red",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1001.3",
+          "displayText": "Yellow Bun",
+          "shortName": "Yellow",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1001.4",
+          "displayText": "Regular Bun",
+          "shortName": "Regular",
+          "priceDelta": 0
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1002",
+      "displayName": "Bun",
+      "action": "on",
+      "defaultSelection": "M1002.0",
+      "options": [
+        {
+          "modifierId": "M1002.0",
+          "displayText": "Black Bun",
+          "priceDelta": 20
+        },
+        {
+          "modifierId": "M1002.1",
+          "displayText": "Green Bun",
+          "priceDelta": 20
+        },
+        {
+          "modifierId": "M1002.2",
+          "displayText": "Red Bun",
+          "priceDelta": 20
+        },
+        {
+          "modifierId": "M1002.3",
+          "displayText": "Yellow Bun",
+          "priceDelta": 20
+        },
+        {
+          "modifierId": "M1002.4",
+          "displayText": "Regular Bun",
+          "priceDelta": 12
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1003",
+      "displayName": "Meat",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1003.0",
+          "displayText": "Swabe Patty",
+          "priceDelta": 30
+        },
+        {
+          "modifierId": "M1003.1",
+          "displayText": "Sweet Ham",
+          "priceDelta": 15
+        },
+        {
+          "modifierId": "M1003.2",
+          "displayText": "Bacon",
+          "priceDelta": 25
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1004",
+      "displayName": "Cheese",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1004.0",
+          "displayText": "Regular Cheese",
+          "priceDelta": 10
+        },
+        {
+          "modifierId": "M1004.1",
+          "displayText": "Cheddar",
+          "priceDelta": 12
+        },
+        {
+          "modifierId": "M1004.2",
+          "displayText": "Quickmelt",
+          "priceDelta": 12
+        },
+        {
+          "modifierId": "M1004.3",
+          "displayText": "Mozarella",
+          "priceDelta": 15
+        },
+        {
+          "modifierId": "M1004.4",
+          "displayText": "Cream Cheese",
+          "priceDelta": 15
+        },
+        {
+          "modifierId": "M1004.5",
+          "displayText": "Cheese Sauce",
+          "priceDelta": 15
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1005",
+      "displayName": "Toppings",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1005.0",
+          "displayText": "Egg",
+          "priceDelta": 12
+        },
+        {
+          "modifierId": "M1005.1",
+          "displayText": "Romaine Lettuce",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.2",
+          "displayText": "Baguio Lettuce",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.3",
+          "displayText": "Purple Cabbage",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.4",
+          "displayText": "Green Ice",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.5",
+          "displayText": "Red Tomato",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.6",
+          "displayText": "White Onion",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.7",
+          "displayText": "Bell Pepper",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.8",
+          "displayText": "Cucumber",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.9",
+          "displayText": "Kyuri",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.10",
+          "displayText": "Pickles",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.11",
+          "displayText": "Mushroom",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1005.12",
+          "displayText": "Pineapple",
+          "priceDelta": 12
+        },
+        {
+          "modifierId": "M1005.13",
+          "displayText": "Jalapeno",
+          "priceDelta": 12
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1006",
+      "action": "on",
+      "displayName": "Size",
+      "defaultSelection": "M1006.1",
+      "options": [
+        {
+          "modifierId": "M1006.1",
+          "displayText": "Regular",
+          "receiptText": "Reg Pineapple",
+          "priceDelta": 0
+        },
+        {
+          "modifierId": "M1006.2",
+          "displayText": "Large",
+          "receiptText": "Large Pineapp",
+          "priceDelta": 10
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1007",
+      "displayName": "Meat",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1007.0",
+          "displayText": "Swabe Patty",
+          "priceDelta": 30
+        },
+        {
+          "modifierId": "M1007.1",
+          "displayText": "Bacon",
+          "priceDelta": 25
+        }
+      ]
+    },
+    {
+      "modifierGroupId": "MG1008",
+      "displayName": "Cheese",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1008.0",
+          "displayText": "Regular Cheese",
+          "receiptText": "Reg Cheese",
+          "priceDelta": 10
+        },
+        {
+          "modifierId": "M1008.1",
+          "displayText": "Mozzarella",
+          "priceDelta": 15
+        },
+        {
+          "modifierId": "M1004.2",
+          "displayText": "Cream Cheese",
+          "priceDelta": 15
+        },
+        {
+          "modifierId": "M1004.3",
+          "displayText": "Cheese Sauce",
+          "priceDelta": 15
+        }
+      ]
+      },
+    {
+      "modifierGroupId": "MG1009",
+      "displayName": "Toppings",
+      "action": "add",
+      "defaultSelection": "",
+      "options": [
+        {
+          "modifierId": "M1009.0",
+          "displayText": "Lettuce",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1009.1",
+          "displayText": "Tomato",
+          "priceDelta": 5
+        },
+        {
+          "modifierId": "M1009.2",
+          "displayText": "Cucumber",
+          "priceDelta": 5
+        }
+      ]
+    }
+  ],
+  "productGroups": [
+    {
+      "productGroupId": "PG0000",
+      "defaultProduct": "",
+      "displayText": "Default",
+      "options": []
+    },
+    {
+      "productGroupId": "PG1000",
+      "defaultProduct": "D1000",
+      "displayText": "Drinks",
+      "options": [
+        "D1000",
+        "D1001",
+        "D1002",
+        "D1003"
+      ]
+    }
+  ]
+}

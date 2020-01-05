@@ -1,0 +1,36 @@
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbarCustom"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    android:paddingStart="16dp"
+    android:paddingEnd="32dp"
+    app:contentInsetEnd="0dp"
+    app:contentInsetStart="0dp">
+
+
+<!--    <ImageView-->
+<!--        android:id="@+id/ivToolbarUp"-->
+<!--        android:layout_width="18dp"-->
+<!--        android:layout_height="18dp"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginEnd="32dp"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        android:tint="@android:color/white" />-->
+
+    <TextView
+        android:id="@+id/tvToolbarText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/texgyreheros_bold"
+        android:text="Menu"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white" />
+
+
+</androidx.appcompat.widget.Toolbar>
