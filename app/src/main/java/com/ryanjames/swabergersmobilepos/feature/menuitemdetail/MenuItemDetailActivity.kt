@@ -19,6 +19,7 @@ private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
 private const val ID_MODIFIER_GROUP = "id.modifier.group"
 private const val ID_PRODUCT_GROUP = "id.product.group"
+private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
 
 class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSelectorListener {
 
@@ -28,6 +29,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
     private lateinit var adapter: MenuItemDetailAdapter
     private var selectedRowModifierGroup: ModifierGroup? = null
     private var selectedProductGroup: ProductGroup? = null
+    private var selectedProductGroupModifierGroup: Pair<Product, ModifierGroup>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
         viewModel.onSelectProduct.observe(this, Observer { productSelections ->
             adapter.setProductSelection(productSelections)
         })
+
+        viewModel.onSelectProductGroupModifier.observe(this, Observer { selections ->
+            adapter.setProductGroupModifierSelection(selections)
+        })
     }
 
     private fun setupRecyclerView() {
@@ -72,6 +78,11 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
             override fun onClickRowProductGroup(productGroup: ProductGroup) {
                 selectedProductGroup = productGroup
                 showBottomFragmentForProductGroup(productGroup)
+            }
+
+            override fun onClickRowProductGroupModifier(product: Product, modifierGroup: ModifierGroup) {
+                selectedProductGroupModifierGroup = Pair(product, modifierGroup)
+                showBottomFragmentForProductGroupModifierGroup(product, modifierGroup)
             }
         })
 
@@ -135,11 +146,31 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
         bottomFragment.show(supportFragmentManager, "Product Group Selection")
     }
 
+    private fun showBottomFragmentForProductGroupModifierGroup(product: Product, modifierGroup: ModifierGroup) {
+        val options = arrayListOf<BottomSelectorAdapter.BottomSelectorItem>()
+        for (option in modifierGroup.options) {
+            val priceDelta = if (option.priceDelta != 0f) getString(R.string.price_delta, option.priceDelta) else null
+            val item = BottomSelectorAdapter.BottomSelectorItem(option.modifierId, option.modifierName, priceDelta)
+            options.add(item)
+        }
+
+        val selectedId = viewModel.onSelectProductGroupModifier.value?.get(Pair(product, modifierGroup))?.modifierId ?: modifierGroup.defaultSelection.modifierId
+
+        val bottomFragment = BottomSelectorFragment.createInstance(
+            ID_PRODUCT_GROUP_MODIFIER,
+            getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"),
+            options,
+            selectedId
+        )
+        bottomFragment.show(supportFragmentManager, "Product Group Modifier Group Selection")
+    }
+
     override fun onSelectItem(requestId: String, selectedItemId: String) {
         when (requestId) {
             ID_MEAL_OPTIONS -> handleMealSelection(selectedItemId)
             ID_MODIFIER_GROUP -> handleModifierGroupSelection(selectedItemId)
             ID_PRODUCT_GROUP -> handleProductGroupSelection(selectedItemId)
+            ID_PRODUCT_GROUP_MODIFIER -> handleProductGroupModifierSelection(selectedItemId)
         }
     }
 
@@ -147,12 +178,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
         if (product.productId == selectedId) {
             viewModel.setProductBundle(null)
         }
-
-        for (bundle in product.bundles) {
-            if (bundle.bundleId == selectedId) {
-                viewModel.setProductBundle(bundle)
-            }
-        }
+        product.bundles.find { it.bundleId == selectedId }?.let { viewModel.setProductBundle(it) }
     }
 
     private fun handleModifierGroupSelection(modifierInfoId: String) {
@@ -162,6 +188,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
 
     private fun handleProductGroupSelection(productGroupId: String) {
         selectedProductGroup?.let { viewModel.setProductSelection(it, productGroupId) }
+    }
+
+    private fun handleProductGroupModifierSelection(productGroupId: String) {
+        selectedProductGroupModifierGroup?.let { viewModel.setProductGroupModifier(it.first, it.second, productGroupId) }
     }
 
     companion object {

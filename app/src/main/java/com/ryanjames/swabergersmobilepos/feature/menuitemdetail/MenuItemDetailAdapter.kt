@@ -9,8 +9,9 @@ import com.ryanjames.swabergersmobilepos.databinding.RowItemSelectBinding
 import com.ryanjames.swabergersmobilepos.domain.*
 
 private const val ID_MEAL_OPTION = 1
-private const val ID_PRODUCT_MODIFIER_GROUP = 2
+private const val ID_MODIFIER_GROUP = 2
 private const val ID_PRODUCT_GROUP = 3
+private const val ID_PRODUCT_GROUP_MODIFIER = 4
 
 class MenuItemDetailAdapter(
     val product: Product,
@@ -20,91 +21,80 @@ class MenuItemDetailAdapter(
     private var selectedBundle: ProductBundle? = null
     private var modifierGroupSelection = HashMap<ModifierGroup, ModifierInfo?>()
     private var productSelection = HashMap<ProductGroup, Product?>()
-    private var productGroupModifierSelection = HashMap<Pair<ProductGroup, ModifierGroup>, ModifierInfo?>()
+    private var productGroupModifierSelection = HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>()
+
+    private var data: List<RowDataHolder> = createRowDataHolders()
 
     fun setBundle(productBundle: ProductBundle?) {
         selectedBundle = productBundle
-        notifyDataSetChanged()
+        updatePage()
     }
 
     fun setModifierSelection(selection: HashMap<ModifierGroup, ModifierInfo?>) {
         modifierGroupSelection = selection
-        notifyDataSetChanged()
+        updatePage()
     }
 
     fun setProductSelection(selection: HashMap<ProductGroup, Product?>) {
         productSelection = selection
+        updatePage()
+    }
+
+    fun setProductGroupModifierSelection(selection: HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>) {
+        productGroupModifierSelection = selection
+        updatePage()
+    }
+
+    private fun updatePage() {
+        data = createRowDataHolders()
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = RowItemSelectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        if (viewType == ID_MEAL_OPTION) {
-            return RowSelectMealViewHolder(binding, onClickRowListener)
-        } else if (viewType == ID_PRODUCT_GROUP) {
-            return RowSelectProductGroupViewHolder(binding, onClickRowListener)
+        return when (viewType) {
+            ID_MEAL_OPTION -> {
+                RowSelectMealViewHolder(binding, onClickRowListener)
+            }
+            ID_PRODUCT_GROUP -> {
+                RowSelectProductGroupViewHolder(binding, onClickRowListener)
+            }
+            ID_PRODUCT_GROUP_MODIFIER -> {
+                RowSelectProductGroupModifierViewHolder(binding, onClickRowListener)
+            }
+            else -> RowSelectModifierViewHolder(binding, onClickRowListener)
         }
-        return RowSelectModifierViewHolder(binding, onClickRowListener)
     }
 
     override fun getItemCount(): Int {
-        var count = product.modifierGroups.count()
-        if (product.hasBundles()) {
-            count++
-        }
-
-        count += (selectedBundle?.productGroups?.count()) ?: 0
-
-        return count
-    }
-
-    private fun Product.hasBundles(): Boolean = this.bundles.isNotEmpty()
-
-    private fun getModifierGroup(adapterPosition: Int): ModifierGroup {
-        var modifierGroupIndex = adapterPosition
-        if (product.hasBundles()) {
-            modifierGroupIndex--
-        }
-        return product.modifierGroups[modifierGroupIndex]
+        return data.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is RowSelectMealViewHolder) {
-            holder.bind(selectedBundle)
-        } else if (holder is RowSelectModifierViewHolder) {
-            val modifierGroup = getModifierGroup(position)
-            holder.bind(modifierGroup, modifierGroupSelection[modifierGroup])
-        } else if (holder is RowSelectProductGroupViewHolder) {
-            selectedBundle?.productGroups?.get(getProductGroupPositions().indexOf(position))?.let {
-                holder.bind(it, productSelection[it])
+        when (holder) {
+            is RowSelectMealViewHolder -> {
+                holder.bind(selectedBundle)
             }
-
-        }
-    }
-
-    private fun countMealSelection(): Int = if (product.hasBundles()) 1 else 0
-
-    private fun getProductGroupPositions(): List<Int> {
-        val productGroupCount = selectedBundle?.productGroups?.count() ?: 0
-        val modifierInfoCount = product.modifierGroups.count()
-        val list = mutableListOf<Int>()
-        for (i in 0 until productGroupCount) {
-            list.add(countMealSelection() + modifierInfoCount + i)
-        }
-        return list
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        if (position == 0 && product.hasBundles()) return ID_MEAL_OPTION
-
-        if (selectedBundle != null) {
-            if (position in getProductGroupPositions()) {
-                return ID_PRODUCT_GROUP
+            is RowSelectModifierViewHolder -> {
+                val dataHolder = data[position] as RowDataHolder.RowModifierGroupDataHolder
+                val modifierGroup = dataHolder.modifierGroup
+                holder.bind(modifierGroup, modifierGroupSelection[modifierGroup])
+            }
+            is RowSelectProductGroupViewHolder -> {
+                val dataHolder = data[position] as RowDataHolder.RowProductGroupDataHolder
+                val productGroup = dataHolder.productGroup
+                holder.bind(productGroup, productSelection[productGroup])
+            }
+            is RowSelectProductGroupModifierViewHolder -> {
+                val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierHolder
+                val product = dataHolder.product
+                val modifierGroup = dataHolder.modifierGroup
+                holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)])
             }
         }
-
-        return ID_PRODUCT_MODIFIER_GROUP
     }
+
+    override fun getItemViewType(position: Int): Int = data[position].itemViewType
 
 
     class RowSelectMealViewHolder(
@@ -164,7 +154,70 @@ class MenuItemDetailAdapter(
                 onClickRowListener.onClickRowProductGroup(productGroup)
             }
         }
+    }
 
+    class RowSelectProductGroupModifierViewHolder(
+        val binding: RowItemSelectBinding,
+        private val onClickRowListener: OnClickRowListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(product: Product, modifierGroup: ModifierGroup, modifierInfo: ModifierInfo?) {
+            binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"
+            if (modifierInfo == null) {
+                binding.tvSubheader.setText(R.string.none_selected)
+            } else {
+                binding.tvSubheader.text = modifierInfo.modifierName
+            }
+
+            binding.root.setOnClickListener {
+                onClickRowListener.onClickRowProductGroupModifier(product, modifierGroup)
+            }
+        }
+
+    }
+
+    private fun createRowDataHolders(): List<RowDataHolder> {
+        val list = mutableListOf<RowDataHolder>()
+        if (product.bundles.isNotEmpty()) {
+            list.add(RowDataHolder.RowSelectMealDataHolder(selectedBundle))
+        }
+
+        for (modifierGroup in product.modifierGroups) {
+            list.add(RowDataHolder.RowModifierGroupDataHolder(modifierGroup))
+        }
+
+        selectedBundle?.productGroups?.forEach { productGroup ->
+            list.add(RowDataHolder.RowProductGroupDataHolder(productGroup))
+
+            val productSelection = productSelection[productGroup]
+            productSelection?.modifierGroups?.forEach { modifierGroup ->
+                list.add(RowDataHolder.RowProductGroupModifierHolder(productSelection, modifierGroup))
+            }
+
+        }
+
+        return list
+    }
+
+    private sealed class RowDataHolder {
+
+        abstract val itemViewType: Int
+
+        class RowSelectMealDataHolder(val bundle: ProductBundle?) : RowDataHolder() {
+            override val itemViewType: Int = ID_MEAL_OPTION
+        }
+
+        class RowModifierGroupDataHolder(val modifierGroup: ModifierGroup) : RowDataHolder() {
+            override val itemViewType: Int = ID_MODIFIER_GROUP
+        }
+
+        class RowProductGroupDataHolder(val productGroup: ProductGroup) : RowDataHolder() {
+            override val itemViewType: Int = ID_PRODUCT_GROUP
+        }
+
+        class RowProductGroupModifierHolder(val product: Product, val modifierGroup: ModifierGroup) : RowDataHolder() {
+            override val itemViewType: Int = ID_PRODUCT_GROUP_MODIFIER
+        }
     }
 
 
@@ -174,6 +227,8 @@ class MenuItemDetailAdapter(
         fun onClickRowProductModifierGroup(modifierGroup: ModifierGroup)
 
         fun onClickRowProductGroup(productGroup: ProductGroup)
+
+        fun onClickRowProductGroupModifier(product: Product, modifierGroup: ModifierGroup)
     }
 
 
