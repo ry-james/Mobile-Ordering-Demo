@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
@@ -86,7 +85,7 @@ class MenuItemDetailAdapter(
                 holder.bind(productGroup, productSelection[productGroup])
             }
             is RowSelectProductGroupModifierViewHolder -> {
-                val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierHolder
+                val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierDataHolder
                 val product = dataHolder.product
                 val modifierGroup = dataHolder.modifierGroup
                 holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)])
@@ -179,7 +178,7 @@ class MenuItemDetailAdapter(
     private fun createRowDataHolders(): List<RowDataHolder> {
         val list = mutableListOf<RowDataHolder>()
         if (product.bundles.isNotEmpty()) {
-            list.add(RowDataHolder.RowSelectMealDataHolder(selectedBundle))
+            list.add(RowDataHolder.RowSelectMealDataHolder())
         }
 
         for (modifierGroup in product.modifierGroups) {
@@ -191,7 +190,7 @@ class MenuItemDetailAdapter(
 
             val productSelection = productSelection[productGroup]
             productSelection?.modifierGroups?.forEach { modifierGroup ->
-                list.add(RowDataHolder.RowProductGroupModifierHolder(productSelection, modifierGroup))
+                list.add(RowDataHolder.RowProductGroupModifierDataHolder(productSelection, modifierGroup))
             }
 
         }
@@ -203,7 +202,7 @@ class MenuItemDetailAdapter(
 
         abstract val itemViewType: Int
 
-        class RowSelectMealDataHolder(val bundle: ProductBundle?) : RowDataHolder() {
+        class RowSelectMealDataHolder() : RowDataHolder() {
             override val itemViewType: Int = ID_MEAL_OPTION
         }
 
@@ -215,7 +214,7 @@ class MenuItemDetailAdapter(
             override val itemViewType: Int = ID_PRODUCT_GROUP
         }
 
-        class RowProductGroupModifierHolder(val product: Product, val modifierGroup: ModifierGroup) : RowDataHolder() {
+        class RowProductGroupModifierDataHolder(val product: Product, val modifierGroup: ModifierGroup) : RowDataHolder() {
             override val itemViewType: Int = ID_PRODUCT_GROUP_MODIFIER
         }
     }
