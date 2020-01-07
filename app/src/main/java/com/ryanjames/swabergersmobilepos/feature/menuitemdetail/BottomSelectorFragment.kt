@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -80,6 +81,13 @@ class BottomSelectorFragment : BottomSheetDialogFragment() {
             listener = context
         } else {
             throw Exception("Activity should implement ${BottomSelectorListener::class.java.simpleName} interface")
+        }
+    }
+
+
+    override fun show(manager: FragmentManager, tag: String?) {
+        if (manager.findFragmentByTag(tag) == null) {
+            super.show(manager, tag)
         }
     }
 
