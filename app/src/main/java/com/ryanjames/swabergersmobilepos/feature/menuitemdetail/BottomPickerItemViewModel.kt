@@ -4,9 +4,9 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class BottomSelectorItemViewModel(
-    val item: BottomSelectorAdapter.BottomSelectorItem,
-    private val onClickListener: (BottomSelectorAdapter.BottomSelectorItem) -> Unit
+class BottomPickerItemViewModel(
+    val item: BottomPickerAdapter.BottomPickerItem,
+    private val onClickListener: (BottomPickerAdapter.BottomPickerItem) -> Unit
 ) : ViewModel() {
 
     val name = MutableLiveData<String>()

@@ -13,7 +13,6 @@ import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Bind
 import com.ryanjames.swabergersmobilepos.domain.ModifierGroup
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.domain.ProductGroup
-import java.util.*
 
 private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
@@ -21,7 +20,7 @@ private const val ID_MODIFIER_GROUP = "id.modifier.group"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
 
-class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSelectorListener {
+class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
     private lateinit var binding: ActivityMenuItemDetail2Binding
     private lateinit var viewModel: MenuItemDetailViewModel
@@ -85,30 +84,26 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
 
     private fun showBottomFragmentForMealSelection() {
 
-        val options = arrayListOf(BottomSelectorAdapter.BottomSelectorItem(product.productId, getString(R.string.ala_carte), getString(R.string.php_price, product.price)))
+        val options = arrayListOf(BottomPickerAdapter.BottomPickerItem(product.productId, getString(R.string.ala_carte), getString(R.string.php_price, product.price)))
         options.addAll(product.bundles.map { bundle ->
-            BottomSelectorAdapter.BottomSelectorItem(
-                bundle.bundleId,
-                bundle.bundleName,
-                getString(R.string.php_price, bundle.price)
-            )
+            BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.php_price, bundle.price))
         })
 
         val selectedItemId = viewModel.onSelectBundleObservable.value?.bundleId ?: product.productId
-        val bottomFragment = BottomSelectorFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), options, selectedItemId)
+        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), options, selectedItemId)
         bottomFragment.show(supportFragmentManager, "Meal Selection")
     }
 
     private fun showBottomFragmentForProductGroup(productGroup: ProductGroup) {
-        val options = arrayListOf<BottomSelectorAdapter.BottomSelectorItem>()
+        val options = arrayListOf<BottomPickerAdapter.BottomPickerItem>()
         for (option in productGroup.options) {
-            val item = BottomSelectorAdapter.BottomSelectorItem(option.productId, option.productName)
+            val item = BottomPickerAdapter.BottomPickerItem(option.productId, option.productName)
             options.add(item)
         }
 
         val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.productId ?: productGroup.defaultProduct.productId
 
-        val bottomFragment = BottomSelectorFragment.createInstance(
+        val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP,
             getString(R.string.select_something, productGroup.productGroupName.toUpperCase()),
             options,
@@ -118,16 +113,16 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
     }
 
     private fun showBottomFragmentForProductGroupModifierGroup(product: Product, modifierGroup: ModifierGroup) {
-        val options = arrayListOf<BottomSelectorAdapter.BottomSelectorItem>()
+        val options = arrayListOf<BottomPickerAdapter.BottomPickerItem>()
         for (option in modifierGroup.options) {
             val priceDelta = if (option.priceDelta != 0f) getString(R.string.price_delta, option.priceDelta) else null
-            val item = BottomSelectorAdapter.BottomSelectorItem(option.modifierId, option.modifierName, priceDelta)
+            val item = BottomPickerAdapter.BottomPickerItem(option.modifierId, option.modifierName, priceDelta)
             options.add(item)
         }
 
         val selectedId = viewModel.onSelectProductGroupModifier.value?.get(Pair(product, modifierGroup))?.modifierId ?: modifierGroup.defaultSelection.modifierId
 
-        val bottomFragment = BottomSelectorFragment.createInstance(
+        val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
             getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"),
             options,
@@ -136,7 +131,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
         bottomFragment.show(supportFragmentManager, "Product Group Modifier Group Selection")
     }
 
-    override fun onSelectItem(requestId: String, selectedItemId: String) {
+    override fun onSelectPickerItem(requestId: String, selectedItemId: String) {
         when (requestId) {
             ID_MEAL_OPTIONS -> handleMealSelection(selectedItemId)
             ID_PRODUCT_GROUP -> handleProductGroupSelection(selectedItemId)

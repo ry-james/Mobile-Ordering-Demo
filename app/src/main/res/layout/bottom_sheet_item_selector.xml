@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.feature.menuitemdetail.BottomSelectorFragmentViewModel" />
+            type="com.ryanjames.swabergersmobilepos.feature.menuitemdetail.BottomPickerFragmentViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"

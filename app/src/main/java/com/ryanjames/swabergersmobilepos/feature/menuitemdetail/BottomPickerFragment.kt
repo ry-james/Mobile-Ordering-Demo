@@ -19,19 +19,19 @@ private const val EXTRA_TITLE = "extra.title"
 private const val EXTRA_OPTIONS = "extra.options"
 private const val EXTRA_SELECTED_ID = "extra.selected.id"
 
-class BottomSelectorFragment : BottomSheetDialogFragment() {
+class BottomPickerFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetItemSelectorBinding
-    private lateinit var options: List<BottomSelectorAdapter.BottomSelectorItem>
-    private lateinit var listener: BottomSelectorListener
-    private lateinit var viewModel: BottomSelectorFragmentViewModel
+    private lateinit var options: List<BottomPickerAdapter.BottomPickerItem>
+    private lateinit var listener: BottomPickerListener
+    private lateinit var viewModel: BottomPickerFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = BottomSheetItemSelectorBinding.inflate(inflater, container, false)
 
         val requestId = arguments?.getString(EXTRA_REQUEST_ID) ?: ""
-        viewModel = ViewModelProviders.of(this, viewModelFactory { BottomSelectorFragmentViewModel(requestId, listener) })
-            .get(BottomSelectorFragmentViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory { BottomPickerFragmentViewModel(requestId, listener) })
+            .get(BottomPickerFragmentViewModel::class.java)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -59,7 +59,7 @@ class BottomSelectorFragment : BottomSheetDialogFragment() {
     private fun setupRecyclerView() {
         binding.rvOptions.also {
             it.layoutManager = LinearLayoutManager(context)
-            val adapter = BottomSelectorAdapter(options, object : BottomSelectorAdapter.BottomSheetClickListener {
+            val adapter = BottomPickerAdapter(options, object : BottomPickerAdapter.BottomSheetClickListener {
                 override fun onSelectRow(id: String) {
                     viewModel.userSelectedId = id
                 }
@@ -77,10 +77,10 @@ class BottomSelectorFragment : BottomSheetDialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BottomSelectorListener) {
+        if (context is BottomPickerListener) {
             listener = context
         } else {
-            throw Exception("Activity should implement ${BottomSelectorListener::class.java.simpleName} interface")
+            throw Exception("Activity should implement ${BottomPickerListener::class.java.simpleName} interface")
         }
     }
 
@@ -91,8 +91,8 @@ class BottomSelectorFragment : BottomSheetDialogFragment() {
         }
     }
 
-    interface BottomSelectorListener {
-        fun onSelectItem(requestId: String, selectedItemId: String)
+    interface BottomPickerListener {
+        fun onSelectPickerItem(requestId: String, selectedItemId: String)
     }
 
     companion object {
@@ -100,10 +100,10 @@ class BottomSelectorFragment : BottomSheetDialogFragment() {
         fun createInstance(
             requestId: String,
             title: String, options:
-            ArrayList<BottomSelectorAdapter.BottomSelectorItem>,
+            ArrayList<BottomPickerAdapter.BottomPickerItem>,
             selectedId: String
-        ): BottomSelectorFragment {
-            val fragment = BottomSelectorFragment()
+        ): BottomPickerFragment {
+            val fragment = BottomPickerFragment()
             val bundle = Bundle().apply {
                 putString(EXTRA_REQUEST_ID, requestId)
                 putString(EXTRA_TITLE, title)

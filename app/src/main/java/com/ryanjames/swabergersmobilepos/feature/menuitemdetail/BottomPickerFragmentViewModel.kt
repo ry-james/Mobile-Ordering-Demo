@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.helper.EventWrapper
 
-class BottomSelectorFragmentViewModel(
-    val requestId: String,
-    val listener: BottomSelectorFragment.BottomSelectorListener
+class BottomPickerFragmentViewModel(
+    private val requestId: String,
+    val listener: BottomPickerFragment.BottomPickerListener
 ) : ViewModel() {
 
     var userSelectedId: String? = null
@@ -20,7 +20,7 @@ class BottomSelectorFragmentViewModel(
         get() = _onClickContinueButton
 
     fun onClickContinueButton(view: View) {
-        userSelectedId?.let { listener.onSelectItem(requestId, it) }
+        userSelectedId?.let { listener.onSelectPickerItem(requestId, it) }
         _onClickContinueButton.value = EventWrapper(true)
     }
 

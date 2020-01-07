@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.feature.menuitemdetail.BottomSelectorItemViewModel" />
+            type="com.ryanjames.swabergersmobilepos.feature.menuitemdetail.BottomPickerItemViewModel" />
     </data>
 
 

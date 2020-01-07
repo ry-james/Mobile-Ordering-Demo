@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.databinding.RowBottomSheetItemBinding
 import kotlinx.android.parcel.Parcelize
 
-class BottomSelectorAdapter(
-    bottomSelectorItems: List<BottomSelectorItem>,
+class BottomPickerAdapter(
+    bottomPickerItems: List<BottomPickerItem>,
     clickListener: BottomSheetClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val viewModels = bottomSelectorItems.map {
-        BottomSelectorItemViewModel(it) { selectedItem ->
+    private val viewModels = bottomPickerItems.map {
+        BottomPickerItemViewModel(it) { selectedItem ->
             this.selectedId = selectedItem.id
             clickListener.onSelectRow(selectedItem.id)
         }
@@ -44,20 +44,20 @@ class BottomSelectorAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = RowBottomSheetItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BottomSelectorViewHolder(binding)
+        return BottomPickerItemViewHolder(binding)
     }
 
     override fun getItemCount(): Int = viewModels.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is BottomSelectorViewHolder) {
+        if (holder is BottomPickerItemViewHolder) {
             holder.bind(viewModels[position])
         }
     }
 
-    class BottomSelectorViewHolder(val binding: RowBottomSheetItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class BottomPickerItemViewHolder(val binding: RowBottomSheetItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(viewModel: BottomSelectorItemViewModel) {
+        fun bind(viewModel: BottomPickerItemViewModel) {
             binding.viewModel = viewModel
             viewModel.setupViewModel()
             binding.executePendingBindings()
@@ -66,7 +66,7 @@ class BottomSelectorAdapter(
     }
 
     @Parcelize
-    data class BottomSelectorItem(
+    data class BottomPickerItem(
         val id: String,
         val name: String,
         val desc: String? = null
