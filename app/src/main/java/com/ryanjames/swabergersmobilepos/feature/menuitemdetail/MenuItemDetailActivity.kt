@@ -27,7 +27,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
     private lateinit var viewModel: MenuItemDetailViewModel
     private lateinit var product: Product
     private lateinit var adapter: MenuItemDetailAdapter
-    private var selectedRowModifierGroup: ModifierGroup? = null
     private var selectedProductGroup: ProductGroup? = null
     private var selectedProductGroupModifierGroup: Pair<Product, ModifierGroup>? = null
 
@@ -49,10 +48,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
             adapter.setBundle(bundle)
         })
 
-        viewModel.onSelectProductModifier.observe(this, Observer { modifierSelections ->
-            adapter.setModifierSelection(modifierSelections)
-        })
-
         viewModel.onSelectProduct.observe(this, Observer { productSelections ->
             adapter.setProductSelection(productSelections)
         })
@@ -68,11 +63,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
 
             override fun onClickRowMealOptions() {
                 showBottomFragmentForMealSelection()
-            }
-
-            override fun onClickRowProductModifierGroup(modifierGroup: ModifierGroup) {
-                selectedRowModifierGroup = modifierGroup
-                showBottomFragmentForModifierGroup(modifierGroup)
             }
 
             override fun onClickRowProductGroup(productGroup: ProductGroup) {
@@ -91,25 +81,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
             adapter = this@MenuItemDetailActivity.adapter
         }
 
-    }
-
-    private fun showBottomFragmentForModifierGroup(modifierGroup: ModifierGroup) {
-        val options = arrayListOf<BottomSelectorAdapter.BottomSelectorItem>()
-        for (option in modifierGroup.options) {
-            val priceDelta = if (option.priceDelta != 0f) getString(R.string.price_delta, option.priceDelta) else null
-            val item = BottomSelectorAdapter.BottomSelectorItem(option.modifierId, option.modifierName, priceDelta)
-            options.add(item)
-        }
-
-        val selectedId = viewModel.onSelectProductModifier.value?.get(modifierGroup)?.modifierId ?: modifierGroup.defaultSelection.modifierId
-
-        val bottomFragment = BottomSelectorFragment.createInstance(
-            ID_MODIFIER_GROUP,
-            getString(R.string.select_something, modifierGroup.modifierGroupName.toUpperCase(Locale.ENGLISH)),
-            options,
-            selectedId
-        )
-        bottomFragment.show(supportFragmentManager, "Modifier Group Selection")
     }
 
     private fun showBottomFragmentForMealSelection() {
@@ -168,7 +139,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
     override fun onSelectItem(requestId: String, selectedItemId: String) {
         when (requestId) {
             ID_MEAL_OPTIONS -> handleMealSelection(selectedItemId)
-            ID_MODIFIER_GROUP -> handleModifierGroupSelection(selectedItemId)
             ID_PRODUCT_GROUP -> handleProductGroupSelection(selectedItemId)
             ID_PRODUCT_GROUP_MODIFIER -> handleProductGroupModifierSelection(selectedItemId)
         }
@@ -180,11 +150,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomSelectorFragment.BottomSele
         }
         product.bundles.find { it.bundleId == selectedId }?.let { viewModel.setProductBundle(it) }
     }
-
-    private fun handleModifierGroupSelection(modifierInfoId: String) {
-        selectedRowModifierGroup?.let { viewModel.setModifierGroupSelection(it, modifierInfoId) }
-    }
-
 
     private fun handleProductGroupSelection(productGroupId: String) {
         selectedProductGroup?.let { viewModel.setProductSelection(it, productGroupId) }

@@ -4,21 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.*
-import java.lang.Thread.sleep
 
 class MenuItemDetailViewModel(val product: Product) : ViewModel() {
 
     // Events
     private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
-    private val _onSelectProductModifier = MutableLiveData<HashMap<ModifierGroup, ModifierInfo?>>()
     private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, Product?>>()
     private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>>()
 
     val onSelectBundleObservable: LiveData<ProductBundle?>
         get() = _onSelectBundleObservable
-
-    val onSelectProductModifier: LiveData<HashMap<ModifierGroup, ModifierInfo?>>
-        get() = _onSelectProductModifier
 
     val onSelectProduct: LiveData<HashMap<ProductGroup, Product?>>
         get() = _onSelectProduct
@@ -26,7 +21,7 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
     val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>>
         get() = _onSelectProductGroupModifier
 
-    private val modifierSelections = HashMap<ModifierGroup, ModifierInfo?>()
+
     private val productSelections = HashMap<ProductGroup, Product?>()
     private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>()
 
@@ -38,9 +33,9 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
 
     private fun initializeSelections() {
         for (modifierGroup in product.modifierGroups) {
-            modifierSelections[modifierGroup] = modifierGroup.defaultSelection
+            productGroupModifierSelections[Pair(product, modifierGroup)] = modifierGroup.defaultSelection
         }
-        _onSelectProductModifier.value = modifierSelections
+        _onSelectProductGroupModifier.value = productGroupModifierSelections
 
     }
 
@@ -71,14 +66,6 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
             product?.modifierGroups?.forEach {
                 setProductGroupModifier(product, it, it.defaultSelection.modifierId)
             }
-        }
-    }
-
-    fun setModifierGroupSelection(modifierGroup: ModifierGroup, id: String) {
-        val modifierInfo = modifierGroup.options.find { it.modifierId == id }
-        if (modifierSelections[modifierGroup] != modifierInfo) {
-            modifierSelections[modifierGroup] = modifierInfo
-            _onSelectProductModifier.value = modifierSelections
         }
     }
 

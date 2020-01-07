@@ -8,9 +8,8 @@ import com.ryanjames.swabergersmobilepos.databinding.RowItemSelectBinding
 import com.ryanjames.swabergersmobilepos.domain.*
 
 private const val ID_MEAL_OPTION = 1
-private const val ID_MODIFIER_GROUP = 2
-private const val ID_PRODUCT_GROUP = 3
-private const val ID_PRODUCT_GROUP_MODIFIER = 4
+private const val ID_PRODUCT_GROUP = 2
+private const val ID_PRODUCT_GROUP_MODIFIER = 3
 
 class MenuItemDetailAdapter(
     val product: Product,
@@ -18,7 +17,6 @@ class MenuItemDetailAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var selectedBundle: ProductBundle? = null
-    private var modifierGroupSelection = HashMap<ModifierGroup, ModifierInfo?>()
     private var productSelection = HashMap<ProductGroup, Product?>()
     private var productGroupModifierSelection = HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>()
 
@@ -26,25 +24,20 @@ class MenuItemDetailAdapter(
 
     fun setBundle(productBundle: ProductBundle?) {
         selectedBundle = productBundle
-        updatePage()
-    }
-
-    fun setModifierSelection(selection: HashMap<ModifierGroup, ModifierInfo?>) {
-        modifierGroupSelection = selection
-        updatePage()
+        notifyChange()
     }
 
     fun setProductSelection(selection: HashMap<ProductGroup, Product?>) {
         productSelection = selection
-        updatePage()
+        notifyChange()
     }
 
     fun setProductGroupModifierSelection(selection: HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>) {
         productGroupModifierSelection = selection
-        updatePage()
+        notifyChange()
     }
 
-    private fun updatePage() {
+    private fun notifyChange() {
         data = createRowDataHolders()
         notifyDataSetChanged()
     }
@@ -58,10 +51,9 @@ class MenuItemDetailAdapter(
             ID_PRODUCT_GROUP -> {
                 RowSelectProductGroupViewHolder(binding, onClickRowListener)
             }
-            ID_PRODUCT_GROUP_MODIFIER -> {
+            else -> {
                 RowSelectProductGroupModifierViewHolder(binding, onClickRowListener)
             }
-            else -> RowSelectModifierViewHolder(binding, onClickRowListener)
         }
     }
 
@@ -73,11 +65,6 @@ class MenuItemDetailAdapter(
         when (holder) {
             is RowSelectMealViewHolder -> {
                 holder.bind(selectedBundle)
-            }
-            is RowSelectModifierViewHolder -> {
-                val dataHolder = data[position] as RowDataHolder.RowModifierGroupDataHolder
-                val modifierGroup = dataHolder.modifierGroup
-                holder.bind(modifierGroup, modifierGroupSelection[modifierGroup])
             }
             is RowSelectProductGroupViewHolder -> {
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupDataHolder
@@ -111,26 +98,6 @@ class MenuItemDetailAdapter(
 
             binding.root.setOnClickListener {
                 onClickRowListener.onClickRowMealOptions()
-            }
-        }
-
-    }
-
-    class RowSelectModifierViewHolder(
-        val binding: RowItemSelectBinding,
-        private val onClickRowListener: OnClickRowListener
-    ) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(modifierGroup: ModifierGroup, modifierInfo: ModifierInfo?) {
-            binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()}"
-            if (modifierInfo == null) {
-                binding.tvSubheader.setText(R.string.none_selected)
-            } else {
-                binding.tvSubheader.text = modifierInfo.modifierName
-            }
-
-            binding.root.setOnClickListener {
-                onClickRowListener.onClickRowProductModifierGroup(modifierGroup)
             }
         }
 
@@ -182,7 +149,7 @@ class MenuItemDetailAdapter(
         }
 
         for (modifierGroup in product.modifierGroups) {
-            list.add(RowDataHolder.RowModifierGroupDataHolder(modifierGroup))
+            list.add(RowDataHolder.RowProductGroupModifierDataHolder(product, modifierGroup))
         }
 
         selectedBundle?.productGroups?.forEach { productGroup ->
@@ -206,10 +173,6 @@ class MenuItemDetailAdapter(
             override val itemViewType: Int = ID_MEAL_OPTION
         }
 
-        class RowModifierGroupDataHolder(val modifierGroup: ModifierGroup) : RowDataHolder() {
-            override val itemViewType: Int = ID_MODIFIER_GROUP
-        }
-
         class RowProductGroupDataHolder(val productGroup: ProductGroup) : RowDataHolder() {
             override val itemViewType: Int = ID_PRODUCT_GROUP
         }
@@ -222,8 +185,6 @@ class MenuItemDetailAdapter(
 
     interface OnClickRowListener {
         fun onClickRowMealOptions()
-
-        fun onClickRowProductModifierGroup(modifierGroup: ModifierGroup)
 
         fun onClickRowProductGroup(productGroup: ProductGroup)
 
