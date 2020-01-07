@@ -128,11 +128,11 @@ class MenuItemDetailAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: Product, modifierGroup: ModifierGroup, modifierInfo: ModifierInfo?) {
-            binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"
+            binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()}"
             if (modifierInfo == null) {
                 binding.tvSubheader.setText(R.string.none_selected)
             } else {
-                binding.tvSubheader.text = modifierInfo.modifierName
+                binding.tvSubheader.text = "${product.productName} - ${modifierInfo.modifierName}"
             }
 
             binding.root.setOnClickListener {
