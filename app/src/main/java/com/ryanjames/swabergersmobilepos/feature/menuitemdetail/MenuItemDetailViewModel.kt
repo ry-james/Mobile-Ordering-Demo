@@ -9,21 +9,21 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
 
     // Events
     private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
-    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, Product?>>()
-    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>>()
+    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product?>>>()
+    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>>()
 
     val onSelectBundleObservable: LiveData<ProductBundle?>
         get() = _onSelectBundleObservable
 
-    val onSelectProduct: LiveData<HashMap<ProductGroup, Product?>>
+    val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product?>>>
         get() = _onSelectProduct
 
-    val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>>
+    val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>>
         get() = _onSelectProductGroupModifier
 
 
-    private val productSelections = HashMap<ProductGroup, Product?>()
-    private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>()
+    private val productSelections = HashMap<ProductGroup, List<Product?>>()
+    private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>()
 
     val strProductName = MutableLiveData<String>().apply { value = product.productName }
 
@@ -33,7 +33,7 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
 
     private fun initializeSelections() {
         for (modifierGroup in product.modifierGroups) {
-            productGroupModifierSelections[Pair(product, modifierGroup)] = modifierGroup.defaultSelection
+            productGroupModifierSelections[Pair(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
         }
         _onSelectProductGroupModifier.value = productGroupModifierSelections
 
@@ -46,7 +46,7 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
             _onSelectBundleObservable.value = bundle
             if (bundle != null) {
                 for (productGroup in bundle.productGroups) {
-                    setProductSelection(productGroup, productGroup.defaultProduct.productId)
+                    setProductSelection(productGroup, listOf(productGroup.defaultProduct.productId))
                 }
             } else {
                 productSelections.clear()
@@ -55,26 +55,35 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
         }
     }
 
-    fun setProductSelection(productGroup: ProductGroup, productId: String) {
-        val product = productGroup.options.find { it.productId == productId }
-        if (productSelections[productGroup] != product) {
-            productSelections[productGroup] = product
-            _onSelectProduct.value = productSelections
+    fun setProductSelection(productGroup: ProductGroup, productIds: List<String>) {
 
-            productGroupModifierSelections.clear()
+        val productList = mutableListOf<Product>()
+        for (productId in productIds) {
+            productGroup.options.find { it.productId == productId }?.let { productList.add(it) }
+        }
 
-            product?.modifierGroups?.forEach {
-                setProductGroupModifier(product, it, it.defaultSelection.modifierId)
+        productSelections[productGroup] = productList
+        _onSelectProduct.value = productSelections
+
+        productGroupModifierSelections.clear()
+
+        for (product in productList) {
+            product.modifierGroups.forEach {
+                setProductGroupModifiers(product, it, listOf(it.defaultSelection.modifierId))
             }
         }
+
     }
 
-    fun setProductGroupModifier(product: Product, modifierGroup: ModifierGroup, id: String) {
-        val modifierInfo = modifierGroup.options.find { it.modifierId == id }
-        val key = Pair(product, modifierGroup)
-        if (productGroupModifierSelections[key] != modifierInfo) {
-            productGroupModifierSelections[key] = modifierInfo
-            _onSelectProductGroupModifier.value = productGroupModifierSelections
+    fun setProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, ids: List<String>) {
+        val modifierList = mutableListOf<ModifierInfo>()
+        for (id in ids) {
+            modifierGroup.options.find { it.modifierId == id }?.let { modifierList.add(it) }
         }
+
+        val key = Pair(product, modifierGroup)
+        productGroupModifierSelections[key] = modifierList
+        _onSelectProductGroupModifier.value = productGroupModifierSelections
+
     }
 }

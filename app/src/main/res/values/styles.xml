@@ -13,4 +13,9 @@
         <item name="android:fontFamily">@font/texgyreheros_bold</item>
     </style>
 
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorGray</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
 </resources>

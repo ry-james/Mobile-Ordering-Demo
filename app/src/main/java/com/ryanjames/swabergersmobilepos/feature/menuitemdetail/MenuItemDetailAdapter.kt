@@ -17,8 +17,8 @@ class MenuItemDetailAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var selectedBundle: ProductBundle? = null
-    private var productSelection = HashMap<ProductGroup, Product?>()
-    private var productGroupModifierSelection = HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>()
+    private var productSelection = HashMap<ProductGroup, List<Product?>>()
+    private var productGroupModifierSelection = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>()
 
     private var data: List<RowDataHolder> = createRowDataHolders()
 
@@ -27,12 +27,12 @@ class MenuItemDetailAdapter(
         notifyChange()
     }
 
-    fun setProductSelection(selection: HashMap<ProductGroup, Product?>) {
+    fun setProductSelection(selection: HashMap<ProductGroup, List<Product?>>) {
         productSelection = selection
         notifyChange()
     }
 
-    fun setProductGroupModifierSelection(selection: HashMap<Pair<Product, ModifierGroup>, ModifierInfo?>) {
+    fun setProductGroupModifierSelection(selection: HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>) {
         productGroupModifierSelection = selection
         notifyChange()
     }
@@ -69,13 +69,13 @@ class MenuItemDetailAdapter(
             is RowSelectProductGroupViewHolder -> {
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupDataHolder
                 val productGroup = dataHolder.productGroup
-                holder.bind(productGroup, productSelection[productGroup])
+                holder.bind(productGroup, productSelection[productGroup] ?: listOf())
             }
             is RowSelectProductGroupModifierViewHolder -> {
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierDataHolder
                 val product = dataHolder.product
                 val modifierGroup = dataHolder.modifierGroup
-                holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)])
+                holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)] ?: listOf())
             }
         }
     }
@@ -108,17 +108,26 @@ class MenuItemDetailAdapter(
         private val onClickRowListener: OnClickRowListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(productGroup: ProductGroup, product: Product?) {
+        fun bind(productGroup: ProductGroup, product: List<Product?>) {
             binding.tvHeader.text = "SELECT ${productGroup.productGroupName.toUpperCase()}"
             if (product == null) {
                 binding.tvSubheader.setText(R.string.none_selected)
             } else {
-                binding.tvSubheader.text = product.productName
+                binding.tvSubheader.text = product.toText()
             }
 
             binding.root.setOnClickListener {
                 onClickRowListener.onClickRowProductGroup(productGroup)
             }
+        }
+
+        private fun List<Product?>.toText(): String {
+            var text = ""
+            this.forEachIndexed { index, product ->
+                text += product?.productName
+                if (index != this.size - 1) text += ", "
+            }
+            return text
         }
     }
 
@@ -127,17 +136,26 @@ class MenuItemDetailAdapter(
         private val onClickRowListener: OnClickRowListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(product: Product, modifierGroup: ModifierGroup, modifierInfo: ModifierInfo?) {
+        fun bind(product: Product, modifierGroup: ModifierGroup, modifierInfo: List<ModifierInfo?>) {
             binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()}"
             if (modifierInfo == null) {
                 binding.tvSubheader.setText(R.string.none_selected)
             } else {
-                binding.tvSubheader.text = "${product.productName} - ${modifierInfo.modifierName}"
+                binding.tvSubheader.text = "${product.productName} - ${modifierInfo.toText()}"
             }
 
             binding.root.setOnClickListener {
                 onClickRowListener.onClickRowProductGroupModifier(product, modifierGroup)
             }
+        }
+
+        private fun List<ModifierInfo?>.toText(): String {
+            var text = ""
+            this.forEachIndexed { index, modifierInfo ->
+                text += modifierInfo?.modifierName
+                if (index != this.size - 1) text += ", "
+            }
+            return text
         }
 
     }
@@ -156,9 +174,12 @@ class MenuItemDetailAdapter(
             list.add(RowDataHolder.RowProductGroupDataHolder(productGroup))
 
             val productSelection = productSelection[productGroup]
-            productSelection?.modifierGroups?.forEach { modifierGroup ->
-                list.add(RowDataHolder.RowProductGroupModifierDataHolder(productSelection, modifierGroup))
+            productSelection?.forEach {
+                it?.modifierGroups?.forEach { modifierGroup ->
+                    list.add(RowDataHolder.RowProductGroupModifierDataHolder(it, modifierGroup))
+                }
             }
+
 
         }
 

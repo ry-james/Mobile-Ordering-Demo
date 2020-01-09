@@ -6,18 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.databinding.BottomSheetItemSelectorBinding
 import com.ryanjames.swabergersmobilepos.helper.viewModelFactory
-import java.lang.Exception
+
 
 private const val EXTRA_REQUEST_ID = "extra.request.id"
 private const val EXTRA_TITLE = "extra.title"
 private const val EXTRA_OPTIONS = "extra.options"
 private const val EXTRA_SELECTED_ID = "extra.selected.id"
+private const val EXTRA_MIN_SELECTION = "extra.min.selection"
+private const val EXTRA_MAX_SELECTION = "extra.max.selection"
 
 class BottomPickerFragment : BottomSheetDialogFragment() {
 
@@ -25,12 +28,18 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
     private lateinit var options: List<BottomPickerAdapter.BottomPickerItem>
     private lateinit var listener: BottomPickerListener
     private lateinit var viewModel: BottomPickerFragmentViewModel
+    private lateinit var adapter: BottomPickerAdapter
+    private var minSelection: Int = 1
+    private var maxSelection: Int = 1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = BottomSheetItemSelectorBinding.inflate(inflater, container, false)
 
         val requestId = arguments?.getString(EXTRA_REQUEST_ID) ?: ""
-        viewModel = ViewModelProviders.of(this, viewModelFactory { BottomPickerFragmentViewModel(requestId, listener) })
+        minSelection = arguments?.getInt(EXTRA_MIN_SELECTION) ?: 1
+        maxSelection = arguments?.getInt(EXTRA_MAX_SELECTION) ?: 1
+        val defaultSelections = arguments?.getStringArrayList(EXTRA_SELECTED_ID) ?: arrayListOf()
+        viewModel = ViewModelProviders.of(this, viewModelFactory { BottomPickerFragmentViewModel(requestId, minSelection, maxSelection, defaultSelections, listener) })
             .get(BottomPickerFragmentViewModel::class.java)
 
         binding.viewModel = viewModel
@@ -53,25 +62,30 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
         })
+
+        viewModel.userSelectionsObservable.observe(this, Observer { selections ->
+            adapter.setSelectedRows(selections.toList())
+        })
+
+
+        viewModel.enableCheckboxesObservable.observe(this, Observer { enable ->
+            if (enable) adapter.enableSelections() else adapter.disableSelections()
+        })
+
+
     }
 
 
     private fun setupRecyclerView() {
         binding.rvOptions.also {
             it.layoutManager = LinearLayoutManager(context)
-            val adapter = BottomPickerAdapter(options, object : BottomPickerAdapter.BottomSheetClickListener {
-                override fun onSelectRow(id: String) {
-                    viewModel.userSelectedId = id
+            adapter = BottomPickerAdapter(options, object : BottomPickerAdapter.BottomSheetClickListener {
+                override fun onSelectPickerRow(id: String) {
+                    viewModel.selectOrRemove(id)
                 }
-            })
+            }, viewModel.isSingleSelection)
             it.adapter = adapter
 
-            // If user has already selected an item, select that item. Otherwise, the passed id in the bundle is selected
-            if (viewModel.userSelectedId != null) {
-                adapter.selectRow(viewModel.userSelectedId)
-            } else {
-                adapter.selectRow(arguments?.getString(EXTRA_SELECTED_ID))
-            }
         }
     }
 
@@ -92,23 +106,27 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
     }
 
     interface BottomPickerListener {
-        fun onSelectPickerItem(requestId: String, selectedItemId: String)
+        fun onUpdatePickerSelections(requestId: String, selectedItemIds: List<String>)
     }
 
     companion object {
 
         fun createInstance(
             requestId: String,
-            title: String, options:
-            ArrayList<BottomPickerAdapter.BottomPickerItem>,
-            selectedId: String
+            title: String,
+            minSelection: Int,
+            maxSelection: Int,
+            options: ArrayList<BottomPickerAdapter.BottomPickerItem>,
+            selectedId: ArrayList<String>
         ): BottomPickerFragment {
             val fragment = BottomPickerFragment()
             val bundle = Bundle().apply {
                 putString(EXTRA_REQUEST_ID, requestId)
                 putString(EXTRA_TITLE, title)
+                putInt(EXTRA_MIN_SELECTION, minSelection)
+                putInt(EXTRA_MAX_SELECTION, maxSelection)
                 putParcelableArrayList(EXTRA_OPTIONS, options)
-                putString(EXTRA_SELECTED_ID, selectedId)
+                putStringArrayList(EXTRA_SELECTED_ID, selectedId)
             }
             fragment.arguments = bundle
             return fragment

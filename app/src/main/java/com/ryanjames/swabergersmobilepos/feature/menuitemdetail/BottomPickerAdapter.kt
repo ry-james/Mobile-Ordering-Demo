@@ -9,37 +9,34 @@ import kotlinx.android.parcel.Parcelize
 
 class BottomPickerAdapter(
     bottomPickerItems: List<BottomPickerItem>,
-    clickListener: BottomSheetClickListener
+    clickListener: BottomSheetClickListener,
+    singleSelection: Boolean
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val viewModels = bottomPickerItems.map {
-        BottomPickerItemViewModel(it) { selectedItem ->
-            this.selectedId = selectedItem.id
-            clickListener.onSelectRow(selectedItem.id)
+        BottomPickerItemViewModel(it, singleSelection) { selectedItem ->
+            clickListener.onSelectPickerRow(selectedItem.id)
         }
     }
 
-
-    private var selectedId: String? = null
-        set(value) {
-            field = value
-            updateViewSelections()
-        }
-
-    fun selectRow(id: String?) {
-        selectedId = id
-    }
-
-
-    private fun updateViewSelections() {
-        viewModels.forEach {
-            if (it.item.id != selectedId) {
-                it.uncheck()
+    fun setSelectedRows(id: List<String>) {
+        for (viewModel in viewModels) {
+            if (id.contains(viewModel.item.id)) {
+                viewModel.check()
             } else {
-                it.check()
+                viewModel.uncheck()
             }
-            notifyItemRangeChanged(0, viewModels.size)
         }
+        notifyDataSetChanged()
+    }
+
+
+    fun disableSelections() {
+        viewModels.forEach { if (it.checked.value == false) it.disable() }
+    }
+
+    fun enableSelections() {
+        viewModels.forEach { it.enable() }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -73,6 +70,6 @@ class BottomPickerAdapter(
     ) : Parcelable
 
     interface BottomSheetClickListener {
-        fun onSelectRow(id: String)
+        fun onSelectPickerRow(id: String)
     }
 }

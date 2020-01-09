@@ -16,7 +16,6 @@ import com.ryanjames.swabergersmobilepos.domain.ProductGroup
 
 private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
-private const val ID_MODIFIER_GROUP = "id.modifier.group"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
 
@@ -89,8 +88,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.php_price, bundle.price))
         })
 
-        val selectedItemId = viewModel.onSelectBundleObservable.value?.bundleId ?: product.productId
-        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), options, selectedItemId)
+        val selectedItemId = arrayListOf(viewModel.onSelectBundleObservable.value?.bundleId ?: product.productId)
+        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), 1, 1, options, selectedItemId)
         bottomFragment.show(supportFragmentManager, "Meal Selection")
     }
 
@@ -101,13 +100,15 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.productId ?: productGroup.defaultProduct.productId
+        val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.map { it?.productId } ?: listOf(productGroup.defaultProduct.productId)
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP,
             getString(R.string.select_something, productGroup.productGroupName.toUpperCase()),
+            1,
+            2,
             options,
-            selectedId
+            ArrayList<String>(selectedId)
         )
         bottomFragment.show(supportFragmentManager, "Product Group Selection")
     }
@@ -120,22 +121,25 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.onSelectProductGroupModifier.value?.get(Pair(product, modifierGroup))?.modifierId ?: modifierGroup.defaultSelection.modifierId
+        val selectedId = viewModel.onSelectProductGroupModifier.value?.get(Pair(product, modifierGroup))?.map { it?.modifierId } ?: listOf(modifierGroup.defaultSelection.modifierId)
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
             getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"),
+            1,
+            1,
             options,
-            selectedId
+            ArrayList<String>(selectedId)
         )
         bottomFragment.show(supportFragmentManager, "Product Group Modifier Group Selection")
     }
 
-    override fun onSelectPickerItem(requestId: String, selectedItemId: String) {
+
+    override fun onUpdatePickerSelections(requestId: String, selectedItemIds: List<String>) {
         when (requestId) {
-            ID_MEAL_OPTIONS -> handleMealSelection(selectedItemId)
-            ID_PRODUCT_GROUP -> handleProductGroupSelection(selectedItemId)
-            ID_PRODUCT_GROUP_MODIFIER -> handleProductGroupModifierSelection(selectedItemId)
+            ID_MEAL_OPTIONS -> handleMealSelection(selectedItemIds[0])
+            ID_PRODUCT_GROUP -> handleProductGroupSelections(selectedItemIds)
+            ID_PRODUCT_GROUP_MODIFIER -> handleProductGroupModifierSelections(selectedItemIds)
         }
     }
 
@@ -146,12 +150,12 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         product.bundles.find { it.bundleId == selectedId }?.let { viewModel.setProductBundle(it) }
     }
 
-    private fun handleProductGroupSelection(productGroupId: String) {
-        selectedProductGroup?.let { viewModel.setProductSelection(it, productGroupId) }
+    private fun handleProductGroupSelections(productGroupIds: List<String>) {
+        selectedProductGroup?.let { viewModel.setProductSelection(it, productGroupIds) }
     }
 
-    private fun handleProductGroupModifierSelection(productGroupId: String) {
-        selectedProductGroupModifierGroup?.let { viewModel.setProductGroupModifier(it.first, it.second, productGroupId) }
+    private fun handleProductGroupModifierSelections(selectedIds: List<String>) {
+        selectedProductGroupModifierGroup?.let { viewModel.setProductGroupModifiers(it.first, it.second, selectedIds) }
     }
 
     companion object {
