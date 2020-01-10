@@ -9,21 +9,21 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
 
     // Events
     private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
-    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product?>>>()
-    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>>()
+    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product>>>()
+    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>()
 
     val onSelectBundleObservable: LiveData<ProductBundle?>
         get() = _onSelectBundleObservable
 
-    val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product?>>>
+    val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product>>>
         get() = _onSelectProduct
 
-    val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>>
+    val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>
         get() = _onSelectProductGroupModifier
 
 
-    private val productSelections = HashMap<ProductGroup, List<Product?>>()
-    private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo?>>()
+    private val productSelections = HashMap<ProductGroup, List<Product>>()
+    private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>()
 
     val strProductName = MutableLiveData<String>().apply { value = product.productName }
 
