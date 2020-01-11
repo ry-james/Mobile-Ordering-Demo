@@ -17,6 +17,7 @@ import com.ryanjames.swabergersmobilepos.helper.viewModelFactory
 
 private const val EXTRA_REQUEST_ID = "extra.request.id"
 private const val EXTRA_TITLE = "extra.title"
+private const val EXTRA_SUBTITLE = "extra.subtitle"
 private const val EXTRA_OPTIONS = "extra.options"
 private const val EXTRA_SELECTED_ID = "extra.selected.id"
 private const val EXTRA_MIN_SELECTION = "extra.min.selection"
@@ -50,6 +51,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setTitle(arguments?.getString(EXTRA_TITLE) ?: getString(R.string.select))
+        arguments?.getString(EXTRA_SUBTITLE)?.let { viewModel.setSubtitle(it) }
         options = arguments?.getParcelableArrayList(EXTRA_OPTIONS) ?: listOf()
         setupRecyclerView()
 
@@ -114,6 +116,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
         fun createInstance(
             requestId: String,
             title: String,
+            subtitle: String?,
             minSelection: Int,
             maxSelection: Int,
             options: ArrayList<BottomPickerAdapter.BottomPickerItem>,
@@ -123,6 +126,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
             val bundle = Bundle().apply {
                 putString(EXTRA_REQUEST_ID, requestId)
                 putString(EXTRA_TITLE, title)
+                putString(EXTRA_SUBTITLE, subtitle)
                 putInt(EXTRA_MIN_SELECTION, minSelection)
                 putInt(EXTRA_MAX_SELECTION, maxSelection)
                 putParcelableArrayList(EXTRA_OPTIONS, options)

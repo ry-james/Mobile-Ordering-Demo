@@ -19,24 +19,27 @@ class BottomPickerAdapter(
         }
     }
 
-    fun setSelectedRows(id: List<String>) {
-        for (viewModel in viewModels) {
-            if (id.contains(viewModel.item.id)) {
+    fun setSelectedRows(ids: List<String>) {
+        for ((index, viewModel) in viewModels.withIndex()) {
+            if (ids.contains(viewModel.item.id)) {
                 viewModel.check()
-            } else {
+                notifyItemChanged(index)
+            } else if (viewModel.checked.value == true) {
                 viewModel.uncheck()
+                notifyItemChanged(index)
             }
         }
-        notifyDataSetChanged()
     }
 
 
     fun disableSelections() {
         viewModels.forEach { if (it.checked.value == false) it.disable() }
+        notifyItemRangeChanged(0, viewModels.size)
     }
 
     fun enableSelections() {
         viewModels.forEach { it.enable() }
+        notifyItemRangeChanged(0, viewModels.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

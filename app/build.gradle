@@ -99,8 +99,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     // For Kotlin use kapt instead of annotationProcessor
 
-    implementation "android.arch.lifecycle:extensions:1.1.1"
-    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
 }

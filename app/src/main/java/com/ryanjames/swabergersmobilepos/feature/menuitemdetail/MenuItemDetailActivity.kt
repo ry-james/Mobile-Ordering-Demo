@@ -18,6 +18,7 @@ private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
+private const val ID_QUANTITY = "id.quantity"
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
@@ -89,7 +90,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         })
 
         val selectedItemId = arrayListOf(viewModel.onSelectBundleObservable.value?.bundleId ?: product.productId)
-        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), 1, 1, options, selectedItemId)
+        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), null, 1, 1, options, selectedItemId)
         bottomFragment.show(supportFragmentManager, "Meal Selection")
     }
 
@@ -101,10 +102,12 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         }
 
         val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.map { it?.productId } ?: listOf(productGroup.defaultProduct.productId)
+        val subtitle = "Required - 1, Max - 2"
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP,
             getString(R.string.select_something, productGroup.productGroupName.toUpperCase()),
+            subtitle,
             1,
             2,
             options,
@@ -125,7 +128,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
-            getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()} (${product.productName})"),
+            getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()}"),
+            product.productName,
             1,
             1,
             options,

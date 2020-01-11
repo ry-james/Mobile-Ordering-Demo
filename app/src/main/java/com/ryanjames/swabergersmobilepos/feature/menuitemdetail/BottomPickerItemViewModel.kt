@@ -13,7 +13,7 @@ class BottomPickerItemViewModel(
     val name = MutableLiveData<String>()
     val descriptionVisibility = MutableLiveData<Int>()
     val description = MutableLiveData<String>()
-    val checked = MutableLiveData<Boolean>()
+    val checked = MutableLiveData<Boolean>().apply { value = false }
     val enabled = MutableLiveData<Boolean>().apply { value = true }
     val radioButtonVisibility = MutableLiveData<Int>()
     val checkboxVisibility = MutableLiveData<Int>()
