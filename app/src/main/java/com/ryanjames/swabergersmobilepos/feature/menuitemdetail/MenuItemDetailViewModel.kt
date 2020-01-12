@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.*
+import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 
 class MenuItemDetailViewModel(
     val product: Product,
@@ -13,6 +14,7 @@ class MenuItemDetailViewModel(
     var quantity: Int = quantity
         set(value) {
             field = if (value < 1) 1 else value
+            updatePrice()
         }
 
     // Events
@@ -29,11 +31,16 @@ class MenuItemDetailViewModel(
     val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>
         get() = _onSelectProductGroupModifier
 
-
     private val productSelections = HashMap<ProductGroup, List<Product>>()
     private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>()
 
-    val strProductName = MutableLiveData<String>().apply { value = product.productName }
+    private val _strProductName = MutableLiveData<String>().apply { value = product.productName }
+    val strProductName: LiveData<String>
+        get() = _strProductName
+
+    private val _strAddToBagBtn = MutableLiveData<String>()
+    val strAddToBag: LiveData<String>
+        get() = _strAddToBagBtn
 
     init {
         initializeSelections()
@@ -44,6 +51,7 @@ class MenuItemDetailViewModel(
             productGroupModifierSelections[Pair(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
         }
         _onSelectProductGroupModifier.value = productGroupModifierSelections
+        updatePrice()
     }
 
     fun setProductBundle(bundle: ProductBundle?) {
@@ -60,10 +68,11 @@ class MenuItemDetailViewModel(
                 productGroupModifierSelections.clear()
             }
         }
+        updatePrice()
     }
 
     fun setProductSelection(productGroup: ProductGroup, productIds: List<String>) {
-
+        val oldProductList = productSelections[productGroup] ?: listOf()
         val productList = mutableListOf<Product>()
         for (productId in productIds) {
             productGroup.options.find { it.productId == productId }?.let { productList.add(it) }
@@ -72,14 +81,31 @@ class MenuItemDetailViewModel(
         productSelections[productGroup] = productList
         _onSelectProduct.value = productSelections
 
-        productGroupModifierSelections.clear()
-
-        for (product in productList) {
+        // Add default modifiers for new product additions
+        val diffList = productList.minus(oldProductList)
+        for (product in diffList) {
             product.modifierGroups.forEach {
                 setProductGroupModifiers(product, it, listOf(it.defaultSelection.modifierId))
             }
         }
 
+        // Delete modifiers for removed product selections
+        for ((key, modifiers) in productGroupModifierSelections) {
+            if (!productIds.contains(key.first.productId)) {
+                removeProductModifiersFromMap(key.first)
+            }
+        }
+
+        updatePrice()
+
+    }
+
+    private fun removeProductModifiersFromMap(product: Product) {
+        for ((key, modifiers) in productGroupModifierSelections) {
+            if (key.first == product) {
+                productGroupModifierSelections.remove(key)
+            }
+        }
     }
 
     fun setProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, ids: List<String>) {
@@ -91,6 +117,28 @@ class MenuItemDetailViewModel(
         val key = Pair(product, modifierGroup)
         productGroupModifierSelections[key] = modifierList
         _onSelectProductGroupModifier.value = productGroupModifierSelections
+        updatePrice()
 
+    }
+
+    private fun updatePrice() {
+        var price = onSelectBundleObservable.value?.price ?: product.price
+        for ((key, value) in productGroupModifierSelections) {
+            for (modifier in value) {
+                price += modifier.priceDelta
+            }
+        }
+        price *= quantity
+        _strAddToBagBtn.value = "ADD TO BAG - PHP. ${price.toTwoDigitString()}"
+    }
+
+    fun createLineItem(): LineItem {
+        return LineItem(
+            product,
+            _onSelectBundleObservable.value,
+            _onSelectProduct.value ?: hashMapOf(),
+            _onSelectProductGroupModifier.value ?: hashMapOf(),
+            quantity
+        )
     }
 }
