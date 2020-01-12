@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.databinding.BottomSheetItemSelectorBinding
@@ -29,7 +30,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
     private lateinit var options: List<BottomPickerAdapter.BottomPickerItem>
     private lateinit var listener: BottomPickerListener
     private lateinit var viewModel: BottomPickerFragmentViewModel
-    private lateinit var adapter: BottomPickerAdapter
+    private lateinit var pickerAdapter: BottomPickerAdapter
     private var minSelection: Int = 1
     private var maxSelection: Int = 1
 
@@ -66,12 +67,12 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
         })
 
         viewModel.userSelectionsObservable.observe(this, Observer { selections ->
-            adapter.setSelectedRows(selections.toList())
+            pickerAdapter.setSelectedRows(selections.toList())
         })
 
 
         viewModel.enableCheckboxesObservable.observe(this, Observer { enable ->
-            if (enable) adapter.enableSelections() else adapter.disableSelections()
+            if (enable) pickerAdapter.enableSelections() else pickerAdapter.disableSelections()
         })
 
 
@@ -79,15 +80,15 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
 
 
     private fun setupRecyclerView() {
-        binding.rvOptions.also {
-            it.layoutManager = LinearLayoutManager(context)
-            adapter = BottomPickerAdapter(options, object : BottomPickerAdapter.BottomSheetClickListener {
+        binding.rvOptions.apply {
+            layoutManager = LinearLayoutManager(context)
+            pickerAdapter = BottomPickerAdapter(options, object : BottomPickerAdapter.BottomSheetClickListener {
                 override fun onSelectPickerRow(id: String) {
                     viewModel.selectOrRemove(id)
                 }
             }, viewModel.isSingleSelection)
-            it.adapter = adapter
-
+            adapter = pickerAdapter
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
     }
 

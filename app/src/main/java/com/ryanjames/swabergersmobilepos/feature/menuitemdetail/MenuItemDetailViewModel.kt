@@ -5,19 +5,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.*
 
-class MenuItemDetailViewModel(val product: Product) : ViewModel() {
+class MenuItemDetailViewModel(
+    val product: Product,
+    quantity: Int = 1
+) : ViewModel() {
+
+    var quantity: Int = quantity
+        set(value) {
+            field = if (value < 1) 1 else value
+        }
 
     // Events
-    private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
-    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product>>>()
-    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>()
 
+    private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
     val onSelectBundleObservable: LiveData<ProductBundle?>
         get() = _onSelectBundleObservable
 
+    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product>>>()
     val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product>>>
         get() = _onSelectProduct
 
+    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>()
     val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>
         get() = _onSelectProductGroupModifier
 
@@ -36,7 +44,6 @@ class MenuItemDetailViewModel(val product: Product) : ViewModel() {
             productGroupModifierSelections[Pair(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
         }
         _onSelectProductGroupModifier.value = productGroupModifierSelections
-
     }
 
     fun setProductBundle(bundle: ProductBundle?) {

@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.base.BaseActivity
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Binding
@@ -18,7 +19,6 @@ private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
-private const val ID_QUANTITY = "id.quantity"
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
@@ -58,7 +58,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     private fun setupRecyclerView() {
 
-        adapter = MenuItemDetailAdapter(product, object : MenuItemDetailAdapter.OnClickRowListener {
+        adapter = MenuItemDetailAdapter(product, viewModel.quantity, object : MenuItemDetailAdapter.OnClickRowListener {
 
             override fun onClickRowMealOptions() {
                 showBottomFragmentForMealSelection()
@@ -73,9 +73,15 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 selectedProductGroupModifierGroup = Pair(product, modifierGroup)
                 showBottomFragmentForProductGroupModifierGroup(product, modifierGroup)
             }
+
+            override fun onChangeQuantity(quantity: Int) {
+                viewModel.quantity = quantity
+                adapter.setQuantity(viewModel.quantity)
+            }
         })
 
         binding.rvMenuItem.apply {
+            (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             layoutManager = LinearLayoutManager(this@MenuItemDetailActivity)
             adapter = this@MenuItemDetailActivity.adapter
         }
@@ -111,7 +117,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             1,
             2,
             options,
-            ArrayList<String>(selectedId)
+            ArrayList(selectedId)
         )
         bottomFragment.show(supportFragmentManager, "Product Group Selection")
     }
@@ -133,7 +139,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             1,
             1,
             options,
-            ArrayList<String>(selectedId)
+            ArrayList(selectedId)
         )
         bottomFragment.show(supportFragmentManager, "Product Group Modifier Group Selection")
     }

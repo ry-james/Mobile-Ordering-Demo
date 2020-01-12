@@ -1,6 +1,7 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
@@ -10,9 +11,11 @@ import com.ryanjames.swabergersmobilepos.domain.*
 private const val ID_MEAL_OPTION = 1
 private const val ID_PRODUCT_GROUP = 2
 private const val ID_PRODUCT_GROUP_MODIFIER = 3
+private const val ID_QUANTITY = 4
 
 class MenuItemDetailAdapter(
     val product: Product,
+    private var quantity: Int,
     private val onClickRowListener: OnClickRowListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -37,6 +40,11 @@ class MenuItemDetailAdapter(
         notifyChange()
     }
 
+    fun setQuantity(qty: Int) {
+        quantity = qty
+        notifyItemChanged(0)
+    }
+
     private fun notifyChange() {
         data = createRowDataHolders()
         notifyDataSetChanged()
@@ -47,6 +55,7 @@ class MenuItemDetailAdapter(
         return when (viewType) {
             ID_MEAL_OPTION -> RowSelectMealViewHolder(binding, onClickRowListener)
             ID_PRODUCT_GROUP -> RowSelectProductGroupViewHolder(binding, onClickRowListener)
+            ID_QUANTITY -> RowSelectQuantityViewHolder(binding, onClickRowListener)
             else -> RowSelectProductGroupModifierViewHolder(binding, onClickRowListener)
         }
     }
@@ -70,6 +79,9 @@ class MenuItemDetailAdapter(
                 val product = dataHolder.product
                 val modifierGroup = dataHolder.modifierGroup
                 holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)] ?: listOf())
+            }
+            is RowSelectQuantityViewHolder -> {
+                holder.bind(quantity)
             }
         }
     }
@@ -118,7 +130,7 @@ class MenuItemDetailAdapter(
         private fun List<Product>.toText(): String {
             var text = ""
             this.forEachIndexed { index, product ->
-                text += product?.productName
+                text += product.productName
                 if (index != this.size - 1) text += ", "
             }
             return text
@@ -154,8 +166,34 @@ class MenuItemDetailAdapter(
 
     }
 
+    class RowSelectQuantityViewHolder(
+        private val binding: RowItemSelectBinding,
+        private val onClickRowListener: OnClickRowListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(quantity: Int) {
+            binding.tvHeader.text = "QUANTITY"
+            binding.ivMinus.visibility = View.VISIBLE
+            binding.ivPlus.visibility = View.VISIBLE
+            binding.tvQuantityValue.visibility = View.VISIBLE
+            binding.tvSubheader.visibility = View.GONE
+            binding.tvQuantityValue.text = quantity.toString()
+
+            binding.ivMinus.setOnClickListener {
+                onClickRowListener.onChangeQuantity(quantity - 1)
+            }
+
+            binding.ivPlus.setOnClickListener {
+                onClickRowListener.onChangeQuantity(quantity + 1)
+            }
+        }
+
+    }
+
     private fun createRowDataHolders(): List<RowDataHolder> {
         val list = mutableListOf<RowDataHolder>()
+        list.add(RowDataHolder.RowQuantity())
+
         if (product.bundles.isNotEmpty()) {
             list.add(RowDataHolder.RowSelectMealDataHolder())
         }
@@ -184,7 +222,7 @@ class MenuItemDetailAdapter(
 
         abstract val itemViewType: Int
 
-        class RowSelectMealDataHolder() : RowDataHolder() {
+        class RowSelectMealDataHolder : RowDataHolder() {
             override val itemViewType: Int = ID_MEAL_OPTION
         }
 
@@ -195,6 +233,10 @@ class MenuItemDetailAdapter(
         class RowProductGroupModifierDataHolder(val product: Product, val modifierGroup: ModifierGroup) : RowDataHolder() {
             override val itemViewType: Int = ID_PRODUCT_GROUP_MODIFIER
         }
+
+        class RowQuantity : RowDataHolder() {
+            override val itemViewType: Int = ID_QUANTITY
+        }
     }
 
 
@@ -204,6 +246,8 @@ class MenuItemDetailAdapter(
         fun onClickRowProductGroup(productGroup: ProductGroup)
 
         fun onClickRowProductGroupModifier(product: Product, modifierGroup: ModifierGroup)
+
+        fun onChangeQuantity(quantity: Int)
     }
 
 
