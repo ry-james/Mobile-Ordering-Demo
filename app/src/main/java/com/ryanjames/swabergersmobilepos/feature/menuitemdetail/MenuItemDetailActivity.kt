@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -166,6 +167,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     private fun handleProductGroupModifierSelections(selectedIds: List<String>) {
         selectedProductGroupModifierGroup?.let { viewModel.setProductGroupModifiers(it.first, it.second, selectedIds) }
+    }
+
+    fun onClickAddToBag(view: View) {
+        finish()
     }
 
     companion object {
