@@ -1,65 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/tvItemQty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/texgyreheros_regular"
-        android:text="1"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
 
-    <TextView
-        android:id="@+id/tvItemName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:fontFamily="@font/texgyreheros_regular"
-        android:text="Regular Burger Meal"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvItemQty"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvItemQty" />
-
-    <TextView
-        android:id="@+id/tvItemModifiers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/texgyreheros_regular"
-        android:text="Small"
-        android:textColor="@color/colorGray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvItemName"
-        app:layout_constraintTop_toBottomOf="@+id/tvItemName" />
-
-    <TextView
-        android:id="@+id/tvPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:text="Php 20.00"
-        android:textAlignment="viewEnd"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvItemName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvItemName" />
+        <variable
+            name="viewModel"
+            type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagItemViewModel" />
+    </data>
 
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/colorGray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvItemQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.quantity}"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.productName}"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvItemQty"
+            tools:text="Product Name" />
+
+        <TextView
+            android:id="@+id/tvItemModifiers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.modifiers}"
+            android:textColor="@color/colorGray"
+            android:visibility="@{viewModel.modifiersVisibility}"
+            app:layout_constraintStart_toStartOf="@+id/tvItemName"
+            app:layout_constraintTop_toBottomOf="@id/tvItemQty"
+            tools:text="Modifier" />
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.price}"
+            android:textAlignment="viewEnd"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvItemName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvItemName" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/divider"
+            app:layout_goneMarginTop="8dp"
+            tools:contentDescription="This is bottom margin for the last item" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/colorGray"
+            android:visibility="@{viewModel.lineVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tvPrice"
+            app:layout_constraintStart_toStartOf="@+id/tvItemModifiers"
+            app:layout_constraintTop_toBottomOf="@id/tvItemModifiers" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

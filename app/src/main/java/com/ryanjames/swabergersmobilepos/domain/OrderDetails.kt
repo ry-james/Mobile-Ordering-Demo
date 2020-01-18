@@ -21,5 +21,7 @@ data class OrderDetails(val lineItems: MutableList<LineItem>) : Parcelable {
     val tax: Float
         get() = subTotal * 0.12f
 
+    val noOfItems: Int
+        get() = lineItems.map { it.quantity }.sum()
 
 }

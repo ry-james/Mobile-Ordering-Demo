@@ -45,7 +45,7 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
 
     fun addLineItem(lineItem: LineItem) {
         orderDetails.lineItems.add(lineItem)
-        _bagCounter.value = orderDetails.lineItems.map { it.quantity }.sum().toString()
+        _bagCounter.value = orderDetails.noOfItems.toString()
     }
 
     override fun onCleared() {
