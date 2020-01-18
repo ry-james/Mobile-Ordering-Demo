@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,14 +13,14 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.base.BaseActivity
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Binding
-import com.ryanjames.swabergersmobilepos.domain.ModifierGroup
-import com.ryanjames.swabergersmobilepos.domain.Product
-import com.ryanjames.swabergersmobilepos.domain.ProductGroup
+import com.ryanjames.swabergersmobilepos.domain.*
 
 private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
+const val REQUEST_LINE_ITEM = 0
+private const val EXTRA_LINE_ITEM = "extra.line.item"
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
@@ -170,6 +171,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     fun onClickAddToBag(view: View) {
+        val intent = Intent().apply {
+            putExtra(EXTRA_LINE_ITEM, viewModel.createLineItem())
+        }
+        setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
@@ -178,6 +183,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             return Intent(context, MenuItemDetailActivity::class.java).apply {
                 putExtra(EXTRA_PRODUCT, product)
             }
+        }
+
+        fun getExtraLineItem(intent: Intent): LineItem {
+            return intent.getParcelableExtra(EXTRA_LINE_ITEM)
         }
     }
 }

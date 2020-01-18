@@ -24,7 +24,7 @@
             android:id="@id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="32dp"
             android:scaleX="0.67"
             android:scaleY="0.67"
             app:layout_constraintBottom_toBottomOf="@id/iv_back"

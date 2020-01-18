@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MenuItemDetailActivity"></activity>
+        <activity android:name=".feature.bagsummary.BagSummaryActivity"></activity>
+        <activity android:name=".activity.MenuItemDetailActivity" />
         <activity android:name=".activity.MenuActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>

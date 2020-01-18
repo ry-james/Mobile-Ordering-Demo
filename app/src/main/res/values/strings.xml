@@ -12,4 +12,8 @@
     <string name="price_delta">+%.2f</string>
     <string name="none_selected">None Selected</string>
     <string name="meal_options">MEAL OPTIONS</string>
+    <string name="select_item_to_modify">Select item to modify</string>
+    <string name="total">TOTAL:</string>
+    <string name="tax">Tax:</string>
+    <string name="subtotal">Subtotal:</string>
 </resources>

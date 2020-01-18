@@ -3,19 +3,21 @@ package com.ryanjames.swabergersmobilepos.domain
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Menu(
     val categories: List<Category>
-) {
+) : Parcelable {
     companion object {
         val EMPTY = Menu(listOf())
     }
 }
 
+@Parcelize
 data class Category(
     val categoryId: String,
     val categoryName: String,
     val products: List<Product>
-) {
+) : Parcelable {
     companion object {
         val EMPTY = Category("0", "", listOf())
     }
@@ -29,11 +31,7 @@ data class Product(
     val receiptText: String,
     val bundles: List<ProductBundle>,
     val modifierGroups: List<ModifierGroup>
-) : Parcelable {
-    companion object {
-        val EMPTY = Product("", "", 0f, "", listOf(), listOf())
-    }
-}
+) : Parcelable
 
 @Parcelize
 data class ProductBundle(
@@ -52,9 +50,6 @@ data class ModifierGroup(
     val defaultSelection: ModifierInfo,
     val options: List<ModifierInfo>
 ) : Parcelable {
-    companion object {
-        val EMPTY = ModifierGroup("0", "", ModifierGroupAction.Required, ModifierInfo.EMPTY, listOf())
-    }
 }
 
 @Parcelize
@@ -64,9 +59,6 @@ data class ModifierInfo(
     val priceDelta: Float,
     val receiptText: String
 ) : Parcelable {
-    companion object {
-        val EMPTY = ModifierInfo("0", "", 0f, "")
-    }
 }
 
 @Parcelize

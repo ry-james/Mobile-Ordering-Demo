@@ -10,4 +10,17 @@ data class LineItem(
     val productsInBundle: HashMap<ProductGroup, List<Product>>,
     val modifiers: HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>,
     val quantity: Int
-) : Parcelable
+) : Parcelable {
+
+    val price: Float
+        get() {
+            var price = bundle?.price ?: product.price
+            for ((key, modifiers) in modifiers) {
+                for (modifier in modifiers) {
+                    price += modifier.priceDelta
+                }
+            }
+            return price * quantity
+        }
+
+}

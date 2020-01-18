@@ -1,6 +1,8 @@
 package com.ryanjames.swabergersmobilepos.fragments
 
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +18,9 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
+import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Product
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuListItemViewModel
 
@@ -25,7 +29,7 @@ const val EXTRA_CATEGORY_ID = "extra.category.id"
 class MenuListFragment : Fragment() {
 
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
-        startActivity(MenuItemDetailActivity.createIntent(context, product))
+        startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
     }
 
     private lateinit var viewModel: MenuActivityViewModel
@@ -60,6 +64,16 @@ class MenuListFragment : Fragment() {
         binding.rvMenuList.apply {
             layoutManager = LinearLayoutManager(this@MenuListFragment.context)
             adapter = menuListAdapter
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_LINE_ITEM && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
+                viewModel.addLineItem(lineItem)
+            }
         }
     }
 

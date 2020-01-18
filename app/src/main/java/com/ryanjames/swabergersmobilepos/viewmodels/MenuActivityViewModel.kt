@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Menu
+import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -21,6 +23,8 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
     val menuObservable: LiveData<Menu>
         get() = _menuObservable
 
+    val orderDetails = OrderDetails(mutableListOf())
+
     fun retrieveMenu() {
         compositeDisposable.add(
             menuRepository.getMenu()
@@ -35,6 +39,9 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
 
     }
 
+    fun addLineItem(lineItem: LineItem) {
+        orderDetails.lineItems.add(lineItem)
+    }
 
     override fun onCleared() {
         super.onCleared()

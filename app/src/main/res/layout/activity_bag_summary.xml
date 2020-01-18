@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".feature.bagsummary.BagSummaryActivity">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+
+        <include layout="@layout/redesign_toolbar" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/tvTotalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/texgyreheros_bold"
+                    android:text="@string/total"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/tvTotal"
+                    app:layout_constraintTop_toTopOf="@+id/tvTotal" />
+
+                <TextView
+                    android:id="@+id/tvTaxLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/texgyreheros_regular"
+                    android:text="@string/tax"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvTax"
+                    app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
+                    app:layout_constraintTop_toTopOf="@+id/tvTax" />
+
+                <TextView
+                    android:id="@+id/tvSubtotalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/texgyreheros_regular"
+                    android:text="@string/subtotal"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvSubtotal"
+                    app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
+                    app:layout_constraintTop_toTopOf="@+id/tvSubtotal" />
+
+                <TextView
+                    android:id="@+id/tvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/texgyreheros_bold"
+                    android:text="@{viewModel.total}"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="@+id/tvTax"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTax" />
+
+                <TextView
+                    android:id="@+id/tvTax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/texgyreheros_regular"
+                    android:text="@{viewModel.tax}"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/colorLightGray"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/tvSubtotal"
+                    app:layout_constraintTop_toBottomOf="@id/tvSubtotal" />
+
+                <TextView
+                    android:id="@+id/tvSubtotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/texgyreheros_regular"
+                    android:text="@{viewModel.subtotal}"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/colorLightGray"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/bgCard"
+                    app:layout_constraintTop_toBottomOf="@id/bgCard" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/bgCard"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:clipToPadding="false"
+                    app:cardBackgroundColor="@color/colorBackgroundGray"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="16dp"
+                    app:layout_constraintBottom_toBottomOf="@id/rvItems"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginTop="16dp"
+                    android:elevation="20dp"
+                    android:fontFamily="@font/texgyreheros_bold"
+                    android:text="@string/select_item_to_modify"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/bgCard" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvItems"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:elevation="20dp"
+                    app:layout_constraintEnd_toEndOf="@id/bgCard"
+                    app:layout_constraintStart_toStartOf="@id/bgCard"
+                    app:layout_constraintTop_toBottomOf="@id/textView2" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</layout>
