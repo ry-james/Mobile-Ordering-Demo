@@ -29,5 +29,8 @@ class BagSummaryViewModel(orderDetails: OrderDetails) : ViewModel() {
     val total: LiveData<String>
         get() = _total
 
+    init {
+        this.orderDetails = orderDetails
+    }
 
 }

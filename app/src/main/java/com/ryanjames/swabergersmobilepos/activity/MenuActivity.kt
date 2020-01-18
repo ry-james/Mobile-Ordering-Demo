@@ -33,6 +33,7 @@ class MenuActivity : BaseActivity() {
 
 
         viewModel = ViewModelProviders.of(this).get(MenuActivityViewModel::class.java)
+        binding.viewModel = viewModel
         viewModel.retrieveMenu()
         addSubscriptions()
     }

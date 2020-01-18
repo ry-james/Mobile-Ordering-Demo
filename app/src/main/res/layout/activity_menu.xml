@@ -2,6 +2,12 @@
 
 <layout>
 
+    <data>
+        <variable
+            name="viewModel"
+            type="com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel" />
+    </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -80,7 +86,7 @@
             android:elevation="32dp"
             android:fontFamily="@font/texgyreheros_bold"
             android:gravity="center"
-            android:text="10"
+            android:text="@{viewModel.bagCounter}"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="12sp"

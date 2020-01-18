@@ -23,6 +23,10 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
     val menuObservable: LiveData<Menu>
         get() = _menuObservable
 
+    private val _bagCounter = MutableLiveData<String>().apply { value = "0" }
+    val bagCounter: LiveData<String>
+        get() = _bagCounter
+
     val orderDetails = OrderDetails(mutableListOf())
 
     fun retrieveMenu() {
@@ -41,6 +45,7 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
 
     fun addLineItem(lineItem: LineItem) {
         orderDetails.lineItems.add(lineItem)
+        _bagCounter.value = orderDetails.lineItems.map { it.quantity }.sum().toString()
     }
 
     override fun onCleared() {
