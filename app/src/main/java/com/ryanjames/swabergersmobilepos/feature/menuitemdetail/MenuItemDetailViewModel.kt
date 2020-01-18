@@ -27,12 +27,12 @@ class MenuItemDetailViewModel(
     val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product>>>
         get() = _onSelectProduct
 
-    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>()
-    val onSelectProductGroupModifier: LiveData<HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>>
+    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<ProductModifierGroupKey, List<ModifierInfo>>>()
+    val onSelectProductGroupModifier: LiveData<HashMap<ProductModifierGroupKey, List<ModifierInfo>>>
         get() = _onSelectProductGroupModifier
 
     private val productSelections = HashMap<ProductGroup, List<Product>>()
-    private val productGroupModifierSelections = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>()
+    private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
 
     private val _strProductName = MutableLiveData<String>().apply { value = product.productName }
     val strProductName: LiveData<String>
@@ -48,7 +48,7 @@ class MenuItemDetailViewModel(
 
     private fun initializeSelections() {
         for (modifierGroup in product.modifierGroups) {
-            productGroupModifierSelections[Pair(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            productGroupModifierSelections[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
         }
         _onSelectProductGroupModifier.value = productGroupModifierSelections
         updatePrice()
@@ -91,8 +91,8 @@ class MenuItemDetailViewModel(
 
         // Delete modifiers for removed product selections
         for ((key, modifiers) in productGroupModifierSelections) {
-            if (!productIds.contains(key.first.productId)) {
-                removeProductModifiersFromMap(key.first)
+            if (!productIds.contains(key.product.productId)) {
+                removeProductModifiersFromMap(key.product)
             }
         }
 
@@ -102,7 +102,7 @@ class MenuItemDetailViewModel(
 
     private fun removeProductModifiersFromMap(product: Product) {
         for ((key, modifiers) in productGroupModifierSelections) {
-            if (key.first == product) {
+            if (key.product == product) {
                 productGroupModifierSelections.remove(key)
             }
         }
@@ -114,7 +114,7 @@ class MenuItemDetailViewModel(
             modifierGroup.options.find { it.modifierId == id }?.let { modifierList.add(it) }
         }
 
-        val key = Pair(product, modifierGroup)
+        val key = ProductModifierGroupKey(product, modifierGroup)
         productGroupModifierSelections[key] = modifierList
         _onSelectProductGroupModifier.value = productGroupModifierSelections
         updatePrice()

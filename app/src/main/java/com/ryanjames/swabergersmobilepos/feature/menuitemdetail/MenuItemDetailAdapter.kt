@@ -21,7 +21,7 @@ class MenuItemDetailAdapter(
 
     private var selectedBundle: ProductBundle? = null
     private var productSelection = HashMap<ProductGroup, List<Product>>()
-    private var productGroupModifierSelection = HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>()
+    private var productGroupModifierSelection = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
 
     private var data: List<RowDataHolder> = createRowDataHolders()
 
@@ -35,7 +35,7 @@ class MenuItemDetailAdapter(
         notifyChange()
     }
 
-    fun setProductGroupModifierSelection(selection: HashMap<Pair<Product, ModifierGroup>, List<ModifierInfo>>) {
+    fun setProductGroupModifierSelection(selection: HashMap<ProductModifierGroupKey, List<ModifierInfo>>) {
         productGroupModifierSelection = selection
         notifyChange()
     }
@@ -78,7 +78,7 @@ class MenuItemDetailAdapter(
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierDataHolder
                 val product = dataHolder.product
                 val modifierGroup = dataHolder.modifierGroup
-                holder.bind(product, modifierGroup, productGroupModifierSelection[Pair(product, modifierGroup)] ?: listOf())
+                holder.bind(product, modifierGroup, productGroupModifierSelection[ProductModifierGroupKey(product, modifierGroup)] ?: listOf())
             }
             is RowSelectQuantityViewHolder -> {
                 holder.bind(quantity)
