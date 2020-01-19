@@ -2,7 +2,6 @@ package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -10,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.base.BaseActivity
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBagSummaryBinding
+import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 
 private const val EXTRA_ORDER = "extra.order"
 
@@ -33,7 +34,13 @@ class BagSummaryActivity : BaseActivity() {
     private fun setupRecyclerView() {
         binding.rvItems.apply {
             layoutManager = LinearLayoutManager(this@BagSummaryActivity)
-            adapter = BagItemAdapter(orderDetails.lineItems)
+            adapter = BagItemAdapter(orderDetails.lineItems, object : BagItemAdapter.BagItemAdapterListener {
+
+                override fun onClickLineItem(lineItem: LineItem) {
+                    startActivity(MenuItemDetailActivity.createIntent(this@BagSummaryActivity, lineItem))
+                }
+
+            })
         }
     }
 

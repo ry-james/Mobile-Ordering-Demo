@@ -8,8 +8,6 @@ import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.ModifierInfo
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
-import java.lang.StringBuilder
-import java.lang.reflect.Modifier
 
 class BagItemViewModel(val lineItem: LineItem) : ViewModel() {
 

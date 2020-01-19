@@ -6,16 +6,29 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 
-class MenuItemDetailViewModel(
-    val product: Product,
-    quantity: Int = 1
-) : ViewModel() {
+class MenuItemDetailViewModel() : ViewModel() {
 
-    var quantity: Int = quantity
+    private var lineItem: LineItem? = null
+    private lateinit var product: Product
+
+    var quantity: Int = 1
         set(value) {
             field = if (value < 1) 1 else value
             updatePrice()
         }
+
+    constructor(product: Product, quantity: Int = 1) : this() {
+        this.product = product
+        this.quantity = quantity
+        initializeSelections()
+    }
+
+    constructor(lineItem: LineItem) : this() {
+        this.product = lineItem.product
+        this.quantity = lineItem.quantity
+        this.lineItem = lineItem
+        initializeSelections()
+    }
 
     // Events
 
@@ -34,7 +47,7 @@ class MenuItemDetailViewModel(
     private val productSelections = HashMap<ProductGroup, List<Product>>()
     private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
 
-    private val _strProductName = MutableLiveData<String>().apply { value = product.productName }
+    private val _strProductName = MutableLiveData<String>()
     val strProductName: LiveData<String>
         get() = _strProductName
 
@@ -42,17 +55,27 @@ class MenuItemDetailViewModel(
     val strAddToBag: LiveData<String>
         get() = _strAddToBagBtn
 
-    init {
-        initializeSelections()
-    }
-
     private fun initializeSelections() {
-        for (modifierGroup in product.modifierGroups) {
-            productGroupModifierSelections[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+        _strProductName.value = product.productName
+        if (!isModifying()) {
+            for (modifierGroup in product.modifierGroups) {
+                productGroupModifierSelections[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            }
+            _onSelectProductGroupModifier.value = productGroupModifierSelections
+        } else {
+            lineItem?.let {
+                setProductBundle(it.bundle)
+                productSelections.putAll(it.productsInBundle)
+                _onSelectProduct.value = productSelections
+                productGroupModifierSelections.putAll(it.modifiers)
+                _onSelectProductGroupModifier.value = productGroupModifierSelections
+            }
+
         }
-        _onSelectProductGroupModifier.value = productGroupModifierSelections
         updatePrice()
     }
+
+    private fun isModifying(): Boolean = lineItem != null
 
     fun setProductBundle(bundle: ProductBundle?) {
 

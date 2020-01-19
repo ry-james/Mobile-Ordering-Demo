@@ -28,21 +28,32 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     private lateinit var viewModel: MenuItemDetailViewModel
     private lateinit var product: Product
     private lateinit var adapter: MenuItemDetailAdapter
+    private var lineItem: LineItem? = null
     private var selectedProductGroup: ProductGroup? = null
     private var selectedProductGroupModifierGroup: Pair<Product, ModifierGroup>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
+
+        lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also {
+            product = it.product
+            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(it) }).get(MenuItemDetailViewModel::class.java)
+        }
+
+        if (lineItem == null) {
+            product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
+            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(product) }).get(MenuItemDetailViewModel::class.java)
+        }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail2)
-        viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(product) }).get(MenuItemDetailViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
         setupRecyclerView()
         addSubscriptions()
+
     }
+
 
     private fun addSubscriptions() {
         viewModel.onSelectBundleObservable.observe(this, Observer { bundle ->
@@ -182,6 +193,12 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         fun createIntent(context: Context?, product: Product): Intent {
             return Intent(context, MenuItemDetailActivity::class.java).apply {
                 putExtra(EXTRA_PRODUCT, product)
+            }
+        }
+
+        fun createIntent(context: Context?, lineItem: LineItem): Intent {
+            return Intent(context, MenuItemDetailActivity::class.java).apply {
+                putExtra(EXTRA_LINE_ITEM, lineItem)
             }
         }
 
