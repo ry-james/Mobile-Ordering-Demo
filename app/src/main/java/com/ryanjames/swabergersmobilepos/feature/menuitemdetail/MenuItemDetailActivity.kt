@@ -35,9 +35,9 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also {
-            product = it.product
-            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(it) }).get(MenuItemDetailViewModel::class.java)
+        lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also { lineItem ->
+            product = lineItem.product
+            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(lineItem) }).get(MenuItemDetailViewModel::class.java)
         }
 
         if (lineItem == null) {
@@ -120,7 +120,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.map { it?.productId } ?: listOf(productGroup.defaultProduct.productId)
+        val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
         val subtitle = "Required - 1, Max - 2"
 
         val bottomFragment = BottomPickerFragment.createInstance(
@@ -147,7 +147,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
-            getString(R.string.select_something, "${modifierGroup.modifierGroupName.toUpperCase()}"),
+            getString(R.string.select_something, modifierGroup.modifierGroupName.toUpperCase()),
             product.productName,
             1,
             1,

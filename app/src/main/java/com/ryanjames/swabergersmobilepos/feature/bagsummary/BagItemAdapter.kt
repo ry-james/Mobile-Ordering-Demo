@@ -11,7 +11,7 @@ class BagItemAdapter(
     private val listener: BagItemAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var viewModels = lineItems.map { BagItemViewModel(it) }
+    private var viewModels = lineItems.map { BagItemViewModel(it) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = RowBagItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -24,6 +24,11 @@ class BagItemAdapter(
         if (holder is BagItemViewHolder) {
             holder.bind(viewModels[holder.adapterPosition], viewModels.size - 1 == holder.adapterPosition)
         }
+    }
+
+    fun updateLineItems(lineItems: List<LineItem>) {
+        viewModels = lineItems.map { BagItemViewModel(it) }
+        notifyDataSetChanged()
     }
 
     class BagItemViewHolder(

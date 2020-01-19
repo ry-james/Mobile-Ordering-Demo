@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
+import java.util.*
+import kotlin.collections.HashMap
 
 class MenuItemDetailViewModel() : ViewModel() {
 
@@ -17,9 +19,8 @@ class MenuItemDetailViewModel() : ViewModel() {
             updatePrice()
         }
 
-    constructor(product: Product, quantity: Int = 1) : this() {
+    constructor(product: Product) : this() {
         this.product = product
-        this.quantity = quantity
         initializeSelections()
     }
 
@@ -156,7 +157,9 @@ class MenuItemDetailViewModel() : ViewModel() {
     }
 
     fun createLineItem(): LineItem {
+        val id = lineItem?.id ?: UUID.randomUUID().toString()
         return LineItem(
+            id,
             product,
             _onSelectBundleObservable.value,
             _onSelectProduct.value ?: hashMapOf(),

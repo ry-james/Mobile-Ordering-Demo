@@ -5,6 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class LineItem(
+    val id: String,
     val product: Product,
     val bundle: ProductBundle?,
     val productsInBundle: HashMap<ProductGroup, List<Product>>,
@@ -26,4 +27,4 @@ data class LineItem(
 }
 
 @Parcelize
-data class ProductModifierGroupKey(val product: Product, val modifierGroup: ModifierGroup): Parcelable
+data class ProductModifierGroupKey(val product: Product, val modifierGroup: ModifierGroup) : Parcelable

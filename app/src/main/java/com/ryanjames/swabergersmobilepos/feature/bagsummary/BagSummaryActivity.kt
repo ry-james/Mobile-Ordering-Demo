@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,6 +13,7 @@ import com.ryanjames.swabergersmobilepos.databinding.ActivityBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 
 private const val EXTRA_ORDER = "extra.order"
 
@@ -20,6 +22,7 @@ class BagSummaryActivity : BaseActivity() {
     private lateinit var binding: ActivityBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
     private lateinit var orderDetails: OrderDetails
+    private lateinit var adapter: BagItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +35,28 @@ class BagSummaryActivity : BaseActivity() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvItems.apply {
-            layoutManager = LinearLayoutManager(this@BagSummaryActivity)
-            adapter = BagItemAdapter(orderDetails.lineItems, object : BagItemAdapter.BagItemAdapterListener {
+        adapter = BagItemAdapter(orderDetails.lineItems, object : BagItemAdapter.BagItemAdapterListener {
+            override fun onClickLineItem(lineItem: LineItem) {
+                startActivityForResult(MenuItemDetailActivity.createIntent(this@BagSummaryActivity, lineItem), REQUEST_LINE_ITEM)
+            }
 
-                override fun onClickLineItem(lineItem: LineItem) {
-                    startActivity(MenuItemDetailActivity.createIntent(this@BagSummaryActivity, lineItem))
-                }
-
-            })
+        })
+        binding.rvItems.also {
+            it.layoutManager = LinearLayoutManager(this@BagSummaryActivity)
+            it.adapter = this.adapter
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_LINE_ITEM && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
+                viewModel.putLineItem(lineItem)
+                adapter.updateLineItems(viewModel.orderDetails.lineItems)
+            }
+        }
+    }
 
     companion object {
 
