@@ -1,10 +1,14 @@
 package com.ryanjames.swabergersmobilepos.mappers
 
+import io.realm.RealmList
+
 interface DataMapper<Entity, Api, Domain> {
 
     fun mapToEntity(input: Api): Entity
 
     fun mapToDomain(input: Entity): Domain
+
+    fun mapDomainToEntity(input: Domain): Entity
 
     fun mapToEntity(input: List<Api>): List<Entity> {
         return input.map { this.mapToEntity(it) }
@@ -12,6 +16,10 @@ interface DataMapper<Entity, Api, Domain> {
 
     fun mapToDomain(input: List<Entity>): List<Domain> {
         return input.map { this.mapToDomain(it) }
+    }
+
+    fun mapDomainToEntity(input: List<Domain>): RealmList<Entity> {
+        return RealmList<Entity>().apply { addAll(input.map { this@DataMapper.mapDomainToEntity(it) }) }
     }
 }
 

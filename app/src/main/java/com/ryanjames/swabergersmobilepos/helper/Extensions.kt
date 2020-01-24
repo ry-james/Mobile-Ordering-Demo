@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import java.util.*
-import kotlin.collections.HashSet
 
 fun Float.toTwoDigitString(): String {
     return String.format(Locale.US, "%.2f", this)
@@ -35,4 +34,9 @@ fun <T> MutableLiveData<HashSet<T>>.value(): HashSet<T> {
 fun <T> MutableLiveData<HashSet<T>>.size(): Int {
     val list = this.value ?: hashSetOf()
     return list.size
+}
+
+fun <T> MutableList<T>.clearAndAddAll(elements: Collection<T>) {
+    clear()
+    addAll(elements)
 }

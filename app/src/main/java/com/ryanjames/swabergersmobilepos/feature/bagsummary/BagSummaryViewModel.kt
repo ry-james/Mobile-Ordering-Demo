@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 
 class BagSummaryViewModel(orderDetails: OrderDetails) : ViewModel() {
 
@@ -43,6 +44,7 @@ class BagSummaryViewModel(orderDetails: OrderDetails) : ViewModel() {
             if (item.id == lineItem.id) {
                 orderDetails.lineItems[index] = lineItem
                 updatePrices()
+                OrderRepository.updateLineItem(lineItem)
                 return
             }
         }

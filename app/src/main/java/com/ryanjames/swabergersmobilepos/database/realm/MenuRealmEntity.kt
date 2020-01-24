@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.database.realm
 
-import com.ryanjames.swabergersmobilepos.domain.Product
 import io.realm.RealmList
 import io.realm.RealmObject
 
@@ -60,7 +59,7 @@ open class ProductBundleRealmEntity(
     var receiptText: String,
     var productGroups: RealmList<ProductGroupRealmEntity>
 ) : RealmObject() {
-    constructor() : this("", "", 0f, "", RealmList<ProductGroupRealmEntity>())
+    constructor() : this("", "", 0f, "", RealmList())
 }
 
 open class ProductGroupRealmEntity(

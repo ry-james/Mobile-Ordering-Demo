@@ -31,7 +31,13 @@ data class Product(
     val receiptText: String,
     val bundles: List<ProductBundle>,
     val modifierGroups: List<ModifierGroup>
-) : Parcelable
+) : Parcelable {
+
+    companion object {
+        val EMPTY = Product("", "", 0f, "", listOf(), listOf())
+    }
+
+}
 
 @Parcelize
 data class ProductBundle(
@@ -50,6 +56,10 @@ data class ModifierGroup(
     val defaultSelection: ModifierInfo,
     val options: List<ModifierInfo>
 ) : Parcelable {
+
+    companion object {
+        val EMPTY = ModifierGroup("", "", ModifierGroupAction.Optional, ModifierInfo.EMPTY, listOf())
+    }
 }
 
 @Parcelize
@@ -59,6 +69,10 @@ data class ModifierInfo(
     val priceDelta: Float,
     val receiptText: String
 ) : Parcelable {
+
+    companion object {
+        val EMPTY = ModifierInfo("", "", 0f, "")
+    }
 }
 
 @Parcelize
@@ -67,7 +81,12 @@ data class ProductGroup(
     val productGroupName: String,
     val defaultProduct: Product,
     val options: List<Product>
-) : Parcelable
+) : Parcelable {
+
+    companion object {
+        val EMPTY = ProductGroup("", "", Product.EMPTY, listOf())
+    }
+}
 
 
 sealed class ModifierGroupAction : Parcelable {

@@ -1,10 +1,9 @@
 package com.ryanjames.swabergersmobilepos.database.realm
 
-import android.view.Menu
 import io.reactivex.Single
 import io.realm.Realm
 
-class MenuRealmDao(val realm: Realm) {
+class MenuRealmDao {
 
     fun getMenu(): Single<MenuRealmEntity> {
         return Single.create { emitter ->

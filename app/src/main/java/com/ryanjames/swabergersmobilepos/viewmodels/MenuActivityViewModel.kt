@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -40,10 +42,24 @@ class MenuActivityViewModel(application: Application) : AndroidViewModel(applica
                 },
                     { error -> error.printStackTrace() })
         )
+    }
 
+    fun retrieveLocalBag() {
+        compositeDisposable.add(
+            OrderRepository.getLocalBag()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ lineItems ->
+                    orderDetails.lineItems.clearAndAddAll(lineItems)
+                    _bagCounter.value = orderDetails.noOfItems.toString()
+                }, { error ->
+                    error.printStackTrace()
+                })
+        )
     }
 
     fun addLineItem(lineItem: LineItem) {
+        OrderRepository.insertLineItem(lineItem)
         orderDetails.lineItems.add(lineItem)
         _bagCounter.value = orderDetails.noOfItems.toString()
     }

@@ -2,7 +2,6 @@ package com.ryanjames.swabergersmobilepos.activity
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -13,13 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.base.BaseActivity
-import com.ryanjames.swabergersmobilepos.database.realm.CategoryRealmEntity
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
 import com.ryanjames.swabergersmobilepos.fragments.MenuListFragment
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
-import io.reactivex.disposables.CompositeDisposable
 
 class MenuActivity : BaseActivity() {
 
@@ -36,6 +33,11 @@ class MenuActivity : BaseActivity() {
         binding.viewModel = viewModel
         viewModel.retrieveMenu()
         addSubscriptions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.retrieveLocalBag()
     }
 
     private fun addSubscriptions() {

@@ -1,25 +1,18 @@
 package com.ryanjames.swabergersmobilepos.repository
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.ryanjames.swabergersmobilepos.database.SwabergersDatabase
-import com.ryanjames.swabergersmobilepos.database.dao.MenuDao
-import com.ryanjames.swabergersmobilepos.database.dao.ModifierInfoDao
-import com.ryanjames.swabergersmobilepos.database.entity.*
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
-import com.ryanjames.swabergersmobilepos.domain.ModifierGroup
-import com.ryanjames.swabergersmobilepos.mappers.Mapper
 import com.ryanjames.swabergersmobilepos.mappers.MenuMapper
-import com.ryanjames.swabergersmobilepos.network.responses.*
+import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
-import io.reactivex.*
-import io.realm.Realm
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.Single
 
 class MenuRepository(context: Context) {
 
-    private val menuRealmDao = MenuRealmDao(Realm.getDefaultInstance())
+    private val menuRealmDao = MenuRealmDao()
 
     private val swabergersService: SwabergersService =
         SwabergersService(context.getSharedPreferences("Preference File", Context.MODE_PRIVATE))
