@@ -178,7 +178,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     private fun handleProductGroupModifierSelections(selectedIds: List<String>) {
-        selectedProductGroupModifierGroup?.let { viewModel.setProductGroupModifiers(it.first, it.second, selectedIds) }
+        selectedProductGroupModifierGroup?.let { viewModel.addProductGroupModifiers(it.first, it.second, selectedIds) }
     }
 
     fun onClickAddToBag(view: View) {

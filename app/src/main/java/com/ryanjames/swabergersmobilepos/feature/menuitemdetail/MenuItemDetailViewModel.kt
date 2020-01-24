@@ -25,9 +25,9 @@ class MenuItemDetailViewModel() : ViewModel() {
     }
 
     constructor(lineItem: LineItem) : this() {
+        this.lineItem = lineItem
         this.product = lineItem.product
         this.quantity = lineItem.quantity
-        this.lineItem = lineItem
         initializeSelections()
     }
 
@@ -109,12 +109,12 @@ class MenuItemDetailViewModel() : ViewModel() {
         val diffList = productList.minus(oldProductList)
         for (product in diffList) {
             product.modifierGroups.forEach {
-                setProductGroupModifiers(product, it, listOf(it.defaultSelection.modifierId))
+                addProductGroupModifiers(product, it, listOf(it.defaultSelection.modifierId))
             }
         }
 
         // Delete modifiers for removed product selections
-        for ((key, modifiers) in productGroupModifierSelections) {
+        for ((key, _) in productGroupModifierSelections) {
             if (!productIds.contains(key.product.productId)) {
                 removeProductModifiersFromMap(key.product)
             }
@@ -125,14 +125,14 @@ class MenuItemDetailViewModel() : ViewModel() {
     }
 
     private fun removeProductModifiersFromMap(product: Product) {
-        for ((key, modifiers) in productGroupModifierSelections) {
+        for ((key, _) in productGroupModifierSelections) {
             if (key.product == product) {
                 productGroupModifierSelections.remove(key)
             }
         }
     }
 
-    fun setProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, ids: List<String>) {
+    fun addProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, ids: List<String>) {
         val modifierList = mutableListOf<ModifierInfo>()
         for (id in ids) {
             modifierGroup.options.find { it.modifierId == id }?.let { modifierList.add(it) }
@@ -147,13 +147,17 @@ class MenuItemDetailViewModel() : ViewModel() {
 
     private fun updatePrice() {
         var price = onSelectBundleObservable.value?.price ?: product.price
-        for ((key, value) in productGroupModifierSelections) {
-            for (modifier in value) {
+        for ((_, modifiers) in productGroupModifierSelections) {
+            for (modifier in modifiers) {
                 price += modifier.priceDelta
             }
         }
         price *= quantity
-        _strAddToBagBtn.value = "ADD TO BAG - PHP. ${price.toTwoDigitString()}"
+        if (isModifying()) {
+            _strAddToBagBtn.value = "UPDATE ITEM - PHP. ${price.toTwoDigitString()}"
+        } else {
+            _strAddToBagBtn.value = "ADD TO BAG - PHP. ${price.toTwoDigitString()}"
+        }
     }
 
     fun createLineItem(): LineItem {
