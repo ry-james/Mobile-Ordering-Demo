@@ -13,17 +13,28 @@
 
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:orientation="vertical">
 
-        <include layout="@layout/redesign_toolbar" />
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/redesign_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/btnCheckout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -141,9 +152,9 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvItems"
                     android:layout_width="0dp"
-                    android:nestedScrollingEnabled="false"
                     android:layout_height="wrap_content"
                     android:elevation="20dp"
+                    android:nestedScrollingEnabled="false"
                     app:layout_constraintEnd_toEndOf="@id/bgCard"
                     app:layout_constraintStart_toStartOf="@id/bgCard"
                     app:layout_constraintTop_toBottomOf="@id/textView2" />
@@ -153,6 +164,16 @@
 
         </androidx.core.widget.NestedScrollView>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/btnCheckout"
+            style="@style/AccentButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="CHECKOUT"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
