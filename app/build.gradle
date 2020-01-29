@@ -102,4 +102,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
+    implementation 'com.github.davidmigloz:number-keyboard:3.0.0'
+
 }

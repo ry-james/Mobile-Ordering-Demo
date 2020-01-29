@@ -168,8 +168,9 @@
             android:id="@+id/btnCheckout"
             style="@style/AccentButton"
             android:layout_width="0dp"
+            android:onClick="onClickCheckout"
             android:layout_height="wrap_content"
-            android:text="CHECKOUT"
+            android:text="@string/checkout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

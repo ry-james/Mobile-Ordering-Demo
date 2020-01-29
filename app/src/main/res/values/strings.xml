@@ -16,4 +16,5 @@
     <string name="total">TOTAL:</string>
     <string name="tax">Tax:</string>
     <string name="subtotal">Subtotal:</string>
+    <string name="checkout">CHECKOUT</string>
 </resources>

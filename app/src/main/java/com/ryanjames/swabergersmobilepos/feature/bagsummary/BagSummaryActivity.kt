@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import com.ryanjames.swabergersmobilepos.fragments.KeypadDialogFragment
 
 private const val EXTRA_ORDER = "extra.order"
 
@@ -56,6 +58,11 @@ class BagSummaryActivity : BaseActivity() {
                 adapter.updateLineItems(viewModel.orderDetails.lineItems)
             }
         }
+    }
+
+
+    fun onClickCheckout(view: View) {
+        KeypadDialogFragment.show(supportFragmentManager)
     }
 
     companion object {

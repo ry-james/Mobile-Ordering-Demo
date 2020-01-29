@@ -25,4 +25,20 @@
         <item name="android:fontFamily">@font/texgyreheros_bold</item>
     </style>
 
+    <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowAnimationStyle">@style/FullScreenDialogSlide</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="actionMenuTextColor">@color/colorAccent</item>
+    </style>
+
+    <style name="FullScreenDialogSlide">
+        <item name="android:windowEnterAnimation">@anim/swipe_up</item>
+        <item name="android:windowExitAnimation">@anim/swipe_down</item>
+
+    </style>
+
 </resources>
