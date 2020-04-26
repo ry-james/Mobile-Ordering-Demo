@@ -2,15 +2,15 @@ package com.ryanjames.swabergersmobilepos.activity
 
 import android.content.DialogInterface
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.database.entity.ModifierInfoEntity
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.network.responses.ModifierInfoResponse
@@ -19,10 +19,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import java.net.SocketTimeoutException
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var modifierInfoViewModel: ModifierInfoViewModel
     private var modifierInfos: List<ModifierInfoEntity> = ArrayList()
@@ -32,8 +35,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        SwabergersApplication.appComponent.inject(this)
 
-        modifierInfoViewModel = ViewModelProviders.of(this).get(ModifierInfoViewModel::class.java)
+        modifierInfoViewModel = ViewModelProviders.of(this, viewModelFactory { ModifierInfoViewModel(sharedPreferences) }).get(ModifierInfoViewModel::class.java)
+
         subscribe()
 
     }
@@ -78,7 +83,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickAuthButton(view: View) {
-        modifierInfoViewModel.authenticate("matteo", "matteo03")
+//        modifierInfoViewModel.authenticate("testcedar", "james")
+        modifierInfoViewModel.authenticate("ryan7994", "Pass1234")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ loginResponse: LoginResponse? ->

@@ -19,6 +19,9 @@ class MenuItemDetailViewModel() : ViewModel() {
             updatePrice()
         }
 
+    private val productsInBundleMap = HashMap<ProductGroup, List<Product>>()
+    private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
+
     constructor(product: Product) : this() {
         this.product = product
         initializeSelections()
@@ -45,8 +48,7 @@ class MenuItemDetailViewModel() : ViewModel() {
     val onSelectProductGroupModifier: LiveData<HashMap<ProductModifierGroupKey, List<ModifierInfo>>>
         get() = _onSelectProductGroupModifier
 
-    private val productSelections = HashMap<ProductGroup, List<Product>>()
-    private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
+    // Data Binding
 
     private val _strProductName = MutableLiveData<String>()
     val strProductName: LiveData<String>
@@ -66,8 +68,8 @@ class MenuItemDetailViewModel() : ViewModel() {
         } else {
             lineItem?.let {
                 setProductBundle(it.bundle)
-                productSelections.putAll(it.productsInBundle)
-                _onSelectProduct.value = productSelections
+                productsInBundleMap.putAll(it.productsInBundle)
+                _onSelectProduct.value = productsInBundleMap
                 productGroupModifierSelections.putAll(it.modifiers)
                 _onSelectProductGroupModifier.value = productGroupModifierSelections
             }
@@ -83,58 +85,61 @@ class MenuItemDetailViewModel() : ViewModel() {
         if (_onSelectBundleObservable.value != bundle) {
 
             _onSelectBundleObservable.value = bundle
+
+            // If bundle is not null, set the default product for each product group in the bundle
+            // If bundle is null, clear all selected bundle products and reset all modifiers
             if (bundle != null) {
                 for (productGroup in bundle.productGroups) {
-                    setProductSelection(productGroup, listOf(productGroup.defaultProduct.productId))
+                    setProductSelectionsForProductGroup(productGroup, listOf(productGroup.defaultProduct.productId))
                 }
             } else {
-                productSelections.clear()
+                productsInBundleMap.clear()
                 productGroupModifierSelections.clear()
             }
         }
         updatePrice()
     }
 
-    fun setProductSelection(productGroup: ProductGroup, productIds: List<String>) {
-        val oldProductList = productSelections[productGroup] ?: listOf()
-        val productList = mutableListOf<Product>()
+    fun setProductSelectionsForProductGroup(productGroup: ProductGroup, productIds: List<String>) {
+        val oldProductList = productsInBundleMap[productGroup] ?: listOf()
+        val newProductList = mutableListOf<Product>()
+
+        // Only add products that are in the product group
         for (productId in productIds) {
-            productGroup.options.find { it.productId == productId }?.let { productList.add(it) }
+            productGroup.options.find { it.productId == productId }?.let { newProductList.add(it) }
         }
 
-        productSelections[productGroup] = productList
-        _onSelectProduct.value = productSelections
+        productsInBundleMap[productGroup] = newProductList
+        _onSelectProduct.value = productsInBundleMap
 
         // Add default modifiers for new product additions
-        val diffList = productList.minus(oldProductList)
-        for (product in diffList) {
-            product.modifierGroups.forEach {
-                addProductGroupModifiers(product, it, listOf(it.defaultSelection.modifierId))
+        val newlyAddedProducts = newProductList.minus(oldProductList)
+        for (newProduct in newlyAddedProducts) {
+            newProduct.modifierGroups.forEach { modifierGroup ->
+                addProductGroupModifiers(newProduct, modifierGroup, listOf(modifierGroup.defaultSelection.modifierId))
             }
         }
 
         // Delete modifiers for removed product selections
-        for ((key, _) in productGroupModifierSelections) {
-            if (!productIds.contains(key.product.productId)) {
-                removeProductModifiersFromMap(key.product)
-            }
-        }
+        oldProductList.minus(newProductList).forEach { removeProductModifiersFromMap(it) }
 
         updatePrice()
 
     }
 
     private fun removeProductModifiersFromMap(product: Product) {
-        for ((key, _) in productGroupModifierSelections) {
-            if (key.product == product) {
-                productGroupModifierSelections.remove(key)
+        for ((productGroupModifierKey, _) in productGroupModifierSelections) {
+            if (productGroupModifierKey.product == product) {
+                productGroupModifierSelections.remove(productGroupModifierKey)
             }
         }
     }
 
-    fun addProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, ids: List<String>) {
+    fun addProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, modifierIds: List<String>) {
         val modifierList = mutableListOf<ModifierInfo>()
-        for (id in ids) {
+
+        // Only add modifiers that are in the modifier group
+        for (id in modifierIds) {
             modifierGroup.options.find { it.modifierId == id }?.let { modifierList.add(it) }
         }
 

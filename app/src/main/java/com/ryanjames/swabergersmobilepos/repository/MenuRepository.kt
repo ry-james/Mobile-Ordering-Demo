@@ -1,6 +1,6 @@
 package com.ryanjames.swabergersmobilepos.repository
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.mappers.MenuMapper
@@ -10,12 +10,12 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class MenuRepository(context: Context) {
+class MenuRepository(sharedPreferences: SharedPreferences) {
 
     private val menuRealmDao = MenuRealmDao()
 
     private val swabergersService: SwabergersService =
-        SwabergersService(context.getSharedPreferences("Preference File", Context.MODE_PRIVATE))
+        SwabergersService(sharedPreferences)
 
     private val menuMapper = MenuMapper()
 

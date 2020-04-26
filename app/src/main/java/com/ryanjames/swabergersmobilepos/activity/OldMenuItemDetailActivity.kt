@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.base.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.customview.OptionViewGroup
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetailBinding
 import com.ryanjames.swabergersmobilepos.domain.ModifierGroup

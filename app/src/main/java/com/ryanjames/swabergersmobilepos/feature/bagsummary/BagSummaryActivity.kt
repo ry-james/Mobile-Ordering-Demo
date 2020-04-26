@@ -9,17 +9,23 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.base.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 import com.ryanjames.swabergersmobilepos.fragments.KeypadDialogFragment
+import javax.inject.Inject
 
 private const val EXTRA_ORDER = "extra.order"
 
 class BagSummaryActivity : BaseActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
@@ -28,9 +34,12 @@ class BagSummaryActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SwabergersApplication.appComponent.inject(this)
+
         orderDetails = intent.getParcelableExtra(EXTRA_ORDER)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_bag_summary)
-        viewModel = ViewModelProviders.of(this, viewModelFactory { BagSummaryViewModel(orderDetails) }).get(BagSummaryViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(BagSummaryViewModel::class.java)
+        viewModel.orderDetails = orderDetails
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         setupRecyclerView()

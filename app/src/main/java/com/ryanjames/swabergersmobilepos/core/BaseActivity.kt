@@ -1,4 +1,4 @@
-package com.ryanjames.swabergersmobilepos.base
+package com.ryanjames.swabergersmobilepos.core
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
@@ -10,4 +10,5 @@ open class BaseActivity : AppCompatActivity() {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
         }
+
 }

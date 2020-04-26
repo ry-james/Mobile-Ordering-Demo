@@ -1,15 +1,29 @@
 package com.ryanjames.swabergersmobilepos.dagger
 
-import com.ryanjames.swabergersmobilepos.base.SwabergersApplication
-import com.ryanjames.swabergersmobilepos.repository.MenuRepository
+import android.app.Application
+import com.ryanjames.swabergersmobilepos.activity.MainActivity
+import com.ryanjames.swabergersmobilepos.activity.MenuActivity
+import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
+import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class))
+@Component(modules = [ApplicationModule::class, ViewModelModule::class])
 interface ApplicationComponent {
 
-    fun inject(application: SwabergersApplication)
+    @Component.Builder
+    interface Builder {
 
-    fun inject(menuRepository: MenuRepository)
+        @BindsInstance
+        fun application(application: Application): Builder
+
+        fun build(): ApplicationComponent
+    }
+
+    fun inject(menuActivity: MenuActivity)
+
+    fun inject(mainActivity: MainActivity)
+
+    fun inject(bagSummaryActivity: BagSummaryActivity)
 }

@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.network
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import com.ryanjames.swabergersmobilepos.network.retrofit.TokenAuthenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -9,7 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceGenerator {
 
-    val API_BASE_URL = "https://test-swabergers.herokuapp.com/"
+//    val API_BASE_URL = "https://test-swabergers.herokuapp.com/"
+    val API_BASE_URL = "http://10.0.2.2:5000"
 
     private val httpClient = OkHttpClient.Builder()
     private val okHttpClient = OkHttpClient()

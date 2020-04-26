@@ -2,6 +2,7 @@ package com.ryanjames.swabergersmobilepos.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -11,25 +12,35 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.base.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
 import com.ryanjames.swabergersmobilepos.fragments.MenuListFragment
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
+import javax.inject.Inject
 
 class MenuActivity : BaseActivity() {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMenuBinding
     private lateinit var viewModel: MenuActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SwabergersApplication.appComponent.inject(this)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu)
         binding.lifecycleOwner = this
 
-
-        viewModel = ViewModelProviders.of(this).get(MenuActivityViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuActivityViewModel::class.java)
         binding.viewModel = viewModel
         viewModel.retrieveMenu()
         addSubscriptions()

@@ -1,18 +1,21 @@
-package com.ryanjames.swabergersmobilepos.base
+package com.ryanjames.swabergersmobilepos.core
 
 import android.app.Application
-import androidx.multidex.MultiDexApplication
 import com.facebook.stetho.Stetho
 import com.ryanjames.swabergersmobilepos.dagger.ApplicationComponent
-import com.ryanjames.swabergersmobilepos.dagger.ApplicationModule
+import com.ryanjames.swabergersmobilepos.dagger.DaggerApplicationComponent
+
 import com.uphyca.stetho_realm.RealmInspectorModulesProvider
 import io.realm.Realm
 
 
-class SwabergersApplication : MultiDexApplication() {
+class SwabergersApplication : Application() {
+
 
     override fun onCreate() {
         super.onCreate()
+        initAppComponent()
+
         Realm.init(this)
 
         val realmInspector = RealmInspectorModulesProvider.builder(this)
@@ -26,4 +29,16 @@ class SwabergersApplication : MultiDexApplication() {
                 .build()
         )
     }
+
+    private fun initAppComponent() {
+        appComponent = DaggerApplicationComponent.builder()
+            .application(this)
+            .build()
+    }
+
+    companion object {
+        lateinit var appComponent: ApplicationComponent
+    }
+
+
 }

@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.base.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Binding
 import com.ryanjames.swabergersmobilepos.domain.*
 
@@ -160,7 +160,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     override fun onUpdatePickerSelections(requestId: String, selectedItemIds: List<String>) {
         when (requestId) {
-            ID_MEAL_OPTIONS -> handleMealSelection(selectedItemIds[0])
+            ID_MEAL_OPTIONS -> if (selectedItemIds.isNotEmpty()) handleMealSelection(selectedItemIds[0])
             ID_PRODUCT_GROUP -> handleProductGroupSelections(selectedItemIds)
             ID_PRODUCT_GROUP_MODIFIER -> handleProductGroupModifierSelections(selectedItemIds)
         }
@@ -174,7 +174,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     private fun handleProductGroupSelections(productGroupIds: List<String>) {
-        selectedProductGroup?.let { viewModel.setProductSelection(it, productGroupIds) }
+        selectedProductGroup?.let { viewModel.setProductSelectionsForProductGroup(it, productGroupIds) }
     }
 
     private fun handleProductGroupModifierSelections(selectedIds: List<String>) {

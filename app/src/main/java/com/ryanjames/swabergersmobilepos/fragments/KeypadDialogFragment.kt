@@ -17,25 +17,22 @@ class KeypadDialogFragment : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        val view = inflater.inflate(R.layout.fragment_keypad, container)
-        return view
+        return inflater.inflate(R.layout.fragment_keypad, container)
     }
 
     companion object {
 
         private const val FULL_SCREEN_DIALOG_TAG = "Full Screen Dialog"
 
-        fun show(supportFragmentManager: FragmentManager): DialogFragment {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fun show(supportFragmentManager: FragmentManager) {
+            // Avoids showing multiple instances of this dialog fragment
             val previous = supportFragmentManager.findFragmentByTag(FULL_SCREEN_DIALOG_TAG)
             if (previous != null) {
-                fragmentTransaction.remove(previous)
+                return
             }
-            fragmentTransaction.addToBackStack(null)
 
             val fullScreenDialog = KeypadDialogFragment()
             fullScreenDialog.show(supportFragmentManager, FULL_SCREEN_DIALOG_TAG)
-            return fullScreenDialog
         }
 
     }

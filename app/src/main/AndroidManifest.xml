@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".base.SwabergersApplication"
+        android:name=".core.SwabergersApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".feature.bagsummary.BagSummaryActivity"></activity>
+        <activity android:name=".dagger.SampleActivity"></activity>
+        <activity android:name=".feature.bagsummary.BagSummaryActivity" />
         <activity android:name=".activity.MenuItemDetailActivity" />
         <activity android:name=".activity.MenuActivity" />
         <activity android:name=".activity.MainActivity">
@@ -23,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".base.BaseActivity" />
+        <activity android:name=".core.BaseActivity" />
         <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
     </application>
 

@@ -4,10 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.ryanjames.swabergersmobilepos.helper.SharedPrefsKeys
 import com.ryanjames.swabergersmobilepos.network.ServiceGenerator
-import com.ryanjames.swabergersmobilepos.network.responses.LoginRequestBody
-import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
-import com.ryanjames.swabergersmobilepos.network.responses.MenuResponse
-import com.ryanjames.swabergersmobilepos.network.responses.ModifierInfosResponse
+import com.ryanjames.swabergersmobilepos.network.responses.*
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.AuthTokenInterceptor
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -59,5 +56,9 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
             }.doOnError { error ->
                 Log.e("ERROR", error.message, error)
             }
+    }
+
+    fun postOrder(orderBody: OrderBody): Single<OrderBody> {
+        return createService().postOrder(orderBody)
     }
 }

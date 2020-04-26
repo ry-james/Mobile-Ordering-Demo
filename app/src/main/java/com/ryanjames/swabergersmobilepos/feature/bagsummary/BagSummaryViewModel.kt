@@ -6,11 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
-import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository2
+import javax.inject.Inject
 
-class BagSummaryViewModel(orderDetails: OrderDetails) : ViewModel() {
+class BagSummaryViewModel @Inject constructor(var orderRepository2: OrderRepository2) : ViewModel() {
 
-    var orderDetails: OrderDetails = orderDetails
+    var orderDetails: OrderDetails = OrderDetails(mutableListOf())
         set(value) {
             field = value
             updatePrices()
@@ -35,16 +36,12 @@ class BagSummaryViewModel(orderDetails: OrderDetails) : ViewModel() {
         _total.value = "PHP. ${orderDetails.total.toTwoDigitString()}"
     }
 
-    init {
-        this.orderDetails = orderDetails
-    }
-
     fun putLineItem(lineItem: LineItem) {
         for ((index, item) in orderDetails.lineItems.withIndex()) {
             if (item.id == lineItem.id) {
                 orderDetails.lineItems[index] = lineItem
                 updatePrices()
-                OrderRepository.updateLineItem(lineItem)
+                orderRepository2.updateLineItem(lineItem)
                 return
             }
         }

@@ -1,16 +1,18 @@
 package com.ryanjames.swabergersmobilepos.repository
 
+import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.mappers.toEntity
+import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Single
 
-object OrderRepository {
+class OrderRepository2(sharedPreferences: SharedPreferences) {
 
+    private val swabergersService = SwabergersService(sharedPreferences)
     private val orderRealmDao = OrderRealmDao()
-
 
     fun getLocalBag(): Single<List<LineItem>> {
         return orderRealmDao.getLineItems().map { it.lineItems.map { item -> item.toDomain() } }
