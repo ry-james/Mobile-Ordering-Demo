@@ -16,7 +16,8 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
-class MenuActivityViewModel @Inject constructor(var menuRepository: MenuRepository) : ViewModel() {
+class MenuActivityViewModel @Inject constructor(var menuRepository: MenuRepository,
+                                                var orderRepository: OrderRepository) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val _menuObservable = MutableLiveData<Menu>()
@@ -44,7 +45,7 @@ class MenuActivityViewModel @Inject constructor(var menuRepository: MenuReposito
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
-            OrderRepository.getLocalBag()
+            orderRepository.getLocalBag()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ lineItems ->
@@ -57,7 +58,7 @@ class MenuActivityViewModel @Inject constructor(var menuRepository: MenuReposito
     }
 
     fun addLineItem(lineItem: LineItem) {
-        OrderRepository.insertLineItem(lineItem)
+        orderRepository.insertLineItem(lineItem)
         orderDetails.lineItems.add(lineItem)
         _bagCounter.value = orderDetails.noOfItems.toString()
     }

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
-import com.ryanjames.swabergersmobilepos.repository.OrderRepository2
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -22,8 +22,8 @@ object ApplicationModule {
     @JvmStatic
     @Singleton
     @Provides
-    fun provideOrderRepository(sharedPreferences: SharedPreferences): OrderRepository2 {
-        return OrderRepository2(sharedPreferences)
+    fun provideOrderRepository(sharedPreferences: SharedPreferences): OrderRepository {
+        return OrderRepository(sharedPreferences)
     }
 
     @JvmStatic

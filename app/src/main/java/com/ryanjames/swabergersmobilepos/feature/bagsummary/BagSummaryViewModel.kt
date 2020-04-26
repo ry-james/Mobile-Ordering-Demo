@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
-import com.ryanjames.swabergersmobilepos.repository.OrderRepository2
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import javax.inject.Inject
 
-class BagSummaryViewModel @Inject constructor(var orderRepository2: OrderRepository2) : ViewModel() {
+class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
 
     var orderDetails: OrderDetails = OrderDetails(mutableListOf())
         set(value) {
@@ -41,7 +41,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository2: OrderReposit
             if (item.id == lineItem.id) {
                 orderDetails.lineItems[index] = lineItem
                 updatePrices()
-                orderRepository2.updateLineItem(lineItem)
+                orderRepository.updateLineItem(lineItem)
                 return
             }
         }
