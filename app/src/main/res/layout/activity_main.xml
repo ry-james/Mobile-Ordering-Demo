@@ -6,75 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
-    <TextView
-        android:id="@+id/tvModifierList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAdd" />
-
-    <EditText
-        android:id="@+id/etModifierId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="Modifier Id"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etModifierName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Modifier Name"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etModifierId" />
-
-    <EditText
-        android:id="@+id/etPriceDelta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Price Delta"
-        android:inputType="number"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etModifierName" />
-
-    <EditText
-        android:id="@+id/etReceiptText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Receipt Text"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/etPriceDelta"
-        app:layout_constraintTop_toBottomOf="@+id/etPriceDelta" />
-
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="83dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:onClick="onAdd"
-        android:text="Add"
-        app:layout_constraintEnd_toEndOf="@+id/etReceiptText"
-        app:layout_constraintStart_toStartOf="@+id/etReceiptText"
-        app:layout_constraintTop_toBottomOf="@+id/etReceiptText" />
-
     <Button
         android:id="@+id/btnAuth"
         android:layout_width="wrap_content"
@@ -82,49 +13,19 @@
         android:layout_marginTop="8dp"
         android:onClick="onClickAuthButton"
         android:text="Authenticate"
-        app:layout_constraintTop_toBottomOf="@+id/btnAdd"
-        tools:layout_editor_absoluteX="75dp" />
-
-    <Button
-        android:id="@+id/btn_getFromApi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="onClickRetrieveFromApiButton"
-        android:text="Retrieve from API"
-        app:layout_constraintTop_toBottomOf="@+id/btnAuth"
-        tools:layout_editor_absoluteX="75dp" />
+        app:layout_constraintStart_toStartOf="@+id/btn_menuActivity"
+        app:layout_constraintTop_toBottomOf="@+id/btn_menuActivity" />
 
     <Button
         android:id="@+id/btn_menuActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
         android:onClick="onClickLaunchMenu"
         android:text="Launch Menu"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textAlignment="viewStart"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickGetModifierGroups"
-        android:text="GET MODIFIER GROUPS"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnAdd"
-        app:layout_constraintTop_toBottomOf="@+id/etReceiptText" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickMenuItem"
-        android:text="MENU ITEM VIEW"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnAdd"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
