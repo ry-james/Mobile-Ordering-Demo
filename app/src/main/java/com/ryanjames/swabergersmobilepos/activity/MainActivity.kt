@@ -10,6 +10,7 @@ import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,6 +25,9 @@ class MainActivity : BaseActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var orderRepository: OrderRepository
 
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -52,6 +56,10 @@ class MainActivity : BaseActivity() {
     fun onClickLaunchMenu(view: View) {
         val intent = MenuActivity.createIntent(this)
         startActivity(intent)
+    }
+
+    fun onClickClearBag(view: View) {
+        orderRepository.clearLocalBag()
     }
 
     private fun Disposable.addToCompositeDisposable() {

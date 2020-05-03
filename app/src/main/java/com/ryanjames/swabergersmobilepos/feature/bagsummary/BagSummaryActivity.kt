@@ -17,7 +17,6 @@ import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
-import com.ryanjames.swabergersmobilepos.fragments.KeypadDialogFragment
 import javax.inject.Inject
 
 private const val EXTRA_ORDER = "extra.order"
@@ -71,7 +70,9 @@ class BagSummaryActivity : BaseActivity() {
 
 
     fun onClickCheckout(view: View) {
-        KeypadDialogFragment.show(supportFragmentManager)
+        // KeypadDialogFragment.show(supportFragmentManager)
+        viewModel.postOrder()
+
     }
 
     companion object {

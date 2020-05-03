@@ -37,5 +37,9 @@ class OrderRealmDao {
         }
     }
 
+    fun deleteAllLineItems(realm: Realm) {
+        realm.delete(LineItemRealmEntity::class.java)
+    }
+
 
 }

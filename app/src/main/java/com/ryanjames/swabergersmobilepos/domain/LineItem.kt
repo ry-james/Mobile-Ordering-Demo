@@ -13,15 +13,23 @@ data class LineItem(
     val quantity: Int
 ) : Parcelable {
 
+    val unitPrice: Float
+        get() = bundle?.price ?: product.price
+
     val price: Float
         get() {
-            var price = bundle?.price ?: product.price
+            var price = unitPrice
             for ((key, modifiers) in modifiers) {
                 for (modifier in modifiers) {
                     price += modifier.priceDelta
                 }
             }
             return price * quantity
+        }
+
+    val lineItemName: String
+        get() {
+            return bundle?.bundleName ?: product.productName
         }
 
 }

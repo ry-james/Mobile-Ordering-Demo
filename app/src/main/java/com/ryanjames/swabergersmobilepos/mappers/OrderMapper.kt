@@ -2,8 +2,13 @@ package com.ryanjames.swabergersmobilepos.mappers
 
 import com.ryanjames.swabergersmobilepos.database.realm.*
 import com.ryanjames.swabergersmobilepos.domain.*
+import com.ryanjames.swabergersmobilepos.network.responses.LineItemRequestBody
+import com.ryanjames.swabergersmobilepos.network.responses.ModifierSelectionRequestBody
+import com.ryanjames.swabergersmobilepos.network.responses.OrderBody
+import com.ryanjames.swabergersmobilepos.network.responses.ProductInOrderRequestBody
 import io.realm.Realm
 import io.realm.RealmList
+import java.util.*
 
 fun LineItem.toEntity(realm: Realm): LineItemRealmEntity {
 
@@ -104,4 +109,56 @@ fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List
     val product = product?.let { productMapper.mapToDomain(it) } ?: Product.EMPTY
     val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapToDomain(it) } ?: ModifierGroup.EMPTY
     return Pair(ProductModifierGroupKey(product, modifierGroup), modifiers)
+}
+
+fun OrderDetails.toRemoteEntity(): OrderBody {
+    return OrderBody(UUID.randomUUID().toString(), lineItems.map { it.toRemoteEntity() })
+}
+
+fun LineItem.toRemoteEntity(): LineItemRequestBody {
+
+    val productInOrderRequestBodyList = mutableListOf<ProductInOrderRequestBody>()
+
+    val baseProductModifierRequest = mutableListOf<ModifierSelectionRequestBody>()
+    for (modifierGroup in product.modifierGroups) {
+        val key = ProductModifierGroupKey(product, modifierGroup)
+        baseProductModifierRequest.add(
+            ModifierSelectionRequestBody(
+                product.productId,
+                modifierGroup.modifierGroupId,
+                modifiers[key]?.sumByDouble { it.priceDelta.toDouble() }?.toFloat() ?: 0f,
+                modifiers[key]?.map { it.modifierId }.orEmpty()
+            )
+        )
+    }
+
+    productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, baseProductModifierRequest))
+
+
+
+    this.productsInBundle.forEach { (productGroup, productList) ->
+        productList.forEach { product ->
+
+            val modifierRequest = mutableListOf<ModifierSelectionRequestBody>()
+
+            for (modifierGroup in product.modifierGroups) {
+                val key = ProductModifierGroupKey(product, modifierGroup)
+                modifierRequest.add(
+                    ModifierSelectionRequestBody(
+                        productGroup.productGroupId,
+                        modifierGroup.modifierGroupId,
+                        modifiers[key]?.sumByDouble { it.priceDelta.toDouble() }?.toFloat() ?: 0f,
+                        modifiers[key]?.map { it.modifierId }.orEmpty()
+                    )
+                )
+
+            }
+
+
+            productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, modifierRequest))
+        }
+
+    }
+
+    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList)
 }

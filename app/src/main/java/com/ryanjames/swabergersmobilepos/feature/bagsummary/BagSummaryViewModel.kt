@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,9 +8,14 @@ import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.OrderDetails
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
+
+    private val compositeDisposable = CompositeDisposable()
 
     var orderDetails: OrderDetails = OrderDetails(mutableListOf())
         set(value) {
@@ -48,4 +54,18 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     }
 
+    fun postOrder() {
+        compositeDisposable.add(
+            orderRepository.postOrder(orderDetails)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ Log.d("ORDER", "CREATED") },
+                    { it.printStackTrace() })
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
 }

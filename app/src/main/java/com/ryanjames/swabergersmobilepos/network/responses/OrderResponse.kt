@@ -12,7 +12,8 @@ data class LineItemRequestBody(
     val lineItemName: String,
     val quantity: Int,
     val price: Float,
-    @SerializedName("unit_price") val unitPrice: Float
+    @SerializedName("unit_price") val unitPrice: Float,
+    val products: List<ProductInOrderRequestBody>
 )
 
 data class ProductInOrderRequestBody(
