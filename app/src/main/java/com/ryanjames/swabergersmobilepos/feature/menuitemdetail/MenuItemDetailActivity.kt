@@ -49,6 +49,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
+        binding.ivBack.setOnClickListener {
+            onUpPressed()
+        }
+
         setupRecyclerView()
         addSubscriptions()
 

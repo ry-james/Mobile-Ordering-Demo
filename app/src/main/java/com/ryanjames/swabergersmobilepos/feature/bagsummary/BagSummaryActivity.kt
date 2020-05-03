@@ -41,6 +41,7 @@ class BagSummaryActivity : BaseActivity() {
         viewModel.orderDetails = orderDetails
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+        setToolbarTitle(getString(R.string.bag_summary_toolbar_title))
         setupRecyclerView()
     }
 

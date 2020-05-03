@@ -19,4 +19,6 @@
     <string name="checkout">CHECKOUT</string>
     <string name="empty_bag_title">Your bag is empty.</string>
     <string name="empty_bag_subtitle">Looks like you haven’t made your choice yet.</string>
+    <string name="bag_summary_toolbar_title">Bag</string>
+    <string name="menu_toolbar_title">Menu</string>
 </resources>

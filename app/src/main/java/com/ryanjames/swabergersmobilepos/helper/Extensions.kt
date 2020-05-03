@@ -40,3 +40,7 @@ fun <T> MutableList<T>.clearAndAddAll(elements: Collection<T>) {
     clear()
     addAll(elements)
 }
+
+fun Any.getLoggerTag(): String {
+    return this::class.java.simpleName
+}

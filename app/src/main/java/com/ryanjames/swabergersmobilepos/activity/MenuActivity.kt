@@ -43,6 +43,7 @@ class MenuActivity : BaseActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuActivityViewModel::class.java)
         binding.viewModel = viewModel
         viewModel.retrieveMenu()
+        setToolbarTitle(getString(R.string.menu_toolbar_title))
         addSubscriptions()
     }
 
