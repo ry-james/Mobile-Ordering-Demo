@@ -1,6 +1,7 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,8 +21,17 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     var orderDetails: OrderDetails = OrderDetails(mutableListOf())
         set(value) {
             field = value
+            updateBagVisibility()
             updatePrices()
         }
+
+    private val _emptyBagVisibility = MutableLiveData<Int>()
+    val emptyBagVisibility: LiveData<Int>
+        get() = _emptyBagVisibility
+
+    private val _nonEmptyBagVisibility = MutableLiveData<Int>()
+    val nonEmptyBagVisibility: LiveData<Int>
+        get() = _nonEmptyBagVisibility
 
     private val _tax = MutableLiveData<String>()
     val tax: LiveData<String>
@@ -35,6 +45,21 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private val _total = MutableLiveData<String>()
     val total: LiveData<String>
         get() = _total
+
+    init {
+        updateBagVisibility()
+    }
+
+    private fun updateBagVisibility() {
+        if (orderDetails.lineItems.isEmpty()) {
+            _emptyBagVisibility.postValue(View.VISIBLE)
+            _nonEmptyBagVisibility.postValue(View.GONE)
+        } else {
+            _emptyBagVisibility.postValue(View.GONE)
+            _nonEmptyBagVisibility.postValue(View.VISIBLE)
+        }
+
+    }
 
     private fun updatePrices() {
         _tax.value = orderDetails.tax.toTwoDigitString()
@@ -51,7 +76,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 return
             }
         }
-
+        updateBagVisibility()
     }
 
     fun postOrder() {

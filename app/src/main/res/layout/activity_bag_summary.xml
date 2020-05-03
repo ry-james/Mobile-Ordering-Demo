@@ -28,9 +28,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visibility="@{viewModel.nonEmptyBagVisibility}"
             app:layout_constraintBottom_toTopOf="@id/btnCheckout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,13 +167,26 @@
 
         </androidx.core.widget.NestedScrollView>
 
+
+        <include
+            android:id="@+id/emptyView"
+            layout="@layout/view_empty_bag"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.emptyBagVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
         <Button
             android:id="@+id/btnCheckout"
             style="@style/AccentButton"
             android:layout_width="0dp"
-            android:onClick="onClickCheckout"
             android:layout_height="wrap_content"
+            android:onClick="onClickCheckout"
             android:text="@string/checkout"
+            android:visibility="@{viewModel.nonEmptyBagVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

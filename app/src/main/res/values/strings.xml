@@ -17,4 +17,6 @@
     <string name="tax">Tax:</string>
     <string name="subtotal">Subtotal:</string>
     <string name="checkout">CHECKOUT</string>
+    <string name="empty_bag_title">Your bag is empty.</string>
+    <string name="empty_bag_subtitle">Looks like you haven’t made your choice yet.</string>
 </resources>
