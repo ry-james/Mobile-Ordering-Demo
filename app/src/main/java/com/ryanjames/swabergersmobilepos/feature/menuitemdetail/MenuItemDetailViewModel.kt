@@ -1,14 +1,17 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
+import android.content.res.Resources
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
-class MenuItemDetailViewModel() : ViewModel() {
+class MenuItemDetailViewModel @Inject constructor(val resources: Resources) : ViewModel() {
 
     private var lineItem: LineItem? = null
     private lateinit var product: Product
@@ -22,12 +25,12 @@ class MenuItemDetailViewModel() : ViewModel() {
     private val productsInBundleMap = HashMap<ProductGroup, List<Product>>()
     private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
 
-    constructor(product: Product) : this() {
+    fun setupWithProduct(product: Product) {
         this.product = product
         initializeSelections()
     }
 
-    constructor(lineItem: LineItem) : this() {
+    fun setupWithLineItem(lineItem: LineItem) {
         this.lineItem = lineItem
         this.product = lineItem.product
         this.quantity = lineItem.quantity
@@ -159,9 +162,9 @@ class MenuItemDetailViewModel() : ViewModel() {
         }
         price *= quantity
         if (isModifying()) {
-            _strAddToBagBtn.value = "UPDATE ITEM - PHP. ${price.toTwoDigitString()}"
+            _strAddToBagBtn.value = String.format(resources.getString(R.string.update_item), price.toTwoDigitString())
         } else {
-            _strAddToBagBtn.value = "ADD TO BAG - PHP. ${price.toTwoDigitString()}"
+            _strAddToBagBtn.value = String.format(resources.getString(R.string.add_to_bag), price.toTwoDigitString())
         }
     }
 

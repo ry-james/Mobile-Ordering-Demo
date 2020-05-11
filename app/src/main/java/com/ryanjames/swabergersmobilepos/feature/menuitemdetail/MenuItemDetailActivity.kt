@@ -12,8 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
+import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Binding
 import com.ryanjames.swabergersmobilepos.domain.*
+import javax.inject.Inject
 
 private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
@@ -23,6 +26,9 @@ const val REQUEST_LINE_ITEM = 0
 private const val EXTRA_LINE_ITEM = "extra.line.item"
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMenuItemDetail2Binding
     private lateinit var viewModel: MenuItemDetailViewModel
@@ -34,15 +40,18 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SwabergersApplication.appComponent.inject(this)
+
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuItemDetailViewModel::class.java)
 
         lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also { lineItem ->
             product = lineItem.product
-            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(lineItem) }).get(MenuItemDetailViewModel::class.java)
+            viewModel.setupWithLineItem(lineItem)
         }
 
         if (lineItem == null) {
             product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
-            viewModel = ViewModelProviders.of(this, viewModelFactory { MenuItemDetailViewModel(product) }).get(MenuItemDetailViewModel::class.java)
+            viewModel.setupWithProduct(product)
         }
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail2)

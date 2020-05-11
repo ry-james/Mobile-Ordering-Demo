@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.dagger
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import dagger.Module
@@ -31,6 +32,13 @@ object ApplicationModule {
     @Provides
     fun provideMenuRepository(sharedPreferences: SharedPreferences): MenuRepository {
         return MenuRepository(sharedPreferences)
+    }
+
+    @JvmStatic
+    @Singleton
+    @Provides
+    fun provideResources(application: Application): Resources {
+        return application.resources
     }
 
 }
