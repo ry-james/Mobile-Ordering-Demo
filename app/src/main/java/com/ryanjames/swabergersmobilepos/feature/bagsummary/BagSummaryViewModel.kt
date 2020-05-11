@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
-import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,7 +18,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private val compositeDisposable = CompositeDisposable()
 
-    var orderDetails: OrderDetails = OrderDetails(mutableListOf())
+    var order: Order = Order(mutableListOf())
         set(value) {
             field = value
             updateBagVisibility()
@@ -51,7 +51,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     private fun updateBagVisibility() {
-        if (orderDetails.lineItems.isEmpty()) {
+        if (order.lineItems.isEmpty()) {
             _emptyBagVisibility.postValue(View.VISIBLE)
             _nonEmptyBagVisibility.postValue(View.GONE)
         } else {
@@ -62,15 +62,15 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     private fun updatePrices() {
-        _tax.value = orderDetails.tax.toTwoDigitString()
-        _subtotal.value = orderDetails.subTotal.toTwoDigitString()
-        _total.value = "PHP. ${orderDetails.total.toTwoDigitString()}"
+        _tax.value = order.tax.toTwoDigitString()
+        _subtotal.value = order.subTotal.toTwoDigitString()
+        _total.value = "PHP. ${order.total.toTwoDigitString()}"
     }
 
     fun putLineItem(lineItem: LineItem) {
-        for ((index, item) in orderDetails.lineItems.withIndex()) {
+        for ((index, item) in order.lineItems.withIndex()) {
             if (item.id == lineItem.id) {
-                orderDetails.lineItems[index] = lineItem
+                order.lineItems[index] = lineItem
                 updatePrices()
                 orderRepository.updateLineItem(lineItem)
                 return
@@ -81,7 +81,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun postOrder() {
         compositeDisposable.add(
-            orderRepository.postOrder(orderDetails)
+            orderRepository.postOrder(order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ Log.d("ORDER", "CREATED") },

@@ -111,7 +111,7 @@ fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List
     return Pair(ProductModifierGroupKey(product, modifierGroup), modifiers)
 }
 
-fun OrderDetails.toRemoteEntity(): OrderBody {
+fun Order.toRemoteEntity(): OrderBody {
     return OrderBody(UUID.randomUUID().toString(), lineItems.map { it.toRemoteEntity() })
 }
 

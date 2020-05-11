@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
 import com.ryanjames.swabergersmobilepos.domain.LineItem
-import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.mappers.toEntity
 import com.ryanjames.swabergersmobilepos.mappers.toRemoteEntity
@@ -28,8 +28,8 @@ class OrderRepository(sharedPreferences: SharedPreferences) {
         executeRealmTransaction { realm -> orderRealmDao.updateLineItem(realm, lineItem.toEntity(realm)) }
     }
 
-    fun postOrder(orderDetails: OrderDetails): Single<Boolean> {
-        return swabergersService.postOrder(orderDetails.toRemoteEntity()).map { true }
+    fun postOrder(order: Order): Single<Boolean> {
+        return swabergersService.postOrder(order.toRemoteEntity()).map { true }
     }
 
     fun clearLocalBag() {

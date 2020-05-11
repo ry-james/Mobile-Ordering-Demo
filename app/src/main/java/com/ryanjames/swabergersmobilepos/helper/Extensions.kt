@@ -3,6 +3,9 @@ package com.ryanjames.swabergersmobilepos.helper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
 import java.util.*
 
 fun Float.toTwoDigitString(): String {
@@ -43,4 +46,8 @@ fun <T> MutableList<T>.clearAndAddAll(elements: Collection<T>) {
 
 fun Any.getLoggerTag(): String {
     return this::class.java.simpleName
+}
+
+fun Date.toLocalDateTime(): LocalDateTime {
+    return Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
 }

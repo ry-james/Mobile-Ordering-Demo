@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Menu
-import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -28,7 +28,7 @@ class MenuActivityViewModel @Inject constructor(var menuRepository: MenuReposito
     val bagCounter: LiveData<String>
         get() = _bagCounter
 
-    val orderDetails = OrderDetails(mutableListOf())
+    val orderDetails = Order(mutableListOf())
 
     fun retrieveMenu() {
         compositeDisposable.add(

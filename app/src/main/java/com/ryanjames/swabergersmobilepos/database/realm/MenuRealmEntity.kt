@@ -2,11 +2,13 @@ package com.ryanjames.swabergersmobilepos.database.realm
 
 import io.realm.RealmList
 import io.realm.RealmObject
+import java.util.*
 
 open class MenuRealmEntity(
-    var categories: RealmList<CategoryRealmEntity>
+    var categories: RealmList<CategoryRealmEntity>,
+    var createdAt: Date
 ) : RealmObject() {
-    constructor() : this(RealmList())
+    constructor() : this(RealmList(), Date())
 }
 
 open class CategoryRealmEntity(

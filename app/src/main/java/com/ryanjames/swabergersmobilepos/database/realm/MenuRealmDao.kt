@@ -26,4 +26,16 @@ class MenuRealmDao {
         realm.close()
     }
 
+    fun deleteMenu() {
+        executeRealmTransaction { realm ->
+            realm.delete(MenuRealmEntity::class.java)
+            realm.delete(ProductRealmEntity::class.java)
+            realm.delete(ProductGroupRealmEntity::class.java)
+            realm.delete(ModifierInfoRealmEntity::class.java)
+            realm.delete(ModifierGroupRealmEntity::class.java)
+            realm.delete(ProductBundleRealmEntity::class.java)
+            realm.delete(CategoryRealmEntity::class.java)
+        }
+    }
+
 }

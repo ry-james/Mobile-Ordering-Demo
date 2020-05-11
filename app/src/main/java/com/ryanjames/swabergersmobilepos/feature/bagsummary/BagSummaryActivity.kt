@@ -14,7 +14,7 @@ import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
-import com.ryanjames.swabergersmobilepos.domain.OrderDetails
+import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 import javax.inject.Inject
@@ -28,17 +28,17 @@ class BagSummaryActivity : BaseActivity() {
 
     private lateinit var binding: ActivityBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
-    private lateinit var orderDetails: OrderDetails
+    private lateinit var order: Order
     private lateinit var adapter: BagItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
 
-        orderDetails = intent.getParcelableExtra(EXTRA_ORDER)
+        order = intent.getParcelableExtra(EXTRA_ORDER)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_bag_summary)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(BagSummaryViewModel::class.java)
-        viewModel.orderDetails = orderDetails
+        viewModel.order = order
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         setToolbarTitle(getString(R.string.bag_summary_toolbar_title))
@@ -46,7 +46,7 @@ class BagSummaryActivity : BaseActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = BagItemAdapter(orderDetails.lineItems, object : BagItemAdapter.BagItemAdapterListener {
+        adapter = BagItemAdapter(order.lineItems, object : BagItemAdapter.BagItemAdapterListener {
             override fun onClickLineItem(lineItem: LineItem) {
                 startActivityForResult(MenuItemDetailActivity.createIntent(this@BagSummaryActivity, lineItem), REQUEST_LINE_ITEM)
             }
@@ -64,7 +64,7 @@ class BagSummaryActivity : BaseActivity() {
             data?.let {
                 val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
                 viewModel.putLineItem(lineItem)
-                adapter.updateLineItems(viewModel.orderDetails.lineItems)
+                adapter.updateLineItems(viewModel.order.lineItems)
             }
         }
     }
@@ -78,9 +78,9 @@ class BagSummaryActivity : BaseActivity() {
 
     companion object {
 
-        fun createIntent(context: Context, orderDetails: OrderDetails): Intent {
+        fun createIntent(context: Context, order: Order): Intent {
             val intent = Intent(context, BagSummaryActivity::class.java)
-            intent.putExtra(EXTRA_ORDER, orderDetails)
+            intent.putExtra(EXTRA_ORDER, order)
             return intent
         }
 

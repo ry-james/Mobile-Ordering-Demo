@@ -4,6 +4,7 @@ import com.ryanjames.swabergersmobilepos.database.realm.*
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.network.responses.*
 import io.realm.RealmList
+import java.util.*
 
 class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
 
@@ -76,7 +77,7 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
             categoryRealmList.add(categoryEntity)
         }
 
-        return MenuRealmEntity(categoryRealmList)
+        return MenuRealmEntity(categoryRealmList, Date())
     }
 
     override fun mapToDomain(input: MenuRealmEntity): Menu {
