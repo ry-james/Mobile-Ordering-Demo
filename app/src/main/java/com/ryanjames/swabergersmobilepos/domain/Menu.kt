@@ -27,6 +27,7 @@ data class Category(
 data class Product(
     val productId: String,
     val productName: String,
+    val productDescription: String,
     val price: Float,
     val receiptText: String,
     val bundles: List<ProductBundle>,
@@ -34,7 +35,7 @@ data class Product(
 ) : Parcelable {
 
     companion object {
-        val EMPTY = Product("", "", 0f, "", listOf(), listOf())
+        val EMPTY = Product("", "", "", 0f, "", listOf(), listOf())
     }
 
 }

@@ -120,6 +120,7 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
         return ProductRealmEntity(
             input.productId,
             input.productName,
+            input.productDescription ?: "",
             input.price ?: 0f,
             input.receiptText ?: "",
             RealmList(),
@@ -131,6 +132,7 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
         return Product(
             input.productId,
             input.productName,
+            input.productDescription,
             input.price,
             input.receiptText,
             bundleMapper.mapToDomain(input.bundles),
@@ -142,6 +144,7 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
         return ProductRealmEntity(
             input.productId,
             input.productName,
+            input.productDescription,
             input.price,
             input.receiptText,
             modifierGroupMapper.mapDomainToEntity(input.modifierGroups),
@@ -215,6 +218,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
         return Product(
             input.productId,
             input.productName,
+            input.productDescription,
             input.price,
             input.receiptText,
             listOf(),
@@ -230,6 +234,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
         return ProductRealmEntity(
             input.productId,
             input.productName,
+            input.productDescription,
             input.price,
             input.receiptText,
             modifierGroupMapper.mapDomainToEntity(input.modifierGroups),

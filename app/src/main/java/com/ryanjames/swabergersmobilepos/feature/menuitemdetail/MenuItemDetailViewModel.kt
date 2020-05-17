@@ -57,12 +57,17 @@ class MenuItemDetailViewModel @Inject constructor(val resources: Resources) : Vi
     val strProductName: LiveData<String>
         get() = _strProductName
 
+    private val _strProductDescription = MutableLiveData<String>()
+    val strProductDescription: LiveData<String>
+        get() = _strProductDescription
+
     private val _strAddToBagBtn = MutableLiveData<String>()
     val strAddToBag: LiveData<String>
         get() = _strAddToBagBtn
 
     private fun initializeSelections() {
         _strProductName.value = product.productName
+        _strProductDescription.value = product.productDescription
         if (!isModifying()) {
             for (modifierGroup in product.modifierGroups) {
                 productGroupModifierSelections[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)

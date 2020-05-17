@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
     }
 
     fun onClickAuthButton(view: View) {
-        mainActivityViewModel.authenticate("ryan7994", "Pass1234")
+        mainActivityViewModel.authenticate("testcedar", "james")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ loginResponse: LoginResponse? ->

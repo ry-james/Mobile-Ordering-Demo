@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.network.responses
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class MenuResponse(
     val categories: List<CategoryResponse>?,
@@ -20,6 +19,7 @@ data class CategoryResponse(
 data class ProductResponse(
     val productId: String?,
     val productName: String?,
+    val productDescription: String?,
     val price: Float?,
     val receiptText: String?,
     val categoryId: String?,

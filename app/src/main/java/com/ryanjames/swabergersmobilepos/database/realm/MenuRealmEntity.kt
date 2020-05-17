@@ -22,12 +22,13 @@ open class CategoryRealmEntity(
 open class ProductRealmEntity(
     var productId: String,
     var productName: String,
+    var productDescription: String,
     var price: Float,
     var receiptText: String,
     var modifierGroups: RealmList<ModifierGroupRealmEntity>,
     var bundles: RealmList<ProductBundleRealmEntity>
 ) : RealmObject() {
-    constructor() : this("", "", 0f, "", RealmList(), RealmList())
+    constructor() : this("", "", "", 0f, "", RealmList(), RealmList())
 }
 
 open class ModifierInfoRealmEntity(
