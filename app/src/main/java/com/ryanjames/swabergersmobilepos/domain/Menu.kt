@@ -55,11 +55,13 @@ data class ModifierGroup(
     val modifierGroupName: String,
     val action: ModifierGroupAction,
     val defaultSelection: ModifierInfo,
-    val options: List<ModifierInfo>
+    val options: List<ModifierInfo>,
+    val min: Int,
+    val max: Int
 ) : Parcelable {
 
     companion object {
-        val EMPTY = ModifierGroup("", "", ModifierGroupAction.Optional, ModifierInfo.EMPTY, listOf())
+        val EMPTY = ModifierGroup("", "", ModifierGroupAction.Optional, ModifierInfo.EMPTY, listOf(), 1, 1)
     }
 }
 

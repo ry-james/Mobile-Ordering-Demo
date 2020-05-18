@@ -45,10 +45,12 @@ open class ModifierGroupRealmEntity(
     var modifierGroupName: String,
     var action: String,
     var options: RealmList<ModifierInfoRealmEntity>,
-    var defaultSelection: String
+    var defaultSelection: String,
+    var min: Int,
+    var max: Int
 ) : RealmObject() {
 
-    constructor() : this("", "", "", RealmList(), "")
+    constructor() : this("", "", "", RealmList(), "", 1, 1)
 
     fun getDefaultSelection(): ModifierInfoRealmEntity? {
         return options.find { it.modifierId == defaultSelection }

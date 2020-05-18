@@ -162,8 +162,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             ID_PRODUCT_GROUP_MODIFIER,
             getString(R.string.select_something, modifierGroup.modifierGroupName.toUpperCase()),
             product.productName,
-            1,
-            1,
+            modifierGroup.min,
+            modifierGroup.max,
             options,
             ArrayList(selectedId)
         )

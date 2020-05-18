@@ -292,7 +292,9 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupName,
             input.action ?: "",
             modifierInfoRealmList,
-            input.defaultSelection ?: ""
+            input.defaultSelection ?: "",
+            input.min ?: 1,
+            input.max ?: 1
         )
     }
 
@@ -302,7 +304,9 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupName,
             input.action.toModifierGroupAction(),
             modifierInfoMapper.mapToDomain(input.getDefaultSelection() ?: ModifierInfoRealmEntity()),
-            modifierInfoMapper.mapToDomain(input.options)
+            modifierInfoMapper.mapToDomain(input.options),
+            input.min,
+            input.max
         )
     }
 
@@ -316,7 +320,9 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupName,
             input.action.toString(),
             modifierInfoRealmList,
-            input.defaultSelection.modifierId
+            input.defaultSelection.modifierId,
+            input.min,
+            input.max
         )
     }
 }

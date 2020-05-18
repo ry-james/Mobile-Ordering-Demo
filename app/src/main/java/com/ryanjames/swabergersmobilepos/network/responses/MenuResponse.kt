@@ -41,7 +41,9 @@ data class ModifierGroupResponse(
     val modifierGroupName: String?,
     val action: String?,
     val defaultSelection: String?,
-    val options: List<ModifierInfoResponse>?
+    val options: List<ModifierInfoResponse>?,
+    val min: Int?,
+    val max: Int?
 )
 
 data class ProductGroupResponse(

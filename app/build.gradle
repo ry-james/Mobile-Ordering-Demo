@@ -93,6 +93,10 @@ dependencies {
 
     def room_version = "2.2.0-alpha01"
 
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    // Mockito
+    testImplementation "org.mockito:mockito-core:2.15.0"
+
     implementation "androidx.room:room-runtime:$room_version"
     implementation 'androidx.room:room-rxjava2:2.2.0-alpha02'
     kapt "androidx.room:room-compiler:$room_version"

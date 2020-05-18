@@ -26,6 +26,8 @@ private const val EXTRA_OPTIONS = "extra.options"
 private const val EXTRA_SELECTED_ID = "extra.selected.id"
 private const val EXTRA_MIN_SELECTION = "extra.min.selection"
 private const val EXTRA_MAX_SELECTION = "extra.max.selection"
+private const val DEFAULT_MIN_SELECTION = 1
+private const val DEFAULT_MAX_SELECTION = 1
 
 class BottomPickerFragment : BottomSheetDialogFragment() {
 
@@ -41,8 +43,8 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
         binding = BottomSheetItemSelectorBinding.inflate(inflater, container, false)
 
         val requestId = arguments?.getString(EXTRA_REQUEST_ID) ?: ""
-        minSelection = arguments?.getInt(EXTRA_MIN_SELECTION) ?: 1
-        maxSelection = arguments?.getInt(EXTRA_MAX_SELECTION) ?: 1
+        minSelection = arguments?.getInt(EXTRA_MIN_SELECTION) ?: DEFAULT_MIN_SELECTION
+        maxSelection = arguments?.getInt(EXTRA_MAX_SELECTION) ?: DEFAULT_MAX_SELECTION
         val defaultSelections = arguments?.getStringArrayList(EXTRA_SELECTED_ID) ?: arrayListOf()
         viewModel = ViewModelProviders.of(this, viewModelFactory { BottomPickerFragmentViewModel(requestId, minSelection, maxSelection, defaultSelections, listener) })
             .get(BottomPickerFragmentViewModel::class.java)
