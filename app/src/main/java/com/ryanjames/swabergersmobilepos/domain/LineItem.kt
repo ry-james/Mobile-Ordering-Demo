@@ -19,12 +19,12 @@ data class LineItem(
     val price: Float
         get() {
             var price = unitPrice
-            for ((key, modifiers) in modifiers) {
+            for ((_, modifiers) in modifiers) {
                 for (modifier in modifiers) {
                     price += modifier.priceDelta
                 }
             }
-            return price * quantity
+            return price * quantity.coerceAtLeast(1)
         }
 
     val lineItemName: String

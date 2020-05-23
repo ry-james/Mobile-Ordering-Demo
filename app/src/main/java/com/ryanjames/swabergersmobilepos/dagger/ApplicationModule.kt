@@ -11,30 +11,27 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-object ApplicationModule {
+open class ApplicationModule {
 
-    @JvmStatic
+
     @Singleton
     @Provides
     fun provideSharedPreferences(application: Application): SharedPreferences {
         return application.getSharedPreferences("Preference File", Context.MODE_PRIVATE)
     }
 
-    @JvmStatic
     @Singleton
     @Provides
     fun provideOrderRepository(sharedPreferences: SharedPreferences): OrderRepository {
         return OrderRepository(sharedPreferences)
     }
 
-    @JvmStatic
     @Singleton
     @Provides
     fun provideMenuRepository(sharedPreferences: SharedPreferences): MenuRepository {
         return MenuRepository(sharedPreferences)
     }
 
-    @JvmStatic
     @Singleton
     @Provides
     fun provideResources(application: Application): Resources {

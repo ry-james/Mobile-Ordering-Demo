@@ -34,6 +34,12 @@ android {
         enabled = true
     }
 
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
 }
 
 repositories {
@@ -107,4 +113,5 @@ dependencies {
 
     implementation 'com.github.davidmigloz:number-keyboard:3.0.0'
 
+    testImplementation "org.robolectric:robolectric:4.3.1"
 }

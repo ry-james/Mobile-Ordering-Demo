@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Swabergers Mobile POS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btnContinue">CONTINUE</string>
+    <string name="select_meal_option">SELECT MEAL OPTION</string>
+    <string name="ala_carte">Ala Carte</string>
+    <string name="php_price">Php. %.2f</string>
+    <string name="select">SELECT</string>
+    <string name="select_something">SELECT %s</string>
+    <string name="price_delta">+%.2f</string>
+    <string name="none_selected">None Selected</string>
+    <string name="meal_options">MEAL OPTIONS</string>
+    <string name="select_item_to_modify">Select item to modify</string>
+    <string name="total">TOTAL:</string>
+    <string name="tax">Tax:</string>
+    <string name="subtotal">Subtotal:</string>
+    <string name="checkout">CHECKOUT</string>
+    <string name="empty_bag_title">Your bag is empty.</string>
+    <string name="empty_bag_subtitle">Looks like you haven’t made your choice yet.</string>
+    <string name="bag_summary_toolbar_title">Bag</string>
+    <string name="menu_toolbar_title">Menu</string>
+    <string name="update_item">I-UPDATE AND BAG - PHP. %s</string>
+    <string name="add_to_bag">ILAGAY SA BAG - PHP. %s</string>
+</resources>
