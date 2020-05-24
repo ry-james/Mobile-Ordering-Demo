@@ -9,47 +9,30 @@ import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
 
-    private var lineItem: LineItem? = null
+    private var lineItem: LineItem = LineItem.EMPTY
     private lateinit var product: Product
-
-    var quantity: Int = 1
-        set(value) {
-            field = if (value < 1) 1 else value
-            updatePrice()
-        }
-
-    private val productsInBundleMap = HashMap<ProductGroup, List<Product>>()
-    private val productGroupModifierSelections = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
-
+    private var isModifying = true
+    
     fun setupWithProduct(product: Product) {
         this.product = product
+        this.lineItem = createLineItem(newLineItem = true)
+        isModifying = false
         initializeSelections()
     }
 
     fun setupWithLineItem(lineItem: LineItem) {
         this.lineItem = lineItem
         this.product = lineItem.product
-        this.quantity = lineItem.quantity
+        isModifying = true
         initializeSelections()
     }
 
-    // Events
-
-    private val _onSelectBundleObservable = MutableLiveData<ProductBundle?>().apply { value = null }
-    val onSelectBundleObservable: LiveData<ProductBundle?>
-        get() = _onSelectBundleObservable
-
-    private val _onSelectProduct = MutableLiveData<HashMap<ProductGroup, List<Product>>>()
-    val onSelectProduct: LiveData<HashMap<ProductGroup, List<Product>>>
-        get() = _onSelectProduct
-
-    private val _onSelectProductGroupModifier = MutableLiveData<HashMap<ProductModifierGroupKey, List<ModifierInfo>>>()
-    val onSelectProductGroupModifier: LiveData<HashMap<ProductModifierGroupKey, List<ModifierInfo>>>
-        get() = _onSelectProductGroupModifier
+    private val _lineItemObservable = MutableLiveData<LineItem>()
+    val lineItemObservable: LiveData<LineItem>
+        get() = _lineItemObservable
 
     // Data Binding
 
@@ -68,120 +51,126 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private fun initializeSelections() {
         _strProductName.value = product.productName
         _strProductDescription.value = product.productDescription
-        if (!isModifying()) {
-            for (modifierGroup in product.modifierGroups) {
-                productGroupModifierSelections[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
-            }
-            _onSelectProductGroupModifier.value = productGroupModifierSelections
+        if (isModifying) {
+            setProductBundle(lineItem.bundle)
+            lineItem.productsInBundle.putAll(lineItem.productsInBundle)
+            lineItem.modifiers.putAll(lineItem.modifiers)
         } else {
-            lineItem?.let {
-                setProductBundle(it.bundle)
-                productsInBundleMap.putAll(it.productsInBundle)
-                _onSelectProduct.value = productsInBundleMap
-                productGroupModifierSelections.putAll(it.modifiers)
-                _onSelectProductGroupModifier.value = productGroupModifierSelections
+            for (modifierGroup in product.modifierGroups) {
+                lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
             }
-
         }
-        updatePrice()
+        updateAndNotifyObservers()
     }
-
-    private fun isModifying(): Boolean = lineItem != null
 
     fun setProductBundle(bundle: ProductBundle?) {
 
-        if (_onSelectBundleObservable.value != bundle) {
-
-            _onSelectBundleObservable.value = bundle
+        if (lineItem.bundle != bundle) {
+            lineItem = lineItem.copy(bundle = bundle)
 
             // If bundle is not null, set the default product for each product group in the bundle
-            // If bundle is null, clear all selected bundle products and reset all modifiers
             if (bundle != null) {
                 for (productGroup in bundle.productGroups) {
-                    setProductSelectionsForProductGroup(productGroup, listOf(productGroup.defaultProduct.productId))
+                    setProductSelectionsForProductGroup(productGroup, listOf(productGroup.defaultProduct))
                 }
-            } else {
-                productsInBundleMap.clear()
-                productGroupModifierSelections.clear()
+            }
+            // If bundle is null, clear all selected bundle products and its modifiers
+            else {
+                lineItem.productsInBundle.flatMap { it.value }.forEach { removeModifiersForProduct(it) }
+                lineItem.productsInBundle.clear()
             }
         }
-        updatePrice()
+        updateAndNotifyObservers()
     }
 
-    fun setProductSelectionsForProductGroup(productGroup: ProductGroup, productIds: List<String>) {
-        val oldProductList = productsInBundleMap[productGroup] ?: listOf()
+    fun setProductSelectionsForProductGroupByIds(productGroup: ProductGroup, productIds: List<String>) {
         val newProductList = mutableListOf<Product>()
 
         // Only add products that are in the product group
         for (productId in productIds) {
             productGroup.options.find { it.productId == productId }?.let { newProductList.add(it) }
         }
-
-        productsInBundleMap[productGroup] = newProductList
-        _onSelectProduct.value = productsInBundleMap
-
-        // Add default modifiers for new product additions
-        val newlyAddedProducts = newProductList.minus(oldProductList)
-        for (newProduct in newlyAddedProducts) {
-            newProduct.modifierGroups.forEach { modifierGroup ->
-                addProductGroupModifiers(newProduct, modifierGroup, listOf(modifierGroup.defaultSelection.modifierId))
-            }
-        }
-
-        // Delete modifiers for removed product selections
-        oldProductList.minus(newProductList).forEach { removeProductModifiersFromMap(it) }
-
-        updatePrice()
+        setProductSelectionsForProductGroup(productGroup, newProductList)
+        updateAndNotifyObservers()
 
     }
 
-    private fun removeProductModifiersFromMap(product: Product) {
-        for ((productGroupModifierKey, _) in productGroupModifierSelections) {
-            if (productGroupModifierKey.product == product) {
-                productGroupModifierSelections.remove(productGroupModifierKey)
-            }
-        }
-    }
-
-    fun addProductGroupModifiers(product: Product, modifierGroup: ModifierGroup, modifierIds: List<String>) {
+    fun setProductModifiersByIds(product: Product, modifierGroup: ModifierGroup, modifierIds: List<String>) {
         val modifierList = mutableListOf<ModifierInfo>()
 
         // Only add modifiers that are in the modifier group
         for (id in modifierIds) {
             modifierGroup.options.find { it.modifierId == id }?.let { modifierList.add(it) }
         }
-
-        val key = ProductModifierGroupKey(product, modifierGroup)
-        productGroupModifierSelections[key] = modifierList
-        _onSelectProductGroupModifier.value = productGroupModifierSelections
-        updatePrice()
+        setModifiersForProduct(product, modifierGroup, modifierList)
+        updateAndNotifyObservers()
 
     }
 
-    private fun updatePrice() {
-        var price = onSelectBundleObservable.value?.price ?: product.price
-        for ((_, modifiers) in productGroupModifierSelections) {
+    fun setQuantity(quantity: Int) {
+        lineItem = lineItem.copy(quantity = quantity.coerceAtLeast(1))
+        updateAndNotifyObservers()
+    }
+
+    private fun setProductSelectionsForProductGroup(productGroup: ProductGroup, products: List<Product>) {
+        val oldProductList = lineItem.productsInBundle[productGroup] ?: listOf()
+        lineItem.productsInBundle[productGroup] = products
+
+        // Add default modifiers for new product additions
+        val newlyAddedProducts = products.minus(oldProductList)
+        for (newProduct in newlyAddedProducts) {
+            newProduct.modifierGroups.forEach { modifierGroup ->
+                setModifiersForProduct(newProduct, modifierGroup, listOf(modifierGroup.defaultSelection))
+            }
+        }
+
+        // Delete modifiers for removed product selections
+        val removedProducts = oldProductList.minus(products)
+        removedProducts.forEach { removeModifiersForProduct(it) }
+    }
+
+    private fun setModifiersForProduct(product: Product, modifierGroup: ModifierGroup, modifiers: List<ModifierInfo>) {
+        val key = ProductModifierGroupKey(product, modifierGroup)
+        lineItem.modifiers[key] = modifiers
+    }
+
+    private fun removeModifiersForProduct(product: Product) {
+        val productGroupModifiersToRemove = mutableListOf<ProductModifierGroupKey>()
+        for ((productGroupModifierKey, _) in lineItem.modifiers) {
+            if (productGroupModifierKey.product == product) {
+                productGroupModifiersToRemove.add(productGroupModifierKey)
+            }
+        }
+        productGroupModifiersToRemove.forEach { lineItem.modifiers.remove(it) }
+    }
+
+    private fun updateAndNotifyObservers() {
+        var price = lineItem.bundle?.price ?: product.price
+
+        for ((_, modifiers) in lineItem.modifiers) {
             for (modifier in modifiers) {
                 price += modifier.priceDelta
             }
         }
-        price *= quantity
-        if (isModifying()) {
+
+        price *= lineItem.quantity
+        if (isModifying) {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, price.toTwoDigitString())
         } else {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, price.toTwoDigitString())
         }
+
+        _lineItemObservable.value = createLineItem()
     }
 
-    fun createLineItem(): LineItem {
-        val id = lineItem?.id ?: UUID.randomUUID().toString()
+    private fun createLineItem(newLineItem: Boolean = false): LineItem {
         return LineItem(
-            id,
+            if (newLineItem) UUID.randomUUID().toString() else lineItem.id,
             product,
-            _onSelectBundleObservable.value,
-            _onSelectProduct.value ?: hashMapOf(),
-            _onSelectProductGroupModifier.value ?: hashMapOf(),
-            quantity
+            lineItem.bundle,
+            lineItem.productsInBundle,
+            lineItem.modifiers,
+            lineItem.quantity
         )
     }
 }

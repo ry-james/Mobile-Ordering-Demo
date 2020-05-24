@@ -15,35 +15,16 @@ private const val ID_QUANTITY = 4
 
 class MenuItemDetailAdapter(
     val product: Product,
-    private var quantity: Int,
     private val onClickRowListener: OnClickRowListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var selectedBundle: ProductBundle? = null
-    private var productSelection = HashMap<ProductGroup, List<Product>>()
-    private var productGroupModifierSelection = HashMap<ProductModifierGroupKey, List<ModifierInfo>>()
-
     private var data: List<RowDataHolder> = createRowDataHolders()
 
-    fun setBundle(productBundle: ProductBundle?) {
-        selectedBundle = productBundle
-        notifyChange()
-    }
-
-    fun setProductSelection(selection: HashMap<ProductGroup, List<Product>>) {
-        productSelection = selection
-        notifyChange()
-    }
-
-    fun setProductGroupModifierSelection(selection: HashMap<ProductModifierGroupKey, List<ModifierInfo>>) {
-        productGroupModifierSelection = selection
-        notifyChange()
-    }
-
-    fun setQuantity(qty: Int) {
-        quantity = qty
-        notifyItemChanged(0)
-    }
+    var lineItem: LineItem? = null
+        set(value) {
+            field = value
+            notifyChange()
+        }
 
     private fun notifyChange() {
         data = createRowDataHolders()
@@ -67,21 +48,27 @@ class MenuItemDetailAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is RowSelectMealViewHolder -> {
-                holder.bind(selectedBundle)
+                holder.bind(lineItem?.bundle)
             }
             is RowSelectProductGroupViewHolder -> {
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupDataHolder
                 val productGroup = dataHolder.productGroup
-                holder.bind(productGroup, productSelection[productGroup] ?: listOf())
+                holder.bind(
+                    productGroup,
+                    lineItem?.productsInBundle?.get(productGroup) ?: listOf()
+                )
             }
             is RowSelectProductGroupModifierViewHolder -> {
                 val dataHolder = data[position] as RowDataHolder.RowProductGroupModifierDataHolder
                 val product = dataHolder.product
                 val modifierGroup = dataHolder.modifierGroup
-                holder.bind(product, modifierGroup, productGroupModifierSelection[ProductModifierGroupKey(product, modifierGroup)] ?: listOf())
+                holder.bind(
+                    product,
+                    modifierGroup, lineItem?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup)) ?: listOf()
+                )
             }
             is RowSelectQuantityViewHolder -> {
-                holder.bind(quantity)
+                holder.bind(lineItem?.quantity ?: 1)
             }
         }
     }
@@ -202,10 +189,10 @@ class MenuItemDetailAdapter(
             list.add(RowDataHolder.RowProductGroupModifierDataHolder(product, modifierGroup))
         }
 
-        selectedBundle?.productGroups?.forEach { productGroup ->
+        lineItem?.bundle?.productGroups?.forEach { productGroup ->
             list.add(RowDataHolder.RowProductGroupDataHolder(productGroup))
 
-            val productSelection = productSelection[productGroup]
+            val productSelection = lineItem?.productsInBundle?.get(productGroup)
             productSelection?.forEach {
                 it.modifierGroups.forEach { modifierGroup ->
                     list.add(RowDataHolder.RowProductGroupModifierDataHolder(it, modifierGroup))

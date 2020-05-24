@@ -32,6 +32,9 @@ data class LineItem(
             return bundle?.bundleName ?: product.productName
         }
 
+    companion object {
+        val EMPTY = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
+    }
 }
 
 @Parcelize

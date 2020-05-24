@@ -14,7 +14,7 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
-import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetail2Binding
+import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetailBinding
 import com.ryanjames.swabergersmobilepos.domain.*
 import javax.inject.Inject
 
@@ -30,7 +30,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var binding: ActivityMenuItemDetail2Binding
+    private lateinit var binding: ActivityMenuItemDetailBinding
     private lateinit var viewModel: MenuItemDetailViewModel
     private lateinit var product: Product
     private lateinit var adapter: MenuItemDetailAdapter
@@ -54,7 +54,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             viewModel.setupWithProduct(product)
         }
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail2)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -67,24 +67,15 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     }
 
-
     private fun addSubscriptions() {
-        viewModel.onSelectBundleObservable.observe(this, Observer { bundle ->
-            adapter.setBundle(bundle)
-        })
-
-        viewModel.onSelectProduct.observe(this, Observer { productSelections ->
-            adapter.setProductSelection(productSelections)
-        })
-
-        viewModel.onSelectProductGroupModifier.observe(this, Observer { selections ->
-            adapter.setProductGroupModifierSelection(selections)
+        viewModel.lineItemObservable.observe(this, Observer { lineItem ->
+            adapter.lineItem = lineItem
         })
     }
 
     private fun setupRecyclerView() {
 
-        adapter = MenuItemDetailAdapter(product, viewModel.quantity, object : MenuItemDetailAdapter.OnClickRowListener {
+        adapter = MenuItemDetailAdapter(product, object : MenuItemDetailAdapter.OnClickRowListener {
 
             override fun onClickRowMealOptions() {
                 showBottomFragmentForMealSelection()
@@ -101,8 +92,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             }
 
             override fun onChangeQuantity(quantity: Int) {
-                viewModel.quantity = quantity
-                adapter.setQuantity(viewModel.quantity)
+                viewModel.setQuantity(quantity)
             }
         })
 
@@ -121,7 +111,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.php_price, bundle.price))
         })
 
-        val selectedItemId = arrayListOf(viewModel.onSelectBundleObservable.value?.bundleId ?: product.productId)
+        val selectedItemId = arrayListOf(viewModel.lineItemObservable.value?.bundle?.bundleId ?: product.productId)
         val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), null, 1, 1, options, selectedItemId)
         bottomFragment.show(supportFragmentManager, "Meal Selection")
     }
@@ -133,7 +123,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.onSelectProduct.value?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
+        val selectedId = viewModel.lineItemObservable.value?.productsInBundle?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
         val subtitle = "Required - 1, Max - 2"
 
         val bottomFragment = BottomPickerFragment.createInstance(
@@ -156,7 +146,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.onSelectProductGroupModifier.value?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId } ?: listOf(modifierGroup.defaultSelection.modifierId)
+        val selectedId = viewModel.lineItemObservable.value?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId } ?: listOf(modifierGroup.defaultSelection.modifierId)
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
@@ -182,21 +172,22 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     private fun handleMealSelection(selectedId: String) {
         if (product.productId == selectedId) {
             viewModel.setProductBundle(null)
+            return
         }
-        product.bundles.find { it.bundleId == selectedId }?.let { viewModel.setProductBundle(it) }
+        product.bundles.find { it.bundleId == selectedId }.let { viewModel.setProductBundle(it) }
     }
 
     private fun handleProductGroupSelections(productGroupIds: List<String>) {
-        selectedProductGroup?.let { viewModel.setProductSelectionsForProductGroup(it, productGroupIds) }
+        selectedProductGroup?.let { viewModel.setProductSelectionsForProductGroupByIds(it, productGroupIds) }
     }
 
     private fun handleProductGroupModifierSelections(selectedIds: List<String>) {
-        selectedProductGroupModifierGroup?.let { viewModel.addProductGroupModifiers(it.first, it.second, selectedIds) }
+        selectedProductGroupModifierGroup?.let { viewModel.setProductModifiersByIds(it.first, it.second, selectedIds) }
     }
 
     fun onClickAddToBag(view: View) {
         val intent = Intent().apply {
-            putExtra(EXTRA_LINE_ITEM, viewModel.createLineItem())
+            putExtra(EXTRA_LINE_ITEM, viewModel.lineItemObservable.value)
         }
         setResult(Activity.RESULT_OK, intent)
         finish()
