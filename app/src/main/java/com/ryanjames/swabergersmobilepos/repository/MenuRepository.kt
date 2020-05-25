@@ -3,15 +3,12 @@ package com.ryanjames.swabergersmobilepos.repository
 import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
-import com.ryanjames.swabergersmobilepos.helper.toLocalDateTime
 import com.ryanjames.swabergersmobilepos.mappers.MenuMapper
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.temporal.ChronoUnit
 
 class MenuRepository(sharedPreferences: SharedPreferences) {
 
@@ -28,13 +25,14 @@ class MenuRepository(sharedPreferences: SharedPreferences) {
 
     private fun databaseObservable(): Maybe<Menu> {
         return menuRealmDao.getMenu().map { menu ->
-            val cacheLifeInMinutes = menu.createdAt.toLocalDateTime().until(LocalDateTime.now(), ChronoUnit.MINUTES)
-            if (cacheLifeInMinutes >= 60 || cacheLifeInMinutes < 0) {
-                menuRealmDao.deleteMenu()
-                Menu.EMPTY
-            } else {
-                menuMapper.mapToDomain(menu)
-            }
+//            Disabling cache for now
+//            val cacheLifeInMinutes = menu.createdAt.toLocalDateTime().until(LocalDateTime.now(), ChronoUnit.MINUTES)
+//            if (cacheLifeInMinutes >= 60 || cacheLifeInMinutes < 0) {
+//                menuRealmDao.deleteMenu()
+//                Menu.EMPTY
+//            } else {
+            menuMapper.mapToDomain(menu)
+//            }
         }.filter { menu ->
             menu.categories.isNotEmpty()
         }

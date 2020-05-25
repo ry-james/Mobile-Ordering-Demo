@@ -32,6 +32,10 @@ data class LineItem(
             return bundle?.bundleName ?: product.productName
         }
 
+    fun deepCopy(): LineItem {
+        return this.copy(productsInBundle = HashMap(this.productsInBundle), modifiers = HashMap(this.modifiers))
+    }
+
     companion object {
         val EMPTY = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
     }

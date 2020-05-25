@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.StringResourceWithArgs
 import com.ryanjames.swabergersmobilepos.domain.*
+import com.ryanjames.swabergersmobilepos.helper.deepEquals
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import java.util.*
 import javax.inject.Inject
@@ -13,21 +14,33 @@ import javax.inject.Inject
 class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
 
     private var lineItem: LineItem = LineItem.EMPTY
+    private var initialLineItem: LineItem = LineItem.EMPTY
     private lateinit var product: Product
     private var isModifying = true
-    
-    fun setupWithProduct(product: Product) {
+
+    private fun initialize(product: Product, lineItem: LineItem?, isModifying: Boolean) {
         this.product = product
-        this.lineItem = createLineItem(newLineItem = true)
-        isModifying = false
-        initializeSelections()
+        this.lineItem = lineItem ?: createLineItem(newLineItem = true)
+        this.isModifying = isModifying
+
+        _strProductName.value = product.productName
+        _strProductDescription.value = product.productDescription
+        if (!isModifying) {
+            for (modifierGroup in product.modifierGroups) {
+                this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            }
+        }
+
+        initialLineItem = this.lineItem.deepCopy()
+        updateAndNotifyObservers()
+    }
+
+    fun setupWithProduct(product: Product) {
+        initialize(product, null, false)
     }
 
     fun setupWithLineItem(lineItem: LineItem) {
-        this.lineItem = lineItem
-        this.product = lineItem.product
-        isModifying = true
-        initializeSelections()
+        initialize(lineItem.product, lineItem, true)
     }
 
     private val _lineItemObservable = MutableLiveData<LineItem>()
@@ -47,21 +60,6 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private val _strAddToBagBtn = MutableLiveData<StringResourceWithArgs>()
     val strAddToBag: LiveData<StringResourceWithArgs>
         get() = _strAddToBagBtn
-
-    private fun initializeSelections() {
-        _strProductName.value = product.productName
-        _strProductDescription.value = product.productDescription
-        if (isModifying) {
-            setProductBundle(lineItem.bundle)
-            lineItem.productsInBundle.putAll(lineItem.productsInBundle)
-            lineItem.modifiers.putAll(lineItem.modifiers)
-        } else {
-            for (modifierGroup in product.modifierGroups) {
-                lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
-            }
-        }
-        updateAndNotifyObservers()
-    }
 
     fun setProductBundle(bundle: ProductBundle?) {
 
@@ -110,6 +108,13 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     fun setQuantity(quantity: Int) {
         lineItem = lineItem.copy(quantity = quantity.coerceAtLeast(1))
         updateAndNotifyObservers()
+    }
+
+    fun shouldShowDiscardChanges(): Boolean {
+        return lineItem.quantity != initialLineItem.quantity ||
+                lineItem.bundle != initialLineItem.bundle ||
+                !lineItem.modifiers.deepEquals(initialLineItem.modifiers) ||
+                !lineItem.productsInBundle.deepEquals(initialLineItem.productsInBundle)
     }
 
     private fun setProductSelectionsForProductGroup(productGroup: ProductGroup, products: List<Product>) {

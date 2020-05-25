@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -65,6 +66,36 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         setupRecyclerView()
         addSubscriptions()
 
+    }
+
+    private fun showCancelChangesDialog() {
+        AlertDialog.Builder(this)
+            .setMessage("Are you sure you want to discard your selections?")
+            .setPositiveButton("YES") { dialogInterface, _ ->
+                super.onUpPressed()
+                dialogInterface.dismiss()
+            }
+            .setNegativeButton("NO") { dialogInterface, _ ->
+                dialogInterface.dismiss()
+            }
+            .show()
+    }
+
+
+    override fun onBackPressed() {
+        if (viewModel.shouldShowDiscardChanges()) {
+            showCancelChangesDialog()
+            return
+        }
+        super.onBackPressed()
+    }
+
+    override fun onUpPressed() {
+        if (viewModel.shouldShowDiscardChanges()) {
+            showCancelChangesDialog()
+            return
+        }
+        super.onUpPressed()
     }
 
     private fun addSubscriptions() {

@@ -44,7 +44,7 @@ open class BaseActivity : AppCompatActivity() {
         tvToolbar.text = title
     }
 
-    protected fun onUpPressed() {
+    protected open fun onUpPressed() {
         finish()
     }
 }

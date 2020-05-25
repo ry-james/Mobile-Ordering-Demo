@@ -51,3 +51,17 @@ fun Any.getLoggerTag(): String {
 fun Date.toLocalDateTime(): LocalDateTime {
     return Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDateTime()
 }
+
+fun <T, K> HashMap<T, List<K>>.deepEquals(mapToCompare: HashMap<T, List<K>>): Boolean {
+    if (this.entries.size != mapToCompare.entries.size) {
+        return false
+    }
+
+    for ((key, value) in this) {
+        if (value != mapToCompare[key]) {
+            return false
+        }
+    }
+
+    return this.keys == mapToCompare.keys
+}
