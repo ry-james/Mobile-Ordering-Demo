@@ -54,7 +54,7 @@ data class ModifierGroup(
     val modifierGroupId: String,
     val modifierGroupName: String,
     val action: ModifierGroupAction,
-    val defaultSelection: ModifierInfo,
+    val defaultSelection: ModifierInfo?,
     val options: List<ModifierInfo>,
     val min: Int,
     val max: Int

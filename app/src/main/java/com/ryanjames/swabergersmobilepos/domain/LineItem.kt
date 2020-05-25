@@ -42,4 +42,9 @@ data class LineItem(
 }
 
 @Parcelize
-data class ProductModifierGroupKey(val product: Product, val modifierGroup: ModifierGroup) : Parcelable
+data class ProductModifierGroupKey(val product: Product, val modifierGroup: ModifierGroup) : Parcelable {
+
+    override fun toString(): String {
+        return "PRODUCT: ${product.productId}, MODIFIER_GROUP: ${modifierGroup.modifierGroupId}"
+    }
+}

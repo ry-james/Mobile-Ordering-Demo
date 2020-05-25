@@ -320,7 +320,7 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupName,
             input.action.toString(),
             modifierInfoRealmList,
-            input.defaultSelection.modifierId,
+            input.defaultSelection?.modifierId,
             input.min,
             input.max
         )

@@ -45,7 +45,7 @@ open class ModifierGroupRealmEntity(
     var modifierGroupName: String,
     var action: String,
     var options: RealmList<ModifierInfoRealmEntity>,
-    var defaultSelection: String,
+    var defaultSelection: String?,
     var min: Int,
     var max: Int
 ) : RealmObject() {

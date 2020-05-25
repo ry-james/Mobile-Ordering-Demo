@@ -18,16 +18,18 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private lateinit var product: Product
     private var isModifying = true
 
-    private fun initialize(product: Product, lineItem: LineItem?, isModifying: Boolean) {
+    private fun initialize(product: Product, lineItem: LineItem, isModifying: Boolean) {
         this.product = product
-        this.lineItem = lineItem ?: createLineItem(newLineItem = true)
+        this.lineItem = lineItem
         this.isModifying = isModifying
 
         _strProductName.value = product.productName
         _strProductDescription.value = product.productDescription
         if (!isModifying) {
             for (modifierGroup in product.modifierGroups) {
-                this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+                if (modifierGroup.defaultSelection != null) {
+                    this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+                }
             }
         }
 
@@ -36,7 +38,7 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setupWithProduct(product: Product) {
-        initialize(product, null, false)
+        initialize(product, LineItem.EMPTY, false)
     }
 
     fun setupWithLineItem(lineItem: LineItem) {
@@ -125,7 +127,9 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
         val newlyAddedProducts = products.minus(oldProductList)
         for (newProduct in newlyAddedProducts) {
             newProduct.modifierGroups.forEach { modifierGroup ->
-                setModifiersForProduct(newProduct, modifierGroup, listOf(modifierGroup.defaultSelection))
+                if (modifierGroup.defaultSelection != null) {
+                    setModifiersForProduct(newProduct, modifierGroup, listOf(modifierGroup.defaultSelection))
+                }
             }
         }
 
@@ -168,9 +172,9 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
         _lineItemObservable.value = createLineItem()
     }
 
-    private fun createLineItem(newLineItem: Boolean = false): LineItem {
+    private fun createLineItem(): LineItem {
         return LineItem(
-            if (newLineItem) UUID.randomUUID().toString() else lineItem.id,
+            if (lineItem == LineItem.EMPTY) UUID.randomUUID().toString() else lineItem.id,
             product,
             lineItem.bundle,
             lineItem.productsInBundle,

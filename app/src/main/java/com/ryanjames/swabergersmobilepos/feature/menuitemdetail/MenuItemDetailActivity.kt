@@ -177,7 +177,13 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.lineItemObservable.value?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId } ?: listOf(modifierGroup.defaultSelection.modifierId)
+        val modifierId = viewModel.lineItemObservable.value?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId }
+
+        val selectedId = when {
+            modifierId != null -> modifierId
+            modifierGroup.defaultSelection?.modifierId != null -> listOf(modifierGroup.defaultSelection.modifierId)
+            else -> listOf()
+        }
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
