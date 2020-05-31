@@ -2,6 +2,8 @@ package com.ryanjames.swabergersmobilepos.domain
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.util.*
+import kotlin.collections.HashMap
 
 @Parcelize
 data class LineItem(
@@ -38,6 +40,10 @@ data class LineItem(
 
     companion object {
         val EMPTY = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
+
+        fun ofProduct(product: Product): LineItem {
+            return EMPTY.copy(id = UUID.randomUUID().toString(), product = product)
+        }
     }
 }
 

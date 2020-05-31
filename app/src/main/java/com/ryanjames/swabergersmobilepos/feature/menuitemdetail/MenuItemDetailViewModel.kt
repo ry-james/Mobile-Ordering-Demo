@@ -8,7 +8,6 @@ import com.ryanjames.swabergersmobilepos.core.StringResourceWithArgs
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.deepEquals
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
-import java.util.*
 import javax.inject.Inject
 
 class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
@@ -38,7 +37,7 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setupWithProduct(product: Product) {
-        initialize(product, LineItem.EMPTY, false)
+        initialize(product, LineItem.ofProduct(product), false)
     }
 
     fun setupWithLineItem(lineItem: LineItem) {
@@ -154,32 +153,12 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun updateAndNotifyObservers() {
-        var price = lineItem.bundle?.price ?: product.price
-
-        for ((_, modifiers) in lineItem.modifiers) {
-            for (modifier in modifiers) {
-                price += modifier.priceDelta
-            }
-        }
-
-        price *= lineItem.quantity
         if (isModifying) {
-            _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, price.toTwoDigitString())
+            _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, lineItem.price.toTwoDigitString())
         } else {
-            _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, price.toTwoDigitString())
+            _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
         }
 
-        _lineItemObservable.value = createLineItem()
-    }
-
-    private fun createLineItem(): LineItem {
-        return LineItem(
-            if (lineItem == LineItem.EMPTY) UUID.randomUUID().toString() else lineItem.id,
-            product,
-            lineItem.bundle,
-            lineItem.productsInBundle,
-            lineItem.modifiers,
-            lineItem.quantity
-        )
+        _lineItemObservable.value = lineItem
     }
 }

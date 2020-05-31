@@ -70,12 +70,12 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     private fun showCancelChangesDialog() {
         AlertDialog.Builder(this)
-            .setMessage("Are you sure you want to discard your selections?")
-            .setPositiveButton("YES") { dialogInterface, _ ->
+            .setMessage(getString(R.string.cancel_changes_dialog_message))
+            .setPositiveButton(getString(R.string.cta_yes)) { dialogInterface, _ ->
                 super.onUpPressed()
                 dialogInterface.dismiss()
             }
-            .setNegativeButton("NO") { dialogInterface, _ ->
+            .setNegativeButton(getString(R.string.cta_no)) { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
             .show()
@@ -155,14 +155,14 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         }
 
         val selectedId = viewModel.lineItemObservable.value?.productsInBundle?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
-        val subtitle = "Required - 1, Max - 2"
+        val subtitle = if (productGroup.min >= 1) getString(R.string.subtitle_required, productGroup.max) else getString(R.string.subtitle_optional, productGroup.max)
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP,
             getString(R.string.select_something, productGroup.productGroupName.toUpperCase()),
             subtitle,
-            1,
-            2,
+            productGroup.min,
+            productGroup.max,
             options,
             ArrayList(selectedId)
         )

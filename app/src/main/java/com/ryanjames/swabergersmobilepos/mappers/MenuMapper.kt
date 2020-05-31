@@ -200,7 +200,10 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
         return ProductGroupRealmEntity(
             input.productGroupId,
             input.productGroupName,
-            RealmList()
+            RealmList(),
+            null,
+            input.min ?: 1,
+            input.max ?: 1
         )
     }
 
@@ -209,7 +212,9 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
             input.productGroupId,
             input.productGroupName,
             mapToEmptyBundleDomain(input.defaultProduct ?: ProductRealmEntity()),
-            mapToEmptyBundleDomain(input.options)
+            mapToEmptyBundleDomain(input.options),
+            input.min,
+            input.max
         )
     }
 
@@ -254,7 +259,10 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
         return ProductGroupRealmEntity(
             input.productGroupId,
             input.productGroupName,
-            mapDomainToEmptyBundleEntity(input.options)
+            mapDomainToEmptyBundleEntity(input.options),
+            null,
+            input.min,
+            input.max
         )
     }
 }

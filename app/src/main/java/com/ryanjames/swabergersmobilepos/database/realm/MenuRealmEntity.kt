@@ -71,7 +71,9 @@ open class ProductGroupRealmEntity(
     var productGroupId: String,
     var productGroupName: String,
     var options: RealmList<ProductRealmEntity>,
-    var defaultProduct: ProductRealmEntity? = null
+    var defaultProduct: ProductRealmEntity?,
+    var min: Int,
+    var max: Int
 ) : RealmObject() {
-    constructor() : this("", "", RealmList())
+    constructor() : this("", "", RealmList(), null, 1, 1)
 }

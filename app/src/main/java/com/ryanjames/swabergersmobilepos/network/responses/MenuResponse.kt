@@ -50,7 +50,9 @@ data class ProductGroupResponse(
     val productGroupId: String?,
     val productGroupName: String?,
     val defaultProduct: String?,
-    val options: List<String>?
+    val options: List<String>?,
+    val min: Int?,
+    val max: Int?
 )
 
 data class ModifierInfosResponse(

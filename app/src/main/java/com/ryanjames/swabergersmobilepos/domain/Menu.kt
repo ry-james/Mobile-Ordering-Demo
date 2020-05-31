@@ -83,11 +83,13 @@ data class ProductGroup(
     val productGroupId: String,
     val productGroupName: String,
     val defaultProduct: Product,
-    val options: List<Product>
+    val options: List<Product>,
+    val min: Int,
+    val max: Int
 ) : Parcelable {
 
     companion object {
-        val EMPTY = ProductGroup("", "", Product.EMPTY, listOf())
+        val EMPTY = ProductGroup("", "", Product.EMPTY, listOf(), 1, 1)
     }
 }
 

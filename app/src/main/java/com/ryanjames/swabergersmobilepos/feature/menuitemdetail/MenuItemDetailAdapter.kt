@@ -179,7 +179,7 @@ class MenuItemDetailAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(quantity: Int) {
-            binding.tvHeader.text = "QUANTITY"
+            binding.tvHeader.text = binding.root.context.getString(R.string.quantity)
             binding.ivMinus.visibility = View.VISIBLE
             binding.ivPlus.visibility = View.VISIBLE
             binding.tvQuantityValue.visibility = View.VISIBLE
