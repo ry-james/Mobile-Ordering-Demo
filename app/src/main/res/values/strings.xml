@@ -7,6 +7,7 @@
     <string name="select_meal_option">SELECT MEAL OPTION</string>
     <string name="ala_carte">Ala Carte</string>
     <string name="php_price">Php. %.2f</string>
+    <string name="usd_price">$ %.2f</string>
     <string name="select">SELECT</string>
     <string name="select_something">SELECT %s</string>
     <string name="price_delta">+%.2f</string>

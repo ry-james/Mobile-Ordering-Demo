@@ -137,9 +137,9 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     private fun showBottomFragmentForMealSelection() {
 
-        val options = arrayListOf(BottomPickerAdapter.BottomPickerItem(product.productId, getString(R.string.ala_carte), getString(R.string.php_price, product.price)))
+        val options = arrayListOf(BottomPickerAdapter.BottomPickerItem(product.productId, getString(R.string.ala_carte), getString(R.string.usd_price, product.price)))
         options.addAll(product.bundles.map { bundle ->
-            BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.php_price, bundle.price))
+            BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.usd_price, bundle.price))
         })
 
         val selectedItemId = arrayListOf(viewModel.lineItemObservable.value?.bundle?.bundleId ?: product.productId)

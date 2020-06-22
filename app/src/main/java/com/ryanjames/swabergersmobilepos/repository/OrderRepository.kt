@@ -17,7 +17,7 @@ class OrderRepository(sharedPreferences: SharedPreferences) {
     private val orderRealmDao = OrderRealmDao()
 
     fun getLocalBag(): Single<List<LineItem>> {
-        return orderRealmDao.getLineItems().map { it.lineItems.map { item -> item.toDomain() } }
+        return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }
     }
 
     fun insertLineItem(lineItem: LineItem) {

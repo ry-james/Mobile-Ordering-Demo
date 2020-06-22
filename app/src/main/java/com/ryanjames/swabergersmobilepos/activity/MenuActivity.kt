@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.activity
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -54,8 +55,27 @@ class MenuActivity : BaseActivity() {
 
     private fun addSubscriptions() {
         viewModel.menuObservable.observe(this, Observer { menu ->
+            if (menu.categories.isEmpty()) {
+                showMenuErrorLoading()
+                return@Observer
+            }
             setupViewPager(menu.categories)
         })
+
+        viewModel.errorLoadingMenuObservable.observe(this, Observer { event ->
+            if (event.getContentIfNotHandled() == true) {
+                showMenuErrorLoading()
+            }
+        })
+    }
+
+    private fun showMenuErrorLoading() {
+        AlertDialog.Builder(this)
+            .setMessage("We can't load the menu at the moment. Please try again later.")
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                finish()
+            }.show()
     }
 
     private fun setupViewPager(categories: List<Category>) {

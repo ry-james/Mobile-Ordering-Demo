@@ -53,8 +53,8 @@ class BottomPickerFragmentViewModel(
     val subtitleVisibility: LiveData<Int>
         get() = _subtitleVisibility
 
-    private val _onClickContinueButton = MutableLiveData<EventWrapper<Boolean>>()
-    val onClickContinueButtonObservable: LiveData<EventWrapper<Boolean>>
+    private val _onClickContinueButton = MutableLiveData<Event<Boolean>>()
+    val onClickContinueButtonObservable: LiveData<Event<Boolean>>
         get() = _onClickContinueButton
 
     fun selectOrRemove(id: String) {
@@ -86,7 +86,7 @@ class BottomPickerFragmentViewModel(
 
     fun onClickContinueButton(view: View) {
         _userSelectionsObservable.value?.let { listener.onUpdatePickerSelections(requestId, it.toList()) }
-        _onClickContinueButton.value = EventWrapper(true)
+        _onClickContinueButton.value = Event(true)
     }
 
     fun setTitle(text: String) {

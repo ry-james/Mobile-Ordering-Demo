@@ -22,7 +22,7 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
         val productGroupRealmList = RealmList<ProductGroupRealmEntity>()
 
         input.modifierGroups?.let {
-            val modifierGroupList = modifierGroupMapper.mapToEntity(input.modifierGroups)
+            val modifierGroupList = modifierGroupMapper.mapToEntity(it)
             modifierGroupRealmList.addAll(modifierGroupList)
         }
 
@@ -300,7 +300,7 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupName,
             input.action ?: "",
             modifierInfoRealmList,
-            input.defaultSelection ?: "",
+            input.defaultSelection,
             input.min ?: 1,
             input.max ?: 1
         )

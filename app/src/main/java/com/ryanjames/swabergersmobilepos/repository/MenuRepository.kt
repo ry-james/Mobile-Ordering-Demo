@@ -24,14 +24,14 @@ class MenuRepository(sharedPreferences: SharedPreferences) {
     }
 
     private fun databaseObservable(): Maybe<Menu> {
-        return menuRealmDao.getMenu().map { menu ->
+        return menuRealmDao.getMenu().map { menuRealm ->
 //            Disabling cache for now
 //            val cacheLifeInMinutes = menu.createdAt.toLocalDateTime().until(LocalDateTime.now(), ChronoUnit.MINUTES)
 //            if (cacheLifeInMinutes >= 60 || cacheLifeInMinutes < 0) {
 //                menuRealmDao.deleteMenu()
 //                Menu.EMPTY
 //            } else {
-            menuMapper.mapToDomain(menu)
+            menuMapper.mapToDomain(menuRealm)
 //            }
         }.filter { menu ->
             menu.categories.isNotEmpty()
