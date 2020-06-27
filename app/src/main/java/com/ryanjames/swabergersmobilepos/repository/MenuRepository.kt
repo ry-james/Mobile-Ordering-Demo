@@ -31,7 +31,7 @@ class MenuRepository(sharedPreferences: SharedPreferences) {
 //                menuRealmDao.deleteMenu()
 //                Menu.EMPTY
 //            } else {
-            menuMapper.mapToDomain(menuRealm)
+            menuMapper.mapLocalToDomain(menuRealm)
 //            }
         }.filter { menu ->
             menu.categories.isNotEmpty()
@@ -40,9 +40,9 @@ class MenuRepository(sharedPreferences: SharedPreferences) {
 
     private fun apiObservable(): Single<Menu> {
         return swabergersService.getMenu()
-            .doOnSuccess { menuResponse -> menuRealmDao.saveMenu(menuMapper.mapToEntity(menuResponse)) }
+            .doOnSuccess { menuResponse -> menuRealmDao.saveMenu(menuMapper.mapRemoteToLocal(menuResponse)) }
             .map { menu ->
-                menuMapper.mapToDomain(menuMapper.mapToEntity(menu))
+                menuMapper.mapLocalToDomain(menuMapper.mapRemoteToLocal(menu))
             }
     }
 

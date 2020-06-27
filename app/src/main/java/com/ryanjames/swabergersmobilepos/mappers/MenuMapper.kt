@@ -14,7 +14,7 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
     private val productBundleMapper = ProductBundleMapper()
     private val productGroupMapper = ProductGroupMapper()
 
-    override fun mapToEntity(input: MenuResponse): MenuRealmEntity {
+    override fun mapRemoteToLocal(input: MenuResponse): MenuRealmEntity {
         val categoryRealmList = RealmList<CategoryRealmEntity>()
         val modifierGroupRealmList = RealmList<ModifierGroupRealmEntity>()
         val productRealmList = RealmList<ProductRealmEntity>()
@@ -22,17 +22,17 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
         val productGroupRealmList = RealmList<ProductGroupRealmEntity>()
 
         input.modifierGroups?.let {
-            val modifierGroupList = modifierGroupMapper.mapToEntity(it)
+            val modifierGroupList = modifierGroupMapper.mapRemoteToLocal(it)
             modifierGroupRealmList.addAll(modifierGroupList)
         }
 
         input.bundles?.forEach { bundleResponse ->
-            val bundleEntity = productBundleMapper.mapToEntity(bundleResponse)
+            val bundleEntity = productBundleMapper.mapRemoteToLocal(bundleResponse)
             bundleRealmList.add(bundleEntity)
         }
 
         input.products?.forEach { productResponse ->
-            val productEntity = productMapper.mapToEntity(productResponse)
+            val productEntity = productMapper.mapRemoteToLocal(productResponse)
 
             productResponse.modifierGroups?.forEach { modifierGroupId ->
                 modifierGroupRealmList.find { it.modifierGroupId == modifierGroupId }?.let { productEntity.modifierGroups.add(it) }
@@ -46,7 +46,7 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
         }
 
         input.productGroups?.forEach { productGroupResponse ->
-            val productGroupEntity = productGroupMapper.mapToEntity(productGroupResponse)
+            val productGroupEntity = productGroupMapper.mapRemoteToLocal(productGroupResponse)
 
             productGroupResponse.defaultProduct?.let { productId ->
                 productRealmList.find { it.productId == productId }?.let { productGroupEntity.defaultProduct = it }
@@ -70,7 +70,7 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
         }
 
         input.categories?.forEach { categoryResponse ->
-            val categoryEntity = categoryMapper.mapToEntity(categoryResponse)
+            val categoryEntity = categoryMapper.mapRemoteToLocal(categoryResponse)
             categoryResponse.products?.forEach { productId ->
                 productRealmList.find { it.productId == productId }?.let { categoryEntity.products.add(it) }
             }
@@ -80,11 +80,11 @@ class MenuMapper : DataMapper<MenuRealmEntity, MenuResponse, Menu> {
         return MenuRealmEntity(categoryRealmList, Date())
     }
 
-    override fun mapToDomain(input: MenuRealmEntity): Menu {
-        return Menu(categoryMapper.mapToDomain(input.categories))
+    override fun mapLocalToDomain(input: MenuRealmEntity): Menu {
+        return Menu(categoryMapper.mapLocalToDomain(input.categories))
     }
 
-    override fun mapDomainToEntity(input: Menu): MenuRealmEntity {
+    override fun mapDomainToLocal(input: Menu): MenuRealmEntity {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
@@ -93,18 +93,18 @@ class CategoryMapper : DataMapper<CategoryRealmEntity, CategoryResponse, Categor
 
     private val productMapper = ProductMapper()
 
-    override fun mapToEntity(input: CategoryResponse): CategoryRealmEntity {
+    override fun mapRemoteToLocal(input: CategoryResponse): CategoryRealmEntity {
         if (input.categoryId != null && input.categoryName != null) {
             return CategoryRealmEntity(input.categoryId, input.categoryName, RealmList())
         }
         return CategoryRealmEntity()
     }
 
-    override fun mapToDomain(input: CategoryRealmEntity): Category {
-        return Category(input.categoryId, input.categoryName, productMapper.mapToDomain(input.products))
+    override fun mapLocalToDomain(input: CategoryRealmEntity): Category {
+        return Category(input.categoryId, input.categoryName, productMapper.mapLocalToDomain(input.products))
     }
 
-    override fun mapDomainToEntity(input: Category): CategoryRealmEntity {
+    override fun mapDomainToLocal(input: Category): CategoryRealmEntity {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
@@ -115,7 +115,7 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
     private val modifierGroupMapper = ModifierGroupMapper()
     private val bundleMapper = ProductBundleMapper()
 
-    override fun mapToEntity(input: ProductResponse): ProductRealmEntity {
+    override fun mapRemoteToLocal(input: ProductResponse): ProductRealmEntity {
         if (input.productId == null || input.productName == null) return ProductRealmEntity()
         return ProductRealmEntity(
             input.productId,
@@ -128,27 +128,27 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
         )
     }
 
-    override fun mapToDomain(input: ProductRealmEntity): Product {
+    override fun mapLocalToDomain(input: ProductRealmEntity): Product {
         return Product(
             input.productId,
             input.productName,
             input.productDescription,
             input.price,
             input.receiptText,
-            bundleMapper.mapToDomain(input.bundles),
-            modifierGroupMapper.mapToDomain(input.modifierGroups)
+            bundleMapper.mapLocalToDomain(input.bundles),
+            modifierGroupMapper.mapLocalToDomain(input.modifierGroups)
         )
     }
 
-    override fun mapDomainToEntity(input: Product): ProductRealmEntity {
+    override fun mapDomainToLocal(input: Product): ProductRealmEntity {
         return ProductRealmEntity(
             input.productId,
             input.productName,
             input.productDescription,
             input.price,
             input.receiptText,
-            modifierGroupMapper.mapDomainToEntity(input.modifierGroups),
-            bundleMapper.mapDomainToEntity(input.bundles)
+            modifierGroupMapper.mapDomainToLocal(input.modifierGroups),
+            bundleMapper.mapDomainToLocal(input.bundles)
         )
     }
 }
@@ -157,7 +157,7 @@ class ProductBundleMapper : DataMapper<ProductBundleRealmEntity, BundleResponse,
 
     private val productGroupMapper = ProductGroupMapper()
 
-    override fun mapToEntity(input: BundleResponse): ProductBundleRealmEntity {
+    override fun mapRemoteToLocal(input: BundleResponse): ProductBundleRealmEntity {
         if (input.bundleId == null || input.bundleName == null) return ProductBundleRealmEntity()
         return ProductBundleRealmEntity(
             input.bundleId,
@@ -169,24 +169,24 @@ class ProductBundleMapper : DataMapper<ProductBundleRealmEntity, BundleResponse,
     }
 
 
-    override fun mapToDomain(input: ProductBundleRealmEntity): ProductBundle {
+    override fun mapLocalToDomain(input: ProductBundleRealmEntity): ProductBundle {
         return ProductBundle(
             input.bundleId,
             input.bundleName,
             input.price,
             input.receiptText,
-            productGroupMapper.mapToDomain(input.productGroups)
+            productGroupMapper.mapLocalToDomain(input.productGroups)
         )
     }
 
-    override fun mapDomainToEntity(input: ProductBundle): ProductBundleRealmEntity {
+    override fun mapDomainToLocal(input: ProductBundle): ProductBundleRealmEntity {
 
         return ProductBundleRealmEntity(
             input.bundleId,
             input.bundleName,
             input.price,
             input.receiptText,
-            productGroupMapper.mapDomainToEntity(input.productGroups)
+            productGroupMapper.mapDomainToLocal(input.productGroups)
         )
     }
 }
@@ -195,7 +195,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
 
     private val modifierGroupMapper = ModifierGroupMapper()
 
-    override fun mapToEntity(input: ProductGroupResponse): ProductGroupRealmEntity {
+    override fun mapRemoteToLocal(input: ProductGroupResponse): ProductGroupRealmEntity {
         if (input.productGroupId == null || input.productGroupName == null) return ProductGroupRealmEntity()
         return ProductGroupRealmEntity(
             input.productGroupId,
@@ -207,7 +207,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
         )
     }
 
-    override fun mapToDomain(input: ProductGroupRealmEntity): ProductGroup {
+    override fun mapLocalToDomain(input: ProductGroupRealmEntity): ProductGroup {
         return ProductGroup(
             input.productGroupId,
             input.productGroupName,
@@ -227,7 +227,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
             input.price,
             input.receiptText,
             listOf(),
-            modifierGroupMapper.mapToDomain(input.modifierGroups)
+            modifierGroupMapper.mapLocalToDomain(input.modifierGroups)
         )
     }
 
@@ -242,7 +242,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
             input.productDescription,
             input.price,
             input.receiptText,
-            modifierGroupMapper.mapDomainToEntity(input.modifierGroups),
+            modifierGroupMapper.mapDomainToLocal(input.modifierGroups),
             RealmList()
         )
     }
@@ -254,7 +254,7 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
     }
 
 
-    override fun mapDomainToEntity(input: ProductGroup): ProductGroupRealmEntity {
+    override fun mapDomainToLocal(input: ProductGroup): ProductGroupRealmEntity {
 
         return ProductGroupRealmEntity(
             input.productGroupId,
@@ -269,16 +269,16 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
 
 class ModifierInfoMapper : DataMapper<ModifierInfoRealmEntity, ModifierInfoResponse, ModifierInfo> {
 
-    override fun mapToEntity(input: ModifierInfoResponse): ModifierInfoRealmEntity {
+    override fun mapRemoteToLocal(input: ModifierInfoResponse): ModifierInfoRealmEntity {
         if (input.modifierId == null || input.modifierName == null) return ModifierInfoRealmEntity()
         return ModifierInfoRealmEntity(input.modifierId, input.modifierName, input.priceDelta ?: 0f, input.receiptText ?: "")
     }
 
-    override fun mapToDomain(input: ModifierInfoRealmEntity): ModifierInfo {
+    override fun mapLocalToDomain(input: ModifierInfoRealmEntity): ModifierInfo {
         return ModifierInfo(input.modifierId, input.modifierName, input.priceDelta, input.receiptText)
     }
 
-    override fun mapDomainToEntity(input: ModifierInfo): ModifierInfoRealmEntity {
+    override fun mapDomainToLocal(input: ModifierInfo): ModifierInfoRealmEntity {
         return ModifierInfoRealmEntity(input.modifierId, input.modifierName, input.priceDelta, input.receiptText)
     }
 }
@@ -287,12 +287,12 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
 
     private val modifierInfoMapper = ModifierInfoMapper()
 
-    override fun mapToEntity(input: ModifierGroupResponse): ModifierGroupRealmEntity {
+    override fun mapRemoteToLocal(input: ModifierGroupResponse): ModifierGroupRealmEntity {
         if (input.modifierGroupId == null || input.modifierGroupName == null) return ModifierGroupRealmEntity()
 
         val modifierInfoRealmList = RealmList<ModifierInfoRealmEntity>()
         input.options?.let {
-            modifierInfoRealmList.addAll(modifierInfoMapper.mapToEntity(it))
+            modifierInfoRealmList.addAll(modifierInfoMapper.mapRemoteToLocal(it))
         }
 
         return ModifierGroupRealmEntity(
@@ -306,22 +306,22 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
         )
     }
 
-    override fun mapToDomain(input: ModifierGroupRealmEntity): ModifierGroup {
+    override fun mapLocalToDomain(input: ModifierGroupRealmEntity): ModifierGroup {
         return ModifierGroup(
             input.modifierGroupId,
             input.modifierGroupName,
             input.action.toModifierGroupAction(),
-            modifierInfoMapper.mapToDomain(input.getDefaultSelection() ?: ModifierInfoRealmEntity()),
-            modifierInfoMapper.mapToDomain(input.options),
+            modifierInfoMapper.mapLocalToDomain(input.getDefaultSelection() ?: ModifierInfoRealmEntity()),
+            modifierInfoMapper.mapLocalToDomain(input.options),
             input.min,
             input.max
         )
     }
 
-    override fun mapDomainToEntity(input: ModifierGroup): ModifierGroupRealmEntity {
+    override fun mapDomainToLocal(input: ModifierGroup): ModifierGroupRealmEntity {
 
         val modifierInfoRealmList = RealmList<ModifierInfoRealmEntity>()
-        input.options.let { modifierInfoRealmList.addAll(modifierInfoMapper.mapDomainToEntity(it)) }
+        input.options.let { modifierInfoRealmList.addAll(modifierInfoMapper.mapDomainToLocal(it)) }
 
         return ModifierGroupRealmEntity(
             input.modifierGroupId,

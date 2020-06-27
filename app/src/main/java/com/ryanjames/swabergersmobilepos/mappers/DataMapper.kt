@@ -4,22 +4,22 @@ import io.realm.RealmList
 
 interface DataMapper<Entity, Api, Domain> {
 
-    fun mapToEntity(input: Api): Entity
+    fun mapRemoteToLocal(input: Api): Entity
 
-    fun mapToDomain(input: Entity): Domain
+    fun mapLocalToDomain(input: Entity): Domain
 
-    fun mapDomainToEntity(input: Domain): Entity
+    fun mapDomainToLocal(input: Domain): Entity
 
-    fun mapToEntity(input: List<Api>): List<Entity> {
-        return input.map { this.mapToEntity(it) }
+    fun mapRemoteToLocal(input: List<Api>): List<Entity> {
+        return input.map { this.mapRemoteToLocal(it) }
     }
 
-    fun mapToDomain(input: List<Entity>): List<Domain> {
-        return input.map { this.mapToDomain(it) }
+    fun mapLocalToDomain(input: List<Entity>): List<Domain> {
+        return input.map { this.mapLocalToDomain(it) }
     }
 
-    fun mapDomainToEntity(input: List<Domain>): RealmList<Entity> {
-        return RealmList<Entity>().apply { addAll(input.map { this@DataMapper.mapDomainToEntity(it) }) }
+    fun mapDomainToLocal(input: List<Domain>): RealmList<Entity> {
+        return RealmList<Entity>().apply { addAll(input.map { this@DataMapper.mapDomainToLocal(it) }) }
     }
 }
 

@@ -73,8 +73,8 @@ fun LineItemRealmEntity.toDomain(): LineItem {
     val bundleMapper = ProductBundleMapper()
 
 
-    val product = product?.let { productMapper.mapToDomain(it) } ?: Product.EMPTY
-    val bundle = productBundle?.let { bundleMapper.mapToDomain(it) }
+    val product = product?.let { productMapper.mapLocalToDomain(it) } ?: Product.EMPTY
+    val bundle = productBundle?.let { bundleMapper.mapLocalToDomain(it) }
 
     val products = hashMapOf<ProductGroup, List<Product>>()
     productsInBundle.map {
@@ -95,8 +95,8 @@ fun ProductsInBundleRealmEntity.toDomain(): Pair<ProductGroup, List<Product>> {
     val productGroupMapper = ProductGroupMapper()
     val productMapper = ProductMapper()
 
-    val productGroup = productGroupRealmEntity?.let { productGroupMapper.mapToDomain(it) } ?: ProductGroup.EMPTY
-    val products = productMapper.mapToDomain(products)
+    val productGroup = productGroupRealmEntity?.let { productGroupMapper.mapLocalToDomain(it) } ?: ProductGroup.EMPTY
+    val products = productMapper.mapLocalToDomain(products)
     return Pair(productGroup, products)
 }
 
@@ -105,9 +105,9 @@ fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List
     val modifierInfoMapper = ModifierInfoMapper()
     val productMapper = ProductMapper()
 
-    val modifiers = modifierInfoMapper.mapToDomain(modifiers)
-    val product = product?.let { productMapper.mapToDomain(it) } ?: Product.EMPTY
-    val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapToDomain(it) } ?: ModifierGroup.EMPTY
+    val modifiers = modifierInfoMapper.mapLocalToDomain(modifiers)
+    val product = product?.let { productMapper.mapLocalToDomain(it) } ?: Product.EMPTY
+    val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapLocalToDomain(it) } ?: ModifierGroup.EMPTY
     return Pair(ProductModifierGroupKey(product, modifierGroup), modifiers)
 }
 
@@ -160,5 +160,5 @@ fun LineItem.toRemoteEntity(): LineItemRequestBody {
 
     }
 
-    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList)
+    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList, product.productId)
 }
