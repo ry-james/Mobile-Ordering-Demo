@@ -4,7 +4,10 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.ryanjames.swabergersmobilepos.helper.SharedPrefsKeys
 import com.ryanjames.swabergersmobilepos.network.ServiceGenerator
-import com.ryanjames.swabergersmobilepos.network.responses.*
+import com.ryanjames.swabergersmobilepos.network.responses.LoginRequestBody
+import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
+import com.ryanjames.swabergersmobilepos.network.responses.MenuResponse
+import com.ryanjames.swabergersmobilepos.network.responses.OrderBody
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.AuthTokenInterceptor
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,18 +27,13 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
         }
 
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         httpClientBuilder.addInterceptor(loggingInterceptor)
 
         val client = httpClientBuilder.build()
 
         val retrofit = ServiceGenerator.builder.client(client).build()
         return retrofit.create(SwabergersApi::class.java)
-    }
-
-
-    fun getModifierInfos(): Single<ModifierInfosResponse> {
-        return createService().getModifierInfos()
     }
 
     fun getMenu(): Single<MenuResponse> {

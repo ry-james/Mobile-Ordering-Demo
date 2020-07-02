@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.repository
 
-import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
@@ -11,12 +10,13 @@ import com.ryanjames.swabergersmobilepos.mappers.toEntity
 import com.ryanjames.swabergersmobilepos.mappers.toRemoteEntity
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Single
+import javax.inject.Inject
 
-class OrderRepository(sharedPreferences: SharedPreferences) {
-
-    private val swabergersService = SwabergersService(sharedPreferences)
-    private val orderRealmDao = OrderRealmDao()
-    private val globalRealmDao = GlobalRealmDao()
+class OrderRepository @Inject constructor(
+    val swabergersService: SwabergersService,
+    val orderRealmDao: OrderRealmDao,
+    val globalRealmDao: GlobalRealmDao
+) {
 
     fun getLocalBag(): Single<List<LineItem>> {
         return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }

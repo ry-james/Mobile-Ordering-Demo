@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.repository
 
-import android.content.SharedPreferences
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.mappers.MenuMapper
@@ -9,13 +8,12 @@ import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
+import javax.inject.Inject
 
-class MenuRepository(sharedPreferences: SharedPreferences) {
-
-    private val menuRealmDao = MenuRealmDao()
-
-    private val swabergersService: SwabergersService =
-        SwabergersService(sharedPreferences)
+class MenuRepository @Inject constructor(
+    val swabergersService: SwabergersService,
+    val menuRealmDao: MenuRealmDao
+) {
 
     private val menuMapper = MenuMapper()
 

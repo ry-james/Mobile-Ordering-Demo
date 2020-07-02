@@ -8,11 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ServiceGenerator {
 
-//    val API_BASE_URL = "https://test-swabergers.herokuapp.com/"
+    //    val API_BASE_URL = "https://test-swabergers.herokuapp.com/"
     val API_BASE_URL = "http://10.0.2.2:5000"
-
-    private val httpClient = OkHttpClient.Builder()
-    private val okHttpClient = OkHttpClient()
 
     val builder = Retrofit.Builder()
         .baseUrl(API_BASE_URL)
@@ -23,20 +20,17 @@ object ServiceGenerator {
         return createService(serviceClass, null)
     }
 
-    fun <S> createService(serviceClass: Class<S>, authToken: String?): S {
+    private fun <S> createService(serviceClass: Class<S>, authToken: String?): S {
         if (authToken != null) {
             addRequestHeaders(authToken)
         }
-
-        
-//        val client = httpClient.authenticator(TokenAuthenticator()).build()
-
-//        val retrofit = builder.client(client).build()
+        // val client = httpClient.authenticator(TokenAuthenticator()).build()
+        // val retrofit = builder.client(client).build()
         return builder.build().create(serviceClass)
     }
 
     private fun addRequestHeaders(authToken: String?) {
-        httpClient.interceptors().add(Interceptor { chain ->
+        OkHttpClient.Builder().interceptors().add(Interceptor { chain ->
             val original = chain.request()
 
             // Request customization: add request headers
