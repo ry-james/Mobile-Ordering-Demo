@@ -1,6 +1,7 @@
 package com.ryanjames.swabergersmobilepos.repository
 
 import android.content.SharedPreferences
+import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
 import com.ryanjames.swabergersmobilepos.domain.LineItem
@@ -15,13 +16,19 @@ class OrderRepository(sharedPreferences: SharedPreferences) {
 
     private val swabergersService = SwabergersService(sharedPreferences)
     private val orderRealmDao = OrderRealmDao()
+    private val globalRealmDao = GlobalRealmDao()
 
     fun getLocalBag(): Single<List<LineItem>> {
         return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }
     }
 
     fun insertLineItem(lineItem: LineItem) {
-        executeRealmTransaction { realm -> orderRealmDao.insertLineItem(realm, lineItem.toEntity(realm)) }
+        executeRealmTransaction { realm ->
+            if (orderRealmDao.lineItemsCount(realm) == 0) {
+                globalRealmDao.createLocalBagOrderId(realm)
+            }
+            orderRealmDao.insertLineItem(realm, lineItem.toEntity(realm))
+        }
     }
 
     fun updateLineItem(lineItem: LineItem) {
@@ -29,10 +36,19 @@ class OrderRepository(sharedPreferences: SharedPreferences) {
     }
 
     fun postOrder(order: Order): Single<Boolean> {
-        return swabergersService.postOrder(order.toRemoteEntity()).map { true }
+        var orderId = globalRealmDao.getLocalBagOrderId()
+        if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {
+            executeRealmTransaction { realm ->
+                orderId = globalRealmDao.createLocalBagOrderId(realm)
+            }
+        }
+        return swabergersService.postOrder(order.toRemoteEntity(orderId)).map { true }
     }
 
     fun clearLocalBag() {
-        executeRealmTransaction { realm -> orderRealmDao.deleteAllLineItems(realm) }
+        executeRealmTransaction { realm ->
+            orderRealmDao.deleteAllLineItems(realm)
+            globalRealmDao.clearLocalBagOrderId(realm)
+        }
     }
 }

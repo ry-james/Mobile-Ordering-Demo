@@ -30,4 +30,5 @@
     <string name="cta_no">NO</string>
     <string name="subtitle_required">Required (Max : %d)</string>
     <string name="subtitle_optional">Optional (Max : %d)</string>
+    <string name="launch_menu"><i>Launch</i> <u>Menu</u></string>
 </resources>

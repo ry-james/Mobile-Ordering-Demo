@@ -22,8 +22,12 @@ class OrderRealmDao {
         }
     }
 
-    fun insertLineItem(realm: Realm, lineItemRealmEntity: LineItemRealmEntity) {
+    fun lineItemsCount(realm: Realm): Int {
+        val result = realm.where(LocalBagRealmEntity::class.java).findFirst()
+        return result?.lineItems?.size ?: 0
+    }
 
+    fun insertLineItem(realm: Realm, lineItemRealmEntity: LineItemRealmEntity) {
         realm.insert(lineItemRealmEntity)
         realm.where(LocalBagRealmEntity::class.java).findFirst()?.apply {
             lineItems.add(lineItemRealmEntity)
