@@ -46,6 +46,14 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val total: LiveData<String>
         get() = _total
 
+    private val _onOrderSucceeded = MutableLiveData<Boolean>()
+    val onOrderSucceeded: LiveData<Boolean>
+        get() = _onOrderSucceeded
+
+    private val _onOrderFailed = MutableLiveData<Boolean>()
+    val orderFailed: LiveData<Boolean>
+        get() = _onOrderFailed
+
     init {
         updateBagVisibility()
     }
@@ -79,13 +87,24 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         updateBagVisibility()
     }
 
+    fun clearBag() {
+        order.lineItems.clear()
+        updateBagVisibility()
+    }
+
     fun postOrder() {
         compositeDisposable.add(
             orderRepository.postOrder(order)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("ORDER", "CREATED") },
-                    { it.printStackTrace() })
+                .subscribe({
+                    Log.d("ORDER", "CREATED")
+                    orderRepository.clearLocalBag()
+                    _onOrderSucceeded.postValue(true)
+                }, {
+                    it.printStackTrace()
+                    _onOrderFailed.postValue(true)
+                })
         )
     }
 

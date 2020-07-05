@@ -1,11 +1,13 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
@@ -43,7 +45,32 @@ class BagSummaryActivity : BaseActivity() {
         binding.lifecycleOwner = this
         setToolbarTitle(getString(R.string.bag_summary_toolbar_title))
         setupRecyclerView()
+        subscribe()
     }
+
+    private fun subscribe() {
+        viewModel.onOrderSucceeded.observe(this, Observer {
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.order_created_message))
+                .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
+                    viewModel.clearBag()
+                    dialogInterface.dismiss()
+                }.setCancelable(false)
+                .show()
+        })
+
+        viewModel.orderFailed.observe(this, Observer {
+            AlertDialog.Builder(this)
+                .setMessage(getString(R.string.something_went_wrong))
+                .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    viewModel.postOrder()
+                }
+                .setNegativeButton(getString(R.string.later_cta)) { dialogInterface, _ -> dialogInterface.dismiss() }
+                .show()
+        })
+    }
+
 
     private fun setupRecyclerView() {
         adapter = BagItemAdapter(order.lineItems, object : BagItemAdapter.BagItemAdapterListener {

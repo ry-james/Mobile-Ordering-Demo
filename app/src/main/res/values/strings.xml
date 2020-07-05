@@ -31,4 +31,9 @@
     <string name="subtitle_required">Required (Max : %d)</string>
     <string name="subtitle_optional">Optional (Max : %d)</string>
     <string name="launch_menu"><i>Launch</i> <u>Menu</u></string>
+    <string name="ok_cta">OK</string>
+    <string name="order_created_message">Your order is created.</string>
+    <string name="something_went_wrong">Something went wrong. Please try again.</string>
+    <string name="later_cta">Later</string>
+    <string name="try_again_cta">Try again</string>
 </resources>

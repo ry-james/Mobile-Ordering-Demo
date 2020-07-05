@@ -22,7 +22,7 @@ open class BaseActivity : AppCompatActivity() {
         if (error is SocketTimeoutException) {
             AlertDialog.Builder(this)
                 .setMessage("The network call timed out. Please try again.")
-                .setPositiveButton("OK") { dialogInterface, _ -> dialogInterface.dismiss() }
+                .setPositiveButton(R.string.ok_cta) { dialogInterface, _ -> dialogInterface.dismiss() }
                 .show()
         }
     }
