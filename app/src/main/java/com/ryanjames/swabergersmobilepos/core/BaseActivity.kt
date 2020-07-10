@@ -1,15 +1,15 @@
 package com.ryanjames.swabergersmobilepos.core
 
+import android.content.pm.ActivityInfo
+import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.helper.getLoggerTag
-import java.net.SocketTimeoutException
 
 open class BaseActivity : AppCompatActivity() {
 
@@ -18,13 +18,9 @@ open class BaseActivity : AppCompatActivity() {
             override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
         }
 
-    protected fun handleError(error: Throwable) {
-        if (error is SocketTimeoutException) {
-            AlertDialog.Builder(this)
-                .setMessage("The network call timed out. Please try again.")
-                .setPositiveButton(R.string.ok_cta) { dialogInterface, _ -> dialogInterface.dismiss() }
-                .show()
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
     }
 
     override fun onResume() {

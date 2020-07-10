@@ -4,6 +4,7 @@ import android.app.Application
 import com.ryanjames.swabergersmobilepos.activity.MainActivity
 import com.ryanjames.swabergersmobilepos.activity.MenuActivity
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
+import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import dagger.BindsInstance
 import dagger.Component
@@ -29,4 +30,6 @@ interface ApplicationComponent {
     fun inject(bagSummaryActivity: BagSummaryActivity)
 
     fun inject(menuItemDetailActivity: MenuItemDetailActivity)
+
+    fun inject(loginActivity: LoginActivity)
 }

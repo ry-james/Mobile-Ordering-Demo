@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
+import com.ryanjames.swabergersmobilepos.feature.login.LoginViewModel
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
@@ -36,6 +37,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MenuItemDetailViewModel::class)
     internal abstract fun bindMenuItemDetailViewModel(viewModel: MenuItemDetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginViewModel::class)
+    internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
 
     //Add more ViewModels here
 }

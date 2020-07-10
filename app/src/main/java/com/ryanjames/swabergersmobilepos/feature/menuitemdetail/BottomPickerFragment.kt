@@ -67,10 +67,12 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
     private fun fullyExpandBottomSheet() {
         dialog?.setOnShowListener { dialog ->
             val bottomSheet = dialog as BottomSheetDialog
-            val frameLayout = bottomSheet.findViewById<FrameLayout>(R.id.design_bottom_sheet)
-            val bottomSheetBehavior = BottomSheetBehavior.from(frameLayout)
-            frameLayout?.height?.let { bottomSheetBehavior.peekHeight = it }
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheet.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.also { frameLayout ->
+                val bottomSheetBehavior = BottomSheetBehavior.from(frameLayout)
+                frameLayout.height.let { bottomSheetBehavior.peekHeight = it }
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+
         }
     }
 

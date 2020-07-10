@@ -65,3 +65,7 @@ fun <T, K> HashMap<T, List<K>>.deepEquals(mapToCompare: HashMap<T, List<K>>): Bo
 
     return this.keys == mapToCompare.keys
 }
+
+fun String.isBlankOrEmpty(): Boolean {
+    return isBlank() || isEmpty()
+}

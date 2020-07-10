@@ -60,11 +60,11 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private fun updateBagVisibility() {
         if (order.lineItems.isEmpty()) {
-            _emptyBagVisibility.postValue(View.VISIBLE)
-            _nonEmptyBagVisibility.postValue(View.GONE)
+            _emptyBagVisibility.value = View.VISIBLE
+            _nonEmptyBagVisibility.value = View.GONE
         } else {
-            _emptyBagVisibility.postValue(View.GONE)
-            _nonEmptyBagVisibility.postValue(View.VISIBLE)
+            _emptyBagVisibility.value = View.GONE
+            _nonEmptyBagVisibility.value = View.VISIBLE
         }
 
     }
@@ -100,10 +100,10 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 .subscribe({
                     Log.d("ORDER", "CREATED")
                     orderRepository.clearLocalBag()
-                    _onOrderSucceeded.postValue(true)
+                    _onOrderSucceeded.value = true
                 }, {
                     it.printStackTrace()
-                    _onOrderFailed.postValue(true)
+                    _onOrderFailed.value = true
                 })
         )
     }

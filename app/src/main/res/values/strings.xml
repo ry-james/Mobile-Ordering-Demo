@@ -36,4 +36,12 @@
     <string name="something_went_wrong">Something went wrong. Please try again.</string>
     <string name="later_cta">Later</string>
     <string name="try_again_cta">Try again</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="title">Mobile POS DEMO</string>
+    <string name="submit">Submit</string>
+    <string name="log_in_failed">Log in failed.</string>
+    <string name="password_empty">Your password cannot be empty.</string>
+    <string name="username_empty">Your username cannot be empty.</string>
+    <string name="username_password_empty">Your username and password cannot be empty.</string>
 </resources>
