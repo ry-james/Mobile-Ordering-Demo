@@ -37,9 +37,12 @@ class LoginActivity : BaseActivity() {
     private fun subscribe() {
         viewModel.loginSuccess.observe(this, Observer {
             Toast.makeText(this, "Login success", Toast.LENGTH_SHORT).show()
+            hideLoadingDialog()
         })
 
         viewModel.loginFailure.observe(this, Observer { error ->
+
+            hideLoadingDialog()
 
             val errorMessage = when (error) {
                 LoginViewModel.LoginError.LOGIN_ERROR -> getString(R.string.log_in_failed)
@@ -58,6 +61,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun onClickSubmit(view: View) {
+        showLoadingDialog(getString(R.string.signing_in))
         viewModel.login()
     }
 }

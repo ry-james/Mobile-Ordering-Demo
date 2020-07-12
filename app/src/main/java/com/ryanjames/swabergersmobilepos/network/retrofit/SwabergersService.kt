@@ -14,6 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 class SwabergersService(private val sharedPrefs: SharedPreferences) {
 
@@ -53,7 +54,7 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
                 }
             }.doOnError { error ->
                 Log.e("ERROR", error.message, error)
-            }
+            }.delaySubscription(3000, TimeUnit.MILLISECONDS)
     }
 
     fun postOrder(orderBody: OrderBody): Single<OrderBody> {

@@ -1,8 +1,10 @@
 package com.ryanjames.swabergersmobilepos.core
 
+import android.app.AlertDialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,8 @@ open class BaseActivity : AppCompatActivity() {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
         }
+
+    private var loadingDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,21 @@ open class BaseActivity : AppCompatActivity() {
             return
         }
         tvToolbar.text = title
+    }
+
+    protected fun showLoadingDialog(message: String = getString(R.string.loading)) {
+        val loadingView = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
+        val tvLoadingMessage = loadingView.findViewById(R.id.tvLoadingMessage) as TextView
+        tvLoadingMessage.text = message
+
+        loadingDialog = AlertDialog.Builder(this)
+            .setView(loadingView)
+            .setCancelable(false)
+            .show()
+    }
+
+    protected fun hideLoadingDialog() {
+        loadingDialog?.dismiss()
     }
 
     protected open fun onUpPressed() {
