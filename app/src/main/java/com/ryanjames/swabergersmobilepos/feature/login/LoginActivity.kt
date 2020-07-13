@@ -2,7 +2,6 @@ package com.ryanjames.swabergersmobilepos.feature.login
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -12,6 +11,7 @@ import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityLoginBinding
+import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import javax.inject.Inject
 
 class LoginActivity : BaseActivity() {
@@ -36,8 +36,9 @@ class LoginActivity : BaseActivity() {
 
     private fun subscribe() {
         viewModel.loginSuccess.observe(this, Observer {
-            Toast.makeText(this, "Login success", Toast.LENGTH_SHORT).show()
             hideLoadingDialog()
+            startActivity(BottomNavActivity.createIntent(this))
+            finish()
         })
 
         viewModel.loginFailure.observe(this, Observer { error ->

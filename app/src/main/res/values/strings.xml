@@ -46,4 +46,11 @@
     <string name="username_password_empty">Your username and password cannot be empty.</string>
     <string name="loading">Loading...</string>
     <string name="signing_in">Signing in...</string>
+    <string name="title_activity_bottom_nav">BottomNavActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="nav_menu">Menu</string>
+    <string name="nav_bag">Bag</string>
+    <string name="menu_orders">Orders</string>
 </resources>

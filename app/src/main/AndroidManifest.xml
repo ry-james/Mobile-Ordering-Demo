@@ -13,10 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".feature.bottomnav.BottomNavActivity"
+            android:label="@string/title_activity_bottom_nav"></activity>
         <activity android:name=".dagger.SampleActivity" />
         <activity android:name=".feature.bagsummary.BagSummaryActivity" />
         <activity android:name=".activity.MenuItemDetailActivity" />
-        <activity android:name=".activity.MenuActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".feature.login.LoginActivity">
             <intent-filter>

@@ -1,29 +1,29 @@
-package com.ryanjames.swabergersmobilepos.activity
+package com.ryanjames.swabergersmobilepos.feature.menu
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
-import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuBinding
+import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
-import com.ryanjames.swabergersmobilepos.fragments.MenuListFragment
+import com.ryanjames.swabergersmobilepos.fragments.MenuPagerFragment
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
 import javax.inject.Inject
 
-class MenuActivity : BaseActivity() {
+class MenuFragment : Fragment() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
@@ -31,21 +31,24 @@ class MenuActivity : BaseActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var binding: ActivityMenuBinding
+    private lateinit var binding: FragmentMenuBinding
     private lateinit var viewModel: MenuActivityViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_menu)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
         binding.lifecycleOwner = this
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuActivityViewModel::class.java)
+        viewModel = activity?.run {
+            ViewModelProviders.of(this)[MenuActivityViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")
+
         binding.viewModel = viewModel
         viewModel.retrieveMenu()
-        setToolbarTitle(getString(R.string.menu_toolbar_title))
         addSubscriptions()
+        return binding.root
     }
 
     override fun onResume() {
@@ -70,25 +73,42 @@ class MenuActivity : BaseActivity() {
     }
 
     private fun showMenuErrorLoading() {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(context)
             .setMessage("We can't load the menu at the moment. Please try again later.")
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
-                finish()
             }.show()
     }
 
     private fun setupViewPager(categories: List<Category>) {
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
-        binding.viewPager.adapter = ProgramDetailPagerAdapter(supportFragmentManager, categories)
+        activity?.let {
+            binding.tabLayout.setupWithViewPager(binding.viewPager)
+            binding.viewPager.adapter = ProgramDetailPagerAdapter(it.supportFragmentManager, categories)
+            binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrollStateChanged(state: Int) {}
+
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+                override fun onPageSelected(position: Int) {
+                    viewModel.selectedCategoryPosition = position
+                }
+            })
+            binding.viewPager.currentItem = viewModel.selectedCategoryPosition
+        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        // Setting this to null to prevent memory leak
+        binding.viewPager.adapter = null
+    }
 
     private class ProgramDetailPagerAdapter(fm: FragmentManager, private val tabs: List<Category>) :
         FragmentStatePagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
-            return MenuListFragment.newInstance(tabs[position].categoryId)
+            return MenuPagerFragment.newInstance(tabs[position].categoryId)
         }
 
         override fun getPageTitle(position: Int): CharSequence? {
@@ -99,18 +119,8 @@ class MenuActivity : BaseActivity() {
 
     }
 
-    fun onClickBag(view: View) {
-        startActivity(BagSummaryActivity.createIntent(this, viewModel.orderDetails))
+    fun onClickBagInFragment(view: View) {
+        startActivity(BagSummaryActivity.createIntent(context!!, viewModel.orderDetails))
     }
-
-
-    companion object {
-
-        fun createIntent(context: Context): Intent {
-            return Intent(context, MenuActivity::class.java)
-        }
-
-    }
-
 
 }

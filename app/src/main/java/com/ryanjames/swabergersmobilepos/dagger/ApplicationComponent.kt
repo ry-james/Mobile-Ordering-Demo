@@ -2,10 +2,12 @@ package com.ryanjames.swabergersmobilepos.dagger
 
 import android.app.Application
 import com.ryanjames.swabergersmobilepos.activity.MainActivity
-import com.ryanjames.swabergersmobilepos.activity.MenuActivity
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
+import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
+import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
+import com.ryanjames.swabergersmobilepos.fragments.MenuPagerFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -23,8 +25,6 @@ interface ApplicationComponent {
         fun build(): ApplicationComponent
     }
 
-    fun inject(menuActivity: MenuActivity)
-
     fun inject(mainActivity: MainActivity)
 
     fun inject(bagSummaryActivity: BagSummaryActivity)
@@ -32,4 +32,10 @@ interface ApplicationComponent {
     fun inject(menuItemDetailActivity: MenuItemDetailActivity)
 
     fun inject(loginActivity: LoginActivity)
+
+    fun inject(menuFragment: MenuFragment)
+
+    fun inject(menuPagerFragment: MenuPagerFragment)
+
+    fun inject(bottomNavActivity: BottomNavActivity)
 }

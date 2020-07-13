@@ -35,6 +35,8 @@ class MenuActivityViewModel @Inject constructor(
     val bagCounter: LiveData<String>
         get() = _bagCounter
 
+    var selectedCategoryPosition = 0
+
     val orderDetails = Order(mutableListOf())
 
     fun retrieveMenu() {

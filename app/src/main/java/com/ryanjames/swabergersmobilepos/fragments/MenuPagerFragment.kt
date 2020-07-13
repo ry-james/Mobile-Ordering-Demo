@@ -4,29 +4,27 @@ package com.ryanjames.swabergersmobilepos.fragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
-import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Product
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuListItemViewModel
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
 
-class MenuListFragment : Fragment() {
+class MenuPagerFragment : Fragment() {
 
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
         startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
@@ -62,7 +60,7 @@ class MenuListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rvMenuList.apply {
-            layoutManager = LinearLayoutManager(this@MenuListFragment.context)
+            layoutManager = LinearLayoutManager(this@MenuPagerFragment.context)
             adapter = menuListAdapter
         }
     }
@@ -118,9 +116,9 @@ class MenuListFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(categoryId: String): MenuListFragment {
+        fun newInstance(categoryId: String): MenuPagerFragment {
             val bundle = Bundle().apply { putString(EXTRA_CATEGORY_ID, categoryId) }
-            return MenuListFragment().apply { arguments = bundle }
+            return MenuPagerFragment().apply { arguments = bundle }
         }
     }
 }

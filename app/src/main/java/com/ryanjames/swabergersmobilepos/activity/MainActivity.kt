@@ -54,8 +54,6 @@ class MainActivity : BaseActivity() {
 
 
     fun onClickLaunchMenu(view: View) {
-        val intent = MenuActivity.createIntent(this)
-        startActivity(intent)
     }
 
     fun onClickClearBag(view: View) {
