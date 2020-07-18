@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="@{viewModel.nonEmptyBagVisibility}"
-            app:layout_constraintBottom_toTopOf="@id/btnCheckout"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -44,7 +44,6 @@
                     android:textAlignment="textEnd"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/tvTotal"
                     app:layout_constraintTop_toTopOf="@+id/tvTotal" />
 
@@ -152,6 +151,24 @@
                     app:layout_constraintStart_toStartOf="@id/bgCard"
                     app:layout_constraintTop_toBottomOf="@id/textView2" />
 
+                <Button
+                    android:id="@+id/btnCheckout"
+                    style="@style/AccentButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/rounded_corners_button"
+                    android:drawableEnd="@drawable/ic_keyboard_arrow_right"
+                    android:drawableTint="@android:color/white"
+                    android:gravity="center"
+                    android:onClick="@{() -> viewModel.postOrder()}"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/checkout"
+                    android:visibility="@{viewModel.nonEmptyBagVisibility}"
+                    app:layout_constraintEnd_toEndOf="@id/tvTotal"
+                    app:layout_constraintTop_toBottomOf="@id/tvTotalLabel" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -169,17 +186,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnCheckout"
-            style="@style/AccentButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:onClick="@{() -> viewModel.postOrder()}"
-            android:text="@string/checkout"
-            android:visibility="@{viewModel.nonEmptyBagVisibility}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

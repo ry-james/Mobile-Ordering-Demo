@@ -25,6 +25,12 @@
         <item name="android:fontFamily">@font/texgyreheros_bold</item>
     </style>
 
+    <style name="MaterialAccenyButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:fontFamily">@font/texgyreheros_bold</item>
+    </style>
+
     <style name="AppTheme.FullScreenDialog" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
