@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel" />
+            type="com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"

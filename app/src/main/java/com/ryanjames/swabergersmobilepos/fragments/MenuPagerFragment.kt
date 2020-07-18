@@ -19,7 +19,7 @@ import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
+import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MenuListItemViewModel
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
@@ -30,7 +30,7 @@ class MenuPagerFragment : Fragment() {
         startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
     }
 
-    private lateinit var viewModel: MenuActivityViewModel
+    private lateinit var viewModel: MenuFragmentViewModel
     private lateinit var binding: FragmentMenuListBinding
     private var categoryId = ""
 
@@ -38,7 +38,7 @@ class MenuPagerFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu_list, container, false)
         viewModel = activity?.run {
-            ViewModelProviders.of(this)[MenuActivityViewModel::class.java]
+            ViewModelProviders.of(this)[MenuFragmentViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         binding.lifecycleOwner = this

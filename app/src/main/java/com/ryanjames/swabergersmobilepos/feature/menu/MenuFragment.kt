@@ -20,7 +20,7 @@ import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
 import com.ryanjames.swabergersmobilepos.fragments.MenuPagerFragment
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuActivityViewModel
+import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
 import javax.inject.Inject
 
 class MenuFragment : Fragment() {
@@ -32,7 +32,7 @@ class MenuFragment : Fragment() {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentMenuBinding
-    private lateinit var viewModel: MenuActivityViewModel
+    private lateinit var viewModel: MenuFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -42,7 +42,7 @@ class MenuFragment : Fragment() {
         binding.lifecycleOwner = this
 
         viewModel = activity?.run {
-            ViewModelProviders.of(this)[MenuActivityViewModel::class.java]
+            ViewModelProviders.of(this)[MenuFragmentViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         binding.viewModel = viewModel

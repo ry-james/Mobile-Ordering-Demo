@@ -17,7 +17,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
-class MenuActivityViewModel @Inject constructor(
+class MenuFragmentViewModel @Inject constructor(
     var menuRepository: MenuRepository,
     var orderRepository: OrderRepository
 ) : ViewModel() {
