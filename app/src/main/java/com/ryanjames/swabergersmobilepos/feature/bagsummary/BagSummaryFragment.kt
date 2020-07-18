@@ -14,14 +14,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
-import com.ryanjames.swabergersmobilepos.databinding.ActivityBagSummaryBinding
+import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
 
 class BagSummaryFragment : Fragment() {
 
-    private lateinit var binding: ActivityBagSummaryBinding
+    private lateinit var binding: FragmentBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
 
     private lateinit var adapter: BagItemAdapter
@@ -30,7 +30,7 @@ class BagSummaryFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_bag_summary, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bag_summary, container, false)
 
         viewModel = activity?.run {
             ViewModelProviders.of(this)[BagSummaryViewModel::class.java]
@@ -51,25 +51,29 @@ class BagSummaryFragment : Fragment() {
     }
 
     private fun subscribe() {
-        viewModel.onOrderSucceeded.observe(this, Observer {
-            AlertDialog.Builder(activity)
-                .setMessage(getString(R.string.order_created_message))
-                .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
-                    viewModel.clearBag()
-                    dialogInterface.dismiss()
-                }.setCancelable(false)
-                .show()
+        viewModel.onOrderSucceeded.observe(this, Observer { event ->
+            if (event.getContentIfNotHandled() == true) {
+                AlertDialog.Builder(activity)
+                    .setMessage(getString(R.string.order_created_message))
+                    .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
+                        viewModel.clearBag()
+                        dialogInterface.dismiss()
+                    }.setCancelable(false)
+                    .show()
+            }
         })
 
-        viewModel.orderFailed.observe(this, Observer {
-            AlertDialog.Builder(activity)
-                .setMessage(getString(R.string.something_went_wrong))
-                .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                    viewModel.postOrder()
-                }
-                .setNegativeButton(getString(R.string.later_cta)) { dialogInterface, _ -> dialogInterface.dismiss() }
-                .show()
+        viewModel.orderFailed.observe(this, Observer { event ->
+            if (event.getContentIfNotHandled() == true) {
+                AlertDialog.Builder(activity)
+                    .setMessage(getString(R.string.something_went_wrong))
+                    .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                        viewModel.postOrder()
+                    }
+                    .setNegativeButton(getString(R.string.later_cta)) { dialogInterface, _ -> dialogInterface.dismiss() }
+                    .show()
+            }
         })
 
         viewModel.getLocalBag.observe(this, Observer { order ->
@@ -101,10 +105,4 @@ class BagSummaryFragment : Fragment() {
         }
     }
 
-
-    fun onClickCheckout(view: View) {
-        // KeypadDialogFragment.show(supportFragmentManager)
-        viewModel.postOrder()
-
-    }
 }

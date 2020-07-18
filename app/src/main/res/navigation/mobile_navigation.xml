@@ -14,7 +14,7 @@
         android:id="@+id/navigation_bag"
         android:name="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/activity_bag_summary" >
+        tools:layout="@layout/fragment_bag_summary" >
         <argument
             android:name="order"
             app:argType="com.ryanjames.swabergersmobilepos.domain.Order" />

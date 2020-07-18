@@ -10,7 +10,6 @@
         <variable
             name="viewModel"
             type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -175,7 +174,7 @@
             style="@style/AccentButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:onClick="onClickCheckout"
+            android:onClick="@{() -> viewModel.postOrder()}"
             android:text="@string/checkout"
             android:visibility="@{viewModel.nonEmptyBagVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
