@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.menu
 
 import android.app.AlertDialog
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,19 +14,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
-import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
-import javax.inject.Inject
 
 class MenuFragment : Fragment() {
-
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentMenuBinding
     private lateinit var viewModel: MenuFragmentViewModel
@@ -37,6 +27,7 @@ class MenuFragment : Fragment() {
         SwabergersApplication.appComponent.inject(this)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
+
         binding.lifecycleOwner = this
 
         viewModel = activity?.run {
@@ -47,11 +38,6 @@ class MenuFragment : Fragment() {
         viewModel.retrieveMenu()
         addSubscriptions()
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.retrieveLocalBag()
     }
 
     private fun addSubscriptions() {
@@ -115,10 +101,6 @@ class MenuFragment : Fragment() {
 
         override fun getCount(): Int = tabs.size
 
-    }
-
-    fun onClickBagInFragment(view: View) {
-        startActivity(BagSummaryActivity.createIntent(context!!, viewModel.orderDetails))
     }
 
 }

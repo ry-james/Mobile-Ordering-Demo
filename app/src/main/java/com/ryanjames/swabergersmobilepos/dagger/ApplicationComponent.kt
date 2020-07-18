@@ -2,7 +2,7 @@ package com.ryanjames.swabergersmobilepos.dagger
 
 import android.app.Application
 import com.ryanjames.swabergersmobilepos.activity.MainActivity
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
+import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
@@ -27,7 +27,7 @@ interface ApplicationComponent {
 
     fun inject(mainActivity: MainActivity)
 
-    fun inject(bagSummaryActivity: BagSummaryActivity)
+    fun inject(bagSummaryFragment: BagSummaryFragment)
 
     fun inject(menuItemDetailActivity: MenuItemDetailActivity)
 

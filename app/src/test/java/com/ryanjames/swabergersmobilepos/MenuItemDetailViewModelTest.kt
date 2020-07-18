@@ -201,9 +201,9 @@ class MenuItemDetailViewModelTest {
         private val PRODUCTS_TOTS
             get() = Product("T1000", "Tots", "Description", 3f, "", listOf(), listOf())
         private val PRODUCT_GROUP_DRINKS
-            get() = ProductGroup("PG1000", "Drinks", PRODUCT_COKE, listOf(PRODUCT_COKE, PRODUCT_PEPSI, PRODUCT_DR_PEPPER))
+            get() = ProductGroup("PG1000", "Drinks", PRODUCT_COKE, listOf(PRODUCT_COKE, PRODUCT_PEPSI, PRODUCT_DR_PEPPER), 1, 1)
         private val PRODUCT_GROUP_SIDES
-            get() = ProductGroup("PG1001", "Sides", PRODUCT_FRIES, listOf(PRODUCT_FRIES, PRODUCTS_TOTS))
+            get() = ProductGroup("PG1001", "Sides", PRODUCT_FRIES, listOf(PRODUCT_FRIES, PRODUCTS_TOTS), 1, 1)
         private val CHEESE_BURGER_MEAL
             get() = ProductBundle("B1000", "Cheese Burger Meal", 12f, "CBM", listOf(PRODUCT_GROUP_DRINKS, PRODUCT_GROUP_SIDES))
         private val PRODUCT_CHEESE_BURGER

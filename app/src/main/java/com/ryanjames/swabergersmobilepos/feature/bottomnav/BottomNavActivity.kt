@@ -11,6 +11,7 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
+import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import javax.inject.Inject
 
@@ -20,6 +21,7 @@ class BottomNavActivity : BaseActivity() {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var menuViewModel: MenuFragmentViewModel
+    private lateinit var bagSummaryViewModelFactory: BagSummaryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,7 @@ class BottomNavActivity : BaseActivity() {
         val navController = findNavController(R.id.nav_host_fragment)
         navView.setupWithNavController(navController)
         menuViewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuFragmentViewModel::class.java)
+        bagSummaryViewModelFactory = ViewModelProviders.of(this, viewModelFactory).get(BagSummaryViewModel::class.java)
     }
 
     companion object {

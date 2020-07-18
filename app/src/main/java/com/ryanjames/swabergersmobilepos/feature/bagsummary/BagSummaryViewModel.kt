@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Order
+import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,12 +19,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private val compositeDisposable = CompositeDisposable()
 
-    var order: Order = Order(mutableListOf())
-        set(value) {
-            field = value
-            updateBagVisibility()
-            updatePrices()
-        }
+    private var order: Order = Order(mutableListOf())
 
     private val _emptyBagVisibility = MutableLiveData<Int>()
     val emptyBagVisibility: LiveData<Int>
@@ -54,8 +50,28 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val orderFailed: LiveData<Boolean>
         get() = _onOrderFailed
 
+    private val _localBag = MutableLiveData<Order>()
+    val getLocalBag: LiveData<Order>
+        get() = _localBag
+
     init {
         updateBagVisibility()
+    }
+
+    fun retrieveLocalBag() {
+        compositeDisposable.add(
+            orderRepository.getLocalBag()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ lineItems ->
+                    order.lineItems.clearAndAddAll(lineItems)
+                    _localBag.value = order.copy()
+                    updateBagVisibility()
+                    updatePrices()
+                }, { error ->
+                    error.printStackTrace()
+                })
+        )
     }
 
     private fun updateBagVisibility() {
@@ -79,6 +95,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         for ((index, item) in order.lineItems.withIndex()) {
             if (item.id == lineItem.id) {
                 order.lineItems[index] = lineItem
+                _localBag.value = order.copy()
                 updatePrices()
                 orderRepository.updateLineItem(lineItem)
                 return

@@ -6,9 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Menu
-import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.helper.Event
-import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,13 +29,7 @@ class MenuFragmentViewModel @Inject constructor(
     val errorLoadingMenuObservable: LiveData<Event<Boolean>>
         get() = _errorLoadingMenu
 
-    private val _bagCounter = MutableLiveData<String>().apply { value = "0" }
-    val bagCounter: LiveData<String>
-        get() = _bagCounter
-
     var selectedCategoryPosition = 0
-
-    val orderDetails = Order(mutableListOf())
 
     fun retrieveMenu() {
         compositeDisposable.add(
@@ -56,24 +48,8 @@ class MenuFragmentViewModel @Inject constructor(
         )
     }
 
-    fun retrieveLocalBag() {
-        compositeDisposable.add(
-            orderRepository.getLocalBag()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ lineItems ->
-                    orderDetails.lineItems.clearAndAddAll(lineItems)
-                    _bagCounter.value = orderDetails.noOfItems.toString()
-                }, { error ->
-                    error.printStackTrace()
-                })
-        )
-    }
-
     fun addLineItem(lineItem: LineItem) {
         orderRepository.insertLineItem(lineItem)
-        orderDetails.lineItems.add(lineItem)
-        _bagCounter.value = orderDetails.noOfItems.toString()
     }
 
     override fun onCleared() {
