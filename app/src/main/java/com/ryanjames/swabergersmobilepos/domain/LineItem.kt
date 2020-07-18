@@ -39,7 +39,8 @@ data class LineItem(
     }
 
     companion object {
-        val EMPTY = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
+        val EMPTY: LineItem
+            get() = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
 
         fun ofProduct(product: Product): LineItem {
             return EMPTY.copy(id = UUID.randomUUID().toString(), product = product)

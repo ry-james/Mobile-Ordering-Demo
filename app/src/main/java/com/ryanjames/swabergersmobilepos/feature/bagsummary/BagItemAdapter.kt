@@ -31,6 +31,11 @@ class BagItemAdapter(
         notifyDataSetChanged()
     }
 
+    fun clear() {
+        viewModels = listOf()
+        notifyDataSetChanged()
+    }
+
     class BagItemViewHolder(
         private val binding: RowBagItemBinding,
         private val listener: BagItemAdapterListener

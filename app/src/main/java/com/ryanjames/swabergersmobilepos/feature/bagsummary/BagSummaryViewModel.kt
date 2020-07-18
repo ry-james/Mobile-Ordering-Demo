@@ -55,6 +55,10 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val getLocalBag: LiveData<Order>
         get() = _localBag
 
+    private val _onClearBag = MutableLiveData<Boolean>()
+    val onClearBag: LiveData<Boolean>
+        get() = _onClearBag
+
     init {
         updateBagVisibility()
     }
@@ -89,7 +93,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private fun updatePrices() {
         _tax.value = order.tax.toTwoDigitString()
         _subtotal.value = order.subTotal.toTwoDigitString()
-        _total.value = "PHP. ${order.total.toTwoDigitString()}"
+        _total.value = "$${order.total.toTwoDigitString()}"
     }
 
     fun putLineItem(lineItem: LineItem) {
@@ -107,6 +111,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun clearBag() {
         order.lineItems.clear()
+        _onClearBag.value = true
         updateBagVisibility()
     }
 

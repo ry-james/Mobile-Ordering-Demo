@@ -81,6 +81,10 @@ class BagSummaryFragment : Fragment() {
         viewModel.getLocalBag.observe(this, Observer { order ->
             adapter.updateLineItems(order.lineItems)
         })
+
+        viewModel.onClearBag.observe(this, Observer {
+            adapter.clear()
+        })
     }
 
 
