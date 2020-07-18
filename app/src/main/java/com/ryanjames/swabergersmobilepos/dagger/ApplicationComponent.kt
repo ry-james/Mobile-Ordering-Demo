@@ -6,8 +6,8 @@ import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
+import com.ryanjames.swabergersmobilepos.feature.menu.MenuPagerFragment
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
-import com.ryanjames.swabergersmobilepos.fragments.MenuPagerFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton

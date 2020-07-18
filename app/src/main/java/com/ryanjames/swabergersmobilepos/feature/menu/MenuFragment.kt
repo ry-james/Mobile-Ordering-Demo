@@ -19,8 +19,6 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryActivity
-import com.ryanjames.swabergersmobilepos.fragments.MenuPagerFragment
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
 import javax.inject.Inject
 
 class MenuFragment : Fragment() {

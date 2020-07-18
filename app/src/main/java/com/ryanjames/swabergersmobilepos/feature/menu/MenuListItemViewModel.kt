@@ -1,6 +1,5 @@
-package com.ryanjames.swabergersmobilepos.viewmodels
+package com.ryanjames.swabergersmobilepos.feature.menu
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.Product

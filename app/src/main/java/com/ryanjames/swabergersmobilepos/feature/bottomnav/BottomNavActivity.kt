@@ -11,7 +11,7 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
+import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import javax.inject.Inject
 
 class BottomNavActivity : BaseActivity() {

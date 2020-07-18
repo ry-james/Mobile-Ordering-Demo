@@ -1,4 +1,4 @@
-package com.ryanjames.swabergersmobilepos.viewmodels
+package com.ryanjames.swabergersmobilepos.feature.menu
 
 import android.util.Log
 import androidx.lifecycle.LiveData

@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.viewmodels.MenuListItemViewModel" />
+            type="com.ryanjames.swabergersmobilepos.feature.menu.MenuListItemViewModel" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

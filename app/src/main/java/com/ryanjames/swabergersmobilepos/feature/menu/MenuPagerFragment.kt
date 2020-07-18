@@ -1,4 +1,4 @@
-package com.ryanjames.swabergersmobilepos.fragments
+package com.ryanjames.swabergersmobilepos.feature.menu
 
 
 import android.app.Activity
@@ -19,8 +19,6 @@ import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuListItemViewModel
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
 

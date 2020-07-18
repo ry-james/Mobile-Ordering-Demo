@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.feature.login.LoginViewModel
+import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
-import com.ryanjames.swabergersmobilepos.viewmodels.MenuFragmentViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
