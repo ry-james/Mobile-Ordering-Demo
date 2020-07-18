@@ -14,10 +14,15 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
+import javax.inject.Inject
 
 class MenuFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentMenuBinding
     private lateinit var viewModel: MenuFragmentViewModel
@@ -30,9 +35,7 @@ class MenuFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        viewModel = activity?.run {
-            ViewModelProviders.of(this)[MenuFragmentViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")
+        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
 
         binding.viewModel = viewModel
         viewModel.retrieveMenu()

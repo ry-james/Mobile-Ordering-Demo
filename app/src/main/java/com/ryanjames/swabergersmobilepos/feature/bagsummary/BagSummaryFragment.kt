@@ -14,12 +14,17 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import javax.inject.Inject
 
 class BagSummaryFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
@@ -31,10 +36,7 @@ class BagSummaryFragment : Fragment() {
         SwabergersApplication.appComponent.inject(this)
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bag_summary, container, false)
-
-        viewModel = activity?.run {
-            ViewModelProviders.of(this)[BagSummaryViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")
+        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(BagSummaryViewModel::class.java)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = activity
