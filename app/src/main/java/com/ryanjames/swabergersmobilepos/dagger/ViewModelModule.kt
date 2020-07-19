@@ -7,6 +7,7 @@ import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.feature.login.LoginViewModel
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
+import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
 import dagger.Binds
 import dagger.Module
@@ -42,6 +43,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(OrderHistoryViewModel::class)
+    internal abstract fun bindOrderHistoryViewModel(viewModel: OrderHistoryViewModel): ViewModel
 
     //Add more ViewModels here
 }

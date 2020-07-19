@@ -8,7 +8,8 @@ data class Menu(
     val categories: List<Category>
 ) : Parcelable {
     companion object {
-        val EMPTY = Menu(listOf())
+        val EMPTY: Menu
+            get() = Menu(listOf())
     }
 }
 
@@ -19,7 +20,8 @@ data class Category(
     val products: List<Product>
 ) : Parcelable {
     companion object {
-        val EMPTY = Category("0", "", listOf())
+        val EMPTY: Category
+            get() = Category("0", "", listOf())
     }
 }
 
@@ -35,7 +37,8 @@ data class Product(
 ) : Parcelable {
 
     companion object {
-        val EMPTY = Product("", "", "", 0f, "", listOf(), listOf())
+        val EMPTY: Product
+            get() = Product("", "", "", 0f, "", listOf(), listOf())
     }
 
 }
@@ -61,7 +64,8 @@ data class ModifierGroup(
 ) : Parcelable {
 
     companion object {
-        val EMPTY = ModifierGroup("", "", ModifierGroupAction.Optional, ModifierInfo.EMPTY, listOf(), 1, 1)
+        val EMPTY: ModifierGroup
+            get() = ModifierGroup("", "", ModifierGroupAction.Optional, ModifierInfo.EMPTY, listOf(), 1, 1)
     }
 }
 
@@ -74,7 +78,8 @@ data class ModifierInfo(
 ) : Parcelable {
 
     companion object {
-        val EMPTY = ModifierInfo("", "", 0f, "")
+        val EMPTY: ModifierInfo
+            get() = ModifierInfo("", "", 0f, "")
     }
 }
 
@@ -89,7 +94,8 @@ data class ProductGroup(
 ) : Parcelable {
 
     companion object {
-        val EMPTY = ProductGroup("", "", Product.EMPTY, listOf(), 1, 1)
+        val EMPTY: ProductGroup
+            get() = ProductGroup("", "", Product.EMPTY, listOf(), 1, 1)
     }
 }
 

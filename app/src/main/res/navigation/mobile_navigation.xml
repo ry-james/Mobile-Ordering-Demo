@@ -8,21 +8,16 @@
     <fragment
         android:id="@+id/navigation_menu"
         android:name="com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment"
-        android:label="@string/title_home" />
+        tools:layout="@layout/fragment_menu" />
 
     <fragment
         android:id="@+id/navigation_bag"
         android:name="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_bag_summary" >
-        <argument
-            android:name="order"
-            app:argType="com.ryanjames.swabergersmobilepos.domain.Order" />
-    </fragment>
+        tools:layout="@layout/fragment_bag_summary" />
 
     <fragment
         android:id="@+id/navigation_order"
-        android:name="com.ryanjames.swabergersmobilepos.feature.bottomnav.ui.dashboard.DashboardFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_dashboard" />
+        android:name="com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment"
+        tools:layout="@layout/fragment_order_history" />
 </navigation>

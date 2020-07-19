@@ -53,4 +53,8 @@
     <string name="nav_menu">Menu</string>
     <string name="nav_bag">Bag</string>
     <string name="menu_orders">Orders</string>
+    <string name="order_id">Order ID</string>
+    <string name="date_and_time">Date and Time</string>
+    <string name="view_order">VIEW ORDER</string>
+    <string name="total_price">Total Price</string>
 </resources>

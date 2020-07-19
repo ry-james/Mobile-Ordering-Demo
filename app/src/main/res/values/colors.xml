@@ -5,5 +5,6 @@
     <color name="colorAccent">#f44336</color>
     <color name="colorGray">#676c71</color>
     <color name="colorLightGray">#9f9493</color>
-    <color name="colorBackgroundGray">#303030</color>
+    <color name="colorBackgroundGray">#353130</color>
+
 </resources>

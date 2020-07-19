@@ -22,4 +22,7 @@ interface SwabergersApi {
 
     @POST("/order")
     fun postOrder(@Body orderBody: OrderBody): Single<OrderBody>
+
+    @GET("/ordersummary")
+    fun getOrderHistory(): Single<OrderHistoryResponse>
 }

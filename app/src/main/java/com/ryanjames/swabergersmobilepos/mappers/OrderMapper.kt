@@ -2,10 +2,7 @@ package com.ryanjames.swabergersmobilepos.mappers
 
 import com.ryanjames.swabergersmobilepos.database.realm.*
 import com.ryanjames.swabergersmobilepos.domain.*
-import com.ryanjames.swabergersmobilepos.network.responses.LineItemRequestBody
-import com.ryanjames.swabergersmobilepos.network.responses.ModifierSelectionRequestBody
-import com.ryanjames.swabergersmobilepos.network.responses.OrderBody
-import com.ryanjames.swabergersmobilepos.network.responses.ProductInOrderRequestBody
+import com.ryanjames.swabergersmobilepos.network.responses.*
 import io.realm.Realm
 import io.realm.RealmList
 import java.util.*
@@ -113,6 +110,21 @@ fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List
 
 fun Order.toRemoteEntity(orderId: String): OrderBody {
     return OrderBody(orderId, lineItems.map { it.toRemoteEntity() })
+}
+
+fun OrderHistoryResponse.toDomain(): List<Order> {
+    return this.orders.map { orderResponse ->
+        Order(orderResponse.lineItems.map { lineItemResponse -> lineItemResponse.toDomain() }.toMutableList())
+            .apply {
+                orderId = orderResponse.orderId
+                price = orderResponse.price
+            }
+    }
+}
+
+fun LineItemResponse.toDomain(): LineItem {
+    val product = Product.EMPTY.copy(productName = lineItemName, price = this.price)
+    return LineItem(lineItemId, product, null, hashMapOf(), hashMapOf(), quantity)
 }
 
 fun LineItem.toRemoteEntity(): LineItemRequestBody {

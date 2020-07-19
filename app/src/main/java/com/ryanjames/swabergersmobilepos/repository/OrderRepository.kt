@@ -22,6 +22,10 @@ class OrderRepository @Inject constructor(
         return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }
     }
 
+    fun getOrderHistory(): Single<List<Order>> {
+        return swabergersService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
+    }
+
     fun insertLineItem(lineItem: LineItem) {
         executeRealmTransaction { realm ->
             if (orderRealmDao.lineItemsCount(realm) == 0) {
