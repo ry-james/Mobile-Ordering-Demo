@@ -16,24 +16,28 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private var initialLineItem: LineItem = LineItem.EMPTY
     private lateinit var product: Product
     private var isModifying = true
+    private var isInitialized = false
 
     private fun initialize(product: Product, lineItem: LineItem, isModifying: Boolean) {
-        this.product = product
-        this.lineItem = lineItem
-        this.isModifying = isModifying
+        if (!isInitialized) {
+            this.product = product
+            this.lineItem = lineItem
+            this.isModifying = isModifying
 
-        _strProductName.value = product.productName
-        _strProductDescription.value = product.productDescription
-        if (!isModifying) {
-            for (modifierGroup in product.modifierGroups) {
-                if (modifierGroup.defaultSelection != null) {
-                    this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            _strProductName.value = product.productName
+            _strProductDescription.value = product.productDescription
+            if (!isModifying) {
+                for (modifierGroup in product.modifierGroups) {
+                    if (modifierGroup.defaultSelection != null) {
+                        this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+                    }
                 }
             }
-        }
 
-        initialLineItem = this.lineItem.deepCopy()
-        updateAndNotifyObservers()
+            initialLineItem = this.lineItem.deepCopy()
+            isInitialized = true
+            updateAndNotifyObservers()
+        }
     }
 
     fun setupWithProduct(product: Product) {

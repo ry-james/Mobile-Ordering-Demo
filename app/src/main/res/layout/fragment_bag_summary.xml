@@ -157,6 +157,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/rounded_corners_button"
                     android:drawableEnd="@drawable/ic_keyboard_arrow_right"
                     android:drawableTint="@android:color/white"
@@ -165,6 +166,7 @@
                     android:paddingEnd="8dp"
                     android:text="@string/checkout"
                     android:visibility="@{viewModel.nonEmptyBagVisibility}"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/tvTotal"
                     app:layout_constraintTop_toBottomOf="@id/tvTotalLabel" />
 
