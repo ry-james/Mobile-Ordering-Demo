@@ -4,9 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +22,7 @@ import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
 class BagSummaryFragment : Fragment() {
@@ -42,6 +46,7 @@ class BagSummaryFragment : Fragment() {
         binding.lifecycleOwner = activity
 
         setupRecyclerView()
+        setupListeners()
         viewModel.retrieveLocalBag()
         subscribe()
         return binding.root
@@ -85,6 +90,46 @@ class BagSummaryFragment : Fragment() {
         viewModel.onClearBag.observe(this, Observer {
             adapter.clear()
         })
+    }
+
+    private fun setupListeners() {
+        binding.btnCheckout.setOnClickListener {
+            showCustomerNameInputDialog()
+        }
+    }
+
+    private fun showCustomerNameInputDialog() {
+        val etCustomerName = EditText(activity).apply {
+            setSingleLine(true)
+            maxLines = 1
+        }
+
+        val dialog = AlertDialog.Builder(activity)
+            .setMessage(getString(R.string.enter_customer_name_message))
+            .setPositiveButton(getString(R.string.cta_set)) { dialogInterface, _ ->
+                val inputText = etCustomerName.text.toString()
+                if (!inputText.isBlank()) {
+                    viewModel.customerInput = etCustomerName.text.toString().trimAllWhitespace()
+                    viewModel.postOrder()
+                }
+                dialogInterface.dismiss()
+
+            }
+            .setView(etCustomerName)
+            .show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !etCustomerName.text.isNullOrBlank()
+
+        etCustomerName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !etCustomerName.text.isNullOrBlank()
+            }
+        })
+
     }
 
 

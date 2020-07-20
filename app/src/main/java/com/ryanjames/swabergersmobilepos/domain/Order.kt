@@ -4,10 +4,14 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Order(val lineItems: MutableList<LineItem>) : Parcelable {
+data class Order(
+    val lineItems: MutableList<LineItem>,
+    var orderId: String = "",
+    var price: Float = 0f,
+    var formattedDate: String = "",
+    var customerName: String = ""
+) : Parcelable {
 
-    var orderId: String = ""
-    var price: Float = 0f
 
     val total: Float
         get() {

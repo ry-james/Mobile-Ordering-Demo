@@ -69,3 +69,7 @@ fun <T, K> HashMap<T, List<K>>.deepEquals(mapToCompare: HashMap<T, List<K>>): Bo
 fun String.isBlankOrEmpty(): Boolean {
     return isBlank() || isEmpty()
 }
+
+fun String.trimAllWhitespace(): String {
+    return this.trim().replace("\\s+".toRegex(), " ")
+}

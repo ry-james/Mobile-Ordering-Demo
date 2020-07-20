@@ -118,6 +118,7 @@ fun OrderHistoryResponse.toDomain(): List<Order> {
             .apply {
                 orderId = orderResponse.orderId
                 price = orderResponse.price
+                formattedDate = orderResponse.creationDate
             }
     }
 }

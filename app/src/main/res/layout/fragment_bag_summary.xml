@@ -161,7 +161,6 @@
                     android:drawableEnd="@drawable/ic_keyboard_arrow_right"
                     android:drawableTint="@android:color/white"
                     android:gravity="center"
-                    android:onClick="@{() -> viewModel.postOrder()}"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:text="@string/checkout"

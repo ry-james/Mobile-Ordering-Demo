@@ -59,6 +59,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
 
+    var customerInput : String? = null
+
     init {
         updateBagVisibility()
     }
@@ -117,7 +119,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun postOrder() {
         compositeDisposable.add(
-            orderRepository.postOrder(order)
+            orderRepository.postOrder(order.apply { this.customerName = customerInput ?: "" })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

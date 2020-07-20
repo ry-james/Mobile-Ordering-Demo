@@ -35,7 +35,8 @@ data class OrderHistoryResponse(val orders: List<OrderResponse>)
 data class OrderResponse(
     val orderId: String,
     val lineItems: List<LineItemResponse>,
-    val price: Float
+    val price: Float,
+    val creationDate: String
 )
 
 data class LineItemResponse(

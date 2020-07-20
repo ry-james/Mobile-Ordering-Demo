@@ -17,6 +17,8 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderHistoryBinding
 import javax.inject.Inject
 
+private const val EXTRA_RV_STATE = "rv.state"
+
 class OrderHistoryFragment : Fragment() {
 
     @Inject
@@ -45,6 +47,16 @@ class OrderHistoryFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.rvOrderHistory.layoutManager?.onRestoreInstanceState(outStateBundle.getParcelable(EXTRA_RV_STATE))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        outStateBundle.putParcelable(EXTRA_RV_STATE, binding.rvOrderHistory.layoutManager?.onSaveInstanceState())
+    }
+
     private fun setupRecyclerView() {
         binding.rvOrderHistory.apply {
             layoutManager = LinearLayoutManager(this@OrderHistoryFragment.activity)
@@ -59,5 +71,8 @@ class OrderHistoryFragment : Fragment() {
         })
     }
 
+    companion object {
+        private val outStateBundle = Bundle()
+    }
 
 }

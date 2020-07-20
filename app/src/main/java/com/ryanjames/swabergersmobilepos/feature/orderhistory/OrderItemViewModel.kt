@@ -20,10 +20,15 @@ class OrderItemViewModel(val order: Order) : ViewModel() {
     val priceText: LiveData<String>
         get() = _priceText
 
+    private val _formattedDateText = MutableLiveData<String>()
+    val formattedDateText: LiveData<String>
+        get() = _formattedDateText
+
     fun setup() {
         _orderId.value = order.orderId.takeLast(12)
         _itemsText.value = "Items : ${order.lineItems.sumBy { it.quantity }}"
         _priceText.value = "$${order.price.toTwoDigitString()}"
+        _formattedDateText.value = order.formattedDate
     }
 
 }
