@@ -47,14 +47,9 @@ class BagSummaryFragment : Fragment() {
 
         setupRecyclerView()
         setupListeners()
-        viewModel.retrieveLocalBag()
         subscribe()
-        return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
         viewModel.retrieveLocalBag()
+        return binding.root
     }
 
     private fun subscribe() {

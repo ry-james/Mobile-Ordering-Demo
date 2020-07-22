@@ -14,15 +14,21 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import javax.inject.Inject
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
 
 class MenuPagerFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
         startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
@@ -33,12 +39,10 @@ class MenuPagerFragment : Fragment() {
     private var categoryId = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
+        super.onCreateView(inflater, container, savedInstanceState)
+        SwabergersApplication.appComponent.inject(this)
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu_list, container, false)
-        viewModel = activity?.run {
-            ViewModelProviders.of(this)[MenuFragmentViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")
-
+        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
         binding.lifecycleOwner = this
 
         categoryId = arguments?.getString(EXTRA_CATEGORY_ID) ?: ""

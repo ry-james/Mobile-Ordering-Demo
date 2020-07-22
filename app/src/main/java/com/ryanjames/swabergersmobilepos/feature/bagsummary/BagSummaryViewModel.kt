@@ -11,9 +11,11 @@ import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
@@ -38,7 +40,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val subtotal: LiveData<String>
         get() = _subtotal
 
-
     private val _total = MutableLiveData<String>()
     val total: LiveData<String>
         get() = _total
@@ -59,7 +60,10 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
 
-    var customerInput : String? = null
+    private val localBagStream: Single<List<LineItem>>
+        get() = orderRepository.getLocalBag().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+
+    var customerInput: String? = null
 
     init {
         updateBagVisibility()
@@ -67,9 +71,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
-            orderRepository.getLocalBag()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            localBagStream
                 .subscribe({ lineItems ->
                     order.lineItems.clearAndAddAll(lineItems)
                     _localBag.value = order
@@ -79,6 +81,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                     error.printStackTrace()
                 })
         )
+
     }
 
     private fun updateBagVisibility() {
@@ -99,16 +102,26 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun putLineItem(lineItem: LineItem) {
-        for ((index, item) in order.lineItems.withIndex()) {
-            if (item.id == lineItem.id) {
-                order.lineItems[index] = lineItem
-                _localBag.value = order
-                updatePrices()
-                orderRepository.updateLineItem(lineItem)
-                return
-            }
-        }
-        updateBagVisibility()
+        compositeDisposable.add(
+            orderRepository.getLocalBag()
+                .subscribeOn(Schedulers.io())
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ lineItems ->
+                    for ((index, item) in lineItems.withIndex()) {
+                        if (item.id == lineItem.id) {
+                            order.lineItems[index] = lineItem
+                            _localBag.value = order
+                            updatePrices()
+                            orderRepository.updateLineItem(lineItem)
+                            break
+                        }
+                    }
+                    updateBagVisibility()
+                }, { error ->
+                    error.printStackTrace()
+                })
+        )
     }
 
     fun clearBag() {
