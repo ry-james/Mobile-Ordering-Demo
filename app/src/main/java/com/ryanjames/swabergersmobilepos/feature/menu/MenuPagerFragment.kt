@@ -2,6 +2,7 @@ package com.ryanjames.swabergersmobilepos.feature.menu
 
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,6 +30,8 @@ class MenuPagerFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private lateinit var fragmentCallback: MenuFragment.MenuFragmentCallback
 
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
         startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
@@ -73,7 +76,17 @@ class MenuPagerFragment : Fragment() {
             data?.let {
                 val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
                 viewModel.addLineItem(lineItem)
+                fragmentCallback.onAddLineItem()
             }
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            fragmentCallback = context as MenuFragment.MenuFragmentCallback
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Host activity should implement ${MenuFragment.MenuFragmentCallback::class.java.simpleName}")
         }
     }
 

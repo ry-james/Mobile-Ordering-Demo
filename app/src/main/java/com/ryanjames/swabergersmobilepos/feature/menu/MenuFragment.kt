@@ -106,4 +106,8 @@ class MenuFragment : Fragment() {
 
     }
 
+    interface MenuFragmentCallback {
+        fun onAddLineItem()
+    }
+
 }

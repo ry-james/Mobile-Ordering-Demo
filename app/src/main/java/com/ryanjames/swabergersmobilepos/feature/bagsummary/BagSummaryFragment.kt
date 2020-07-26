@@ -2,6 +2,7 @@ package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -32,7 +33,7 @@ class BagSummaryFragment : Fragment() {
 
     private lateinit var binding: FragmentBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
-
+    private lateinit var fragmentCallback: BagSummaryFragmentCallback
     private lateinit var adapter: BagItemAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -93,6 +94,15 @@ class BagSummaryFragment : Fragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            fragmentCallback = context as BagSummaryFragmentCallback
+        } catch (e: ClassCastException) {
+            throw ClassCastException("Host activity should implement ${BagSummaryFragmentCallback::class.java.simpleName}")
+        }
+    }
+
     private fun showCustomerNameInputDialog() {
         val etCustomerName = EditText(activity).apply {
             setSingleLine(true)
@@ -147,8 +157,13 @@ class BagSummaryFragment : Fragment() {
             data?.let {
                 val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
                 viewModel.putLineItem(lineItem)
+                fragmentCallback.onUpdateLineItem()
             }
         }
+    }
+
+    interface BagSummaryFragmentCallback {
+        fun onUpdateLineItem()
     }
 
 }
