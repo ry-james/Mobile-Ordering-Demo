@@ -24,7 +24,7 @@ class MenuFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var binding: FragmentMenuBinding
+    private var binding: FragmentMenuBinding? = null
     private lateinit var viewModel: MenuFragmentViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,14 +33,14 @@ class MenuFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
 
-        binding.lifecycleOwner = this
+        binding?.lifecycleOwner = this
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
 
-        binding.viewModel = viewModel
+        binding?.viewModel = viewModel
         viewModel.retrieveMenu()
         addSubscriptions()
-        return binding.root
+        return binding?.root
     }
 
     private fun addSubscriptions() {
@@ -69,9 +69,9 @@ class MenuFragment : Fragment() {
 
     private fun setupViewPager(categories: List<Category>) {
         activity?.let {
-            binding.tabLayout.setupWithViewPager(binding.viewPager)
-            binding.viewPager.adapter = ProgramDetailPagerAdapter(it.supportFragmentManager, categories)
-            binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            binding?.tabLayout?.setupWithViewPager(binding?.viewPager)
+            binding?.viewPager?.adapter = ProgramDetailPagerAdapter(it.supportFragmentManager, categories)
+            binding?.viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {}
 
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -80,7 +80,7 @@ class MenuFragment : Fragment() {
                     viewModel.selectedCategoryPosition = position
                 }
             })
-            binding.viewPager.currentItem = viewModel.selectedCategoryPosition
+            binding?.viewPager?.currentItem = viewModel.selectedCategoryPosition
         }
     }
 
@@ -88,7 +88,9 @@ class MenuFragment : Fragment() {
         super.onDestroyView()
 
         // Setting this to null to prevent memory leak
-        binding.viewPager.adapter = null
+        binding?.viewPager?.adapter = null
+        binding = null
+
     }
 
     private class ProgramDetailPagerAdapter(fm: FragmentManager, private val tabs: List<Category>) :
