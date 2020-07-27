@@ -55,20 +55,16 @@ class BottomNavActivity : BaseActivity(), MenuFragment.MenuFragmentCallback, Bag
         }
     }
 
-    private fun showItemAddedSnackbar() {
-        showSnackbar("Item is added successfully.")
-    }
-
-    private fun showItemUpdatedSnackbar() {
+    override fun onUpdateLineItem() {
         showSnackbar("Item is updated successfully.")
     }
 
-    override fun onUpdateLineItem() {
-        showItemUpdatedSnackbar()
+    override fun onAddLineItem() {
+        showSnackbar("Item is added successfully.")
     }
 
-    override fun onAddLineItem() {
-        showItemAddedSnackbar()
+    override fun onRemoveLineItem() {
+        showSnackbar("Item is removed successfully.")
     }
 
     companion object {

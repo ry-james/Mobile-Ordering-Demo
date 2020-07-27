@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,6 +24,8 @@ private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
 const val REQUEST_LINE_ITEM = 0
 private const val EXTRA_LINE_ITEM = "extra.line.item"
+const val RESULT_ADD_OR_UPDATE = 1000
+const val RESULT_REMOVE = 1001
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
@@ -226,7 +227,15 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         val intent = Intent().apply {
             putExtra(EXTRA_LINE_ITEM, viewModel.lineItemObservable.value)
         }
-        setResult(Activity.RESULT_OK, intent)
+        setResult(RESULT_ADD_OR_UPDATE, intent)
+        finish()
+    }
+
+    fun onClickRemove(view: View) {
+        val intent = Intent().apply {
+            putExtra(EXTRA_LINE_ITEM, viewModel.lineItemObservable.value)
+        }
+        setResult(RESULT_REMOVE, intent)
         finish()
     }
 

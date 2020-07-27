@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -23,6 +22,8 @@ import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE
 import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
@@ -153,17 +154,24 @@ class BagSummaryFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_LINE_ITEM && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_ADD_OR_UPDATE) {
             data?.let {
                 val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
                 viewModel.putLineItem(lineItem)
                 fragmentCallback.onUpdateLineItem()
+            }
+        } else if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_REMOVE) {
+            data?.let {
+                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
+                viewModel.removeLineItem(lineItem)
+                fragmentCallback.onRemoveLineItem()
             }
         }
     }
 
     interface BagSummaryFragmentCallback {
         fun onUpdateLineItem()
+        fun onRemoveLineItem()
     }
 
 }

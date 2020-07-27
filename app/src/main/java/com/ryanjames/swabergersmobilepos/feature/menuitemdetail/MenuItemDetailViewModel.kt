@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -65,6 +66,10 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private val _strAddToBagBtn = MutableLiveData<StringResourceWithArgs>()
     val strAddToBag: LiveData<StringResourceWithArgs>
         get() = _strAddToBagBtn
+
+    private val _btnRemoveVisibility = MutableLiveData<Int>()
+    val btnRemoveVisibility: LiveData<Int>
+        get() = _btnRemoveVisibility
 
     fun setProductBundle(bundle: ProductBundle?) {
 
@@ -159,8 +164,10 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
     private fun updateAndNotifyObservers() {
         if (isModifying) {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, lineItem.price.toTwoDigitString())
+            _btnRemoveVisibility.value = View.VISIBLE
         } else {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
+            _btnRemoveVisibility.value = View.GONE
         }
 
         _lineItemObservable.value = lineItem

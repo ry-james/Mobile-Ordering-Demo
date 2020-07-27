@@ -41,6 +41,10 @@ class OrderRealmDao {
         }
     }
 
+    fun removeLineItem(realm: Realm, lineItemRealmEntity: LineItemRealmEntity) {
+        realm.where(LineItemRealmEntity::class.java).equalTo("id", lineItemRealmEntity.id).findFirst()?.deleteFromRealm()
+    }
+
     fun deleteAllLineItems(realm: Realm) {
         realm.delete(LineItemRealmEntity::class.java)
     }

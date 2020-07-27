@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.menu
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -22,6 +21,7 @@ import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE
 import javax.inject.Inject
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
@@ -72,7 +72,7 @@ class MenuPagerFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_LINE_ITEM && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_ADD_OR_UPDATE) {
             data?.let {
                 val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
                 viewModel.addLineItem(lineItem)

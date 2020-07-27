@@ -39,6 +39,10 @@ class OrderRepository @Inject constructor(
         executeRealmTransaction { realm -> orderRealmDao.updateLineItem(realm, lineItem.toEntity(realm)) }
     }
 
+    fun removeLineItem(lineItem: LineItem) {
+        executeRealmTransaction { realm -> orderRealmDao.removeLineItem(realm, lineItem.toEntity(realm)) }
+    }
+
     fun postOrder(order: Order): Single<Boolean> {
         var orderId = globalRealmDao.getLocalBagOrderId()
         if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {

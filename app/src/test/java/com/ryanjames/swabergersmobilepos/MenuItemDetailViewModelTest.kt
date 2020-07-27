@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos
 
+import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.ryanjames.swabergersmobilepos.data.LineItemTestData
 import com.ryanjames.swabergersmobilepos.domain.*
@@ -41,6 +42,7 @@ class MenuItemDetailViewModelTest {
         assertEquals(R.string.add_to_bag, viewModel.strAddToBag.value?.id)
         assertEquals(1, viewModel.strAddToBag.value?.formatArgs?.size)
         assertEquals(formattedPrice, viewModel.strAddToBag.value?.formatArgs?.get(0))
+        assertEquals(View.GONE, viewModel.btnRemoveVisibility.value)
     }
 
     @Test
@@ -52,6 +54,7 @@ class MenuItemDetailViewModelTest {
         assertEquals(R.string.update_item, viewModel.strAddToBag.value?.id)
         assertEquals(1, viewModel.strAddToBag.value?.formatArgs?.size)
         assertEquals(formattedPrice, viewModel.strAddToBag.value?.formatArgs?.get(0))
+        assertEquals(View.VISIBLE, viewModel.btnRemoveVisibility.value)
     }
 
     @Test

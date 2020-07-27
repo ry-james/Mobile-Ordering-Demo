@@ -124,6 +124,28 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
+    fun removeLineItem(lineItem: LineItem) {
+        compositeDisposable.add(
+            orderRepository.getLocalBag()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ lineItems ->
+                    for ((index, item) in lineItems.withIndex()) {
+                        if (item.id == lineItem.id) {
+                            order.lineItems.removeAt(index)
+                            _localBag.value = order
+                            updatePrices()
+                            orderRepository.removeLineItem(lineItem)
+                            break
+                        }
+                    }
+                    updateBagVisibility()
+                }, { error ->
+                    error.printStackTrace()
+                })
+        )
+    }
+
     fun clearBag() {
         order.lineItems.clear()
         _onClearBag.value = true

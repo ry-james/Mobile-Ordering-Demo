@@ -22,7 +22,7 @@
     <string name="empty_bag_subtitle">Looks like you haven’t made your choice yet.</string>
     <string name="bag_summary_toolbar_title">Bag</string>
     <string name="menu_toolbar_title">Menu</string>
-    <string name="update_item">UPDATE ITEM - $%s</string>
+    <string name="update_item">UPDATE ITEM\n$%s</string>
     <string name="add_to_bag">ADD TO BAG - $%s</string>
     <string name="quantity">QUANTITY</string>
     <string name="cancel_changes_dialog_message">Are you sure you want to discard your selections?</string>
@@ -59,4 +59,5 @@
     <string name="total_price">Total Price</string>
     <string name="cta_set">SET</string>
     <string name="enter_customer_name_message">Please enter the customer name.</string>
+    <string name="remove">REMOVE</string>
 </resources>
