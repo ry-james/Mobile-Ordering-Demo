@@ -2,6 +2,8 @@ package com.ryanjames.swabergersmobilepos.database.realm
 
 import io.realm.RealmList
 import io.realm.RealmObject
+import io.realm.RealmResults
+import io.realm.annotations.LinkingObjects
 import io.realm.annotations.PrimaryKey
 
 open class LocalBagRealmEntity(
@@ -32,7 +34,9 @@ open class ProductsInBundleRealmEntity(
 open class ModifiersInProductRealmEntity(
     var product: ProductRealmEntity? = null,
     var modifierGroup: ModifierGroupRealmEntity? = null,
-    var modifiers: RealmList<ModifierInfoRealmEntity> = RealmList()
+    var modifiers: RealmList<ModifierInfoRealmEntity> = RealmList(),
+    @LinkingObjects("modifiers")
+    val lineItems: RealmResults<LineItemRealmEntity>? = null
 ) : RealmObject() {
     constructor() : this(null, null, RealmList())
 }

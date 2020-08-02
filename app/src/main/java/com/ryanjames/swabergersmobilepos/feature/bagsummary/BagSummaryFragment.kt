@@ -60,7 +60,6 @@ class BagSummaryFragment : Fragment() {
                 AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.order_created_message))
                     .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
-                        viewModel.clearBag()
                         dialogInterface.dismiss()
                     }.setCancelable(false)
                     .show()

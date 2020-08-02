@@ -92,7 +92,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
             _emptyBagVisibility.value = View.GONE
             _nonEmptyBagVisibility.value = View.VISIBLE
         }
-
     }
 
     private fun updatePrices() {
@@ -134,11 +133,11 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                         if (item.id == lineItem.id) {
                             order.lineItems.removeAt(index)
                             _localBag.value = order
-                            updatePrices()
                             orderRepository.removeLineItem(lineItem)
                             break
                         }
                     }
+                    updatePrices()
                     updateBagVisibility()
                 }, { error ->
                     error.printStackTrace()
@@ -147,6 +146,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun clearBag() {
+        orderRepository.clearLocalBag()
         order.lineItems.clear()
         _onClearBag.value = true
         updateBagVisibility()
@@ -159,7 +159,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     Log.d("ORDER", "CREATED")
-                    orderRepository.clearLocalBag()
+                    clearBag()
                     _onOrderSucceeded.value = Event(true)
                 }, {
                     it.printStackTrace()
