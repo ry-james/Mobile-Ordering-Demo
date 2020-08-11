@@ -7,13 +7,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
@@ -26,7 +25,7 @@ import javax.inject.Inject
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
 
-class MenuPagerFragment : Fragment() {
+class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragment_menu_list) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -38,16 +37,13 @@ class MenuPagerFragment : Fragment() {
     }
 
     private lateinit var viewModel: MenuFragmentViewModel
-    private lateinit var binding: FragmentMenuListBinding
     private var categoryId = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu_list, container, false)
-        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
-        binding.lifecycleOwner = this
 
+        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
         categoryId = arguments?.getString(EXTRA_CATEGORY_ID) ?: ""
 
         addSubscriptions()

@@ -60,4 +60,7 @@
     <string name="cta_set">SET</string>
     <string name="enter_customer_name_message">Please enter the customer name.</string>
     <string name="remove">REMOVE</string>
+    <string name="item_updated_snackbar">Item is updated successfully.</string>
+    <string name="item_added_snackbar">Item is added successfully.</string>
+    <string name="item_removed_snackbar">Item is removed successfully.</string>
 </resources>

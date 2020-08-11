@@ -10,6 +10,7 @@ object ServiceGenerator {
 
     //    val API_BASE_URL = "https://test-swabergers.herokuapp.com/"
     val API_BASE_URL = "http://10.0.2.2:5000"
+//    val API_BASE_URL = "http://192.168.1.234:5000"
 
     val builder = Retrofit.Builder()
         .baseUrl(API_BASE_URL)

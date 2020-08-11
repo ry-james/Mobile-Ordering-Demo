@@ -16,12 +16,12 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/texgyreheros_bold"
             android:textAllCaps="true"
-            app:layout_constraintBottom_toTopOf="@id/tvSubheader"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            app:layout_goneMarginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@id/tvSubheader"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginBottom="16dp"
             tools:text="SELECT BUN" />
 
         <TextView
@@ -59,10 +59,10 @@
             android:id="@+id/ivPlus"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="gone"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -74,13 +74,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/texgyreheros_bold"
+            android:text="3"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ivPlus"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="3" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/ivMinus"

@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.MarginItemDecoration
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
@@ -19,12 +18,11 @@ import javax.inject.Inject
 
 private const val EXTRA_RV_STATE = "rv.state"
 
-class OrderHistoryFragment : Fragment() {
+class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.fragment_order_history) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var binding: FragmentOrderHistoryBinding
     private lateinit var viewModel: OrderHistoryViewModel
 
     private val orderHistoryAdapter = OrderHistoryAdapter(listOf())
@@ -33,11 +31,8 @@ class OrderHistoryFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_order_history, container, false)
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(OrderHistoryViewModel::class.java)
-
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
 
         subscribe()
         setupRecyclerView()

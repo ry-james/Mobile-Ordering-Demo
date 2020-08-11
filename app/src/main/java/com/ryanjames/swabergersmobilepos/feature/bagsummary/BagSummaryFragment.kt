@@ -10,12 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
@@ -27,12 +26,11 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE
 import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
-class BagSummaryFragment : Fragment() {
+class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.fragment_bag_summary) {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var binding: FragmentBagSummaryBinding
     private lateinit var viewModel: BagSummaryViewModel
     private lateinit var fragmentCallback: BagSummaryFragmentCallback
     private lateinit var adapter: BagItemAdapter
@@ -41,11 +39,8 @@ class BagSummaryFragment : Fragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         SwabergersApplication.appComponent.inject(this)
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bag_summary, container, false)
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(BagSummaryViewModel::class.java)
-
         binding.viewModel = viewModel
-        binding.lifecycleOwner = activity
 
         setupRecyclerView()
         setupListeners()
