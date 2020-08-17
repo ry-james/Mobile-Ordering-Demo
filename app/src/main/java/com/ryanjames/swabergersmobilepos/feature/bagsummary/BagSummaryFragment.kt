@@ -26,6 +26,8 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE
 import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
+private const val EXTRA_RV_STATE = "rv.state"
+
 class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.fragment_bag_summary) {
 
     @Inject
@@ -41,16 +43,19 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(BagSummaryViewModel::class.java)
         binding.viewModel = viewModel
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupListeners()
         subscribe()
         viewModel.retrieveLocalBag()
-        return binding.root
     }
 
     private fun subscribe() {
-        viewModel.onOrderSucceeded.observe(this, Observer { event ->
+        viewModel.onOrderSucceeded.observe(viewLifecycleOwner, Observer { event ->
             if (event.getContentIfNotHandled() == true) {
                 AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.order_created_message))
@@ -61,7 +66,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
             }
         })
 
-        viewModel.orderFailed.observe(this, Observer { event ->
+        viewModel.orderFailed.observe(viewLifecycleOwner, Observer { event ->
             if (event.getContentIfNotHandled() == true) {
                 AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.something_went_wrong))
@@ -74,11 +79,11 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
             }
         })
 
-        viewModel.getLocalBag.observe(this, Observer { order ->
+        viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { order ->
             adapter.updateLineItems(order.lineItems)
         })
 
-        viewModel.onClearBag.observe(this, Observer {
+        viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
             adapter.clear()
         })
     }
@@ -166,6 +171,10 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     interface BagSummaryFragmentCallback {
         fun onUpdateLineItem()
         fun onRemoveLineItem()
+    }
+
+    companion object {
+        private val outStateBundle = Bundle()
     }
 
 }

@@ -32,14 +32,17 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
         binding.viewModel = viewModel
-
-        viewModel.retrieveMenu()
-        addSubscriptions()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addSubscriptions()
+        viewModel.retrieveMenu()
+    }
+
     private fun addSubscriptions() {
-        viewModel.menuObservable.observe(this, Observer { menu ->
+        viewModel.menuObservable.observe(viewLifecycleOwner, Observer { menu ->
             if (menu.categories.isEmpty()) {
                 showMenuErrorLoading()
                 return@Observer
@@ -47,7 +50,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
             setupViewPager(menu.categories)
         })
 
-        viewModel.errorLoadingMenuObservable.observe(this, Observer { event ->
+        viewModel.errorLoadingMenuObservable.observe(viewLifecycleOwner, Observer { event ->
             if (event.getContentIfNotHandled() == true) {
                 showMenuErrorLoading()
             }

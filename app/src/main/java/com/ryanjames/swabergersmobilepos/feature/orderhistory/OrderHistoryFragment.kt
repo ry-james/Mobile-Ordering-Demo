@@ -33,12 +33,6 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(OrderHistoryViewModel::class.java)
         binding.viewModel = viewModel
-
-        subscribe()
-        setupRecyclerView()
-
-        viewModel.retrieveOrderHistory()
-
         return binding.root
     }
 
@@ -52,6 +46,13 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
         outStateBundle.putParcelable(EXTRA_RV_STATE, binding.rvOrderHistory.layoutManager?.onSaveInstanceState())
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        subscribe()
+        setupRecyclerView()
+        viewModel.retrieveOrderHistory()
+    }
+
     private fun setupRecyclerView() {
         binding.rvOrderHistory.apply {
             layoutManager = LinearLayoutManager(this@OrderHistoryFragment.activity)
@@ -61,7 +62,7 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
     }
 
     private fun subscribe() {
-        viewModel.onRetrieveOrderHistory.observe(this, Observer {
+        viewModel.onRetrieveOrderHistory.observe(viewLifecycleOwner, Observer {
             orderHistoryAdapter.updateOrderHistory(it)
         })
     }

@@ -2,7 +2,9 @@ package com.ryanjames.swabergersmobilepos.feature.bottomnav
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -17,6 +19,8 @@ import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
+import com.ryanjames.swabergersmobilepos.helper.observeBroadcasts
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener, MenuFragment.MenuFragmentCallback, BagSummaryFragment.BagSummaryFragmentCallback {
@@ -25,7 +29,8 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityBottomNavBinding
-
+    private var internetConnectivitySubscription: Disposable? = null
+    private var noInternetSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +47,35 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         binding.bottomNav.setOnNavigationItemSelectedListener(this)
+        navigateToMenuTab()
+        internetConnectivitySubscription = observeBroadcasts(ConnectivityManager.CONNECTIVITY_ACTION)
+            .subscribe(this::onConnectivityChange)
 
     }
 
+    private fun onConnectivityChange(intent: Intent) {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
+        Log.i("MainActivity", "isConnected = $isConnected")
+        if (isConnected) {
+            hideNoInternetSnackbar()
+        } else {
+            showNoInternetSnackbar()
+        }
+    }
+
+    private fun showNoInternetSnackbar() {
+        noInternetSnackbar = showSnackbar("No internet connection", Snackbar.LENGTH_INDEFINITE)
+    }
+
+    private fun hideNoInternetSnackbar() {
+        noInternetSnackbar?.dismiss()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        internetConnectivitySubscription?.dispose()
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val selectedFragment = when (item.itemId) {
@@ -53,7 +84,6 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
             R.id.navigation_order -> OrderHistoryFragment()
             else -> return false
         }
-
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_content_bottom_nav, selectedFragment, selectedFragment::class.qualifiedName)
             .commit()
@@ -64,14 +94,17 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         if (supportFragmentManager.findFragmentByTag(MenuFragment::class.qualifiedName)?.isVisible == true) {
             finish()
         } else {
-            binding.bottomNav.selectedItemId = R.id.navigation_menu
+            navigateToMenuTab()
         }
     }
 
-    private fun showSnackbar(message: String) {
-        Snackbar.make(binding.coordinatorLayout, message, Snackbar.LENGTH_SHORT).apply {
+    private fun navigateToMenuTab() {
+        binding.bottomNav.selectedItemId = R.id.navigation_menu
+    }
+
+    private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT): Snackbar {
+        return Snackbar.make(binding.coordinatorLayout, message, duration).apply {
             anchorView = binding.bottomNav
-            show()
         }
     }
 
