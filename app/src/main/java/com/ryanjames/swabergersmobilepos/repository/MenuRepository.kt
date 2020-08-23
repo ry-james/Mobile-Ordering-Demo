@@ -23,9 +23,11 @@ class MenuRepository @Inject constructor(
 
     private fun databaseObservable(): Maybe<Menu> {
         return menuRealmDao.getMenu().map { menuRealm ->
-//            Disabling cache for now
-//            val cacheLifeInMinutes = menu.createdAt.toLocalDateTime().until(LocalDateTime.now(), ChronoUnit.MINUTES)
-//            if (cacheLifeInMinutes >= 60 || cacheLifeInMinutes < 0) {
+            // Disabling cache for now
+            val dateCreated = menuRealm.createdAt
+//            val diffInMillies = Math.abs(Date(System.currentTimeMillis()).time - dateCreated.time)
+//            val cacheLifeInSeconds = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS)
+//            if (cacheLifeInSeconds >= 60 || cacheLifeInSeconds < 0) {
 //                menuRealmDao.deleteMenu()
 //                Menu.EMPTY
 //            } else {
@@ -44,9 +46,9 @@ class MenuRepository @Inject constructor(
             }
     }
 
-    fun getMenu(): Single<Menu> {
+    fun getMenu(): Observable<Menu> {
         return Observable.concat(databaseObservable().toObservable(), apiObservable().toObservable())
-            .firstElement().toSingle()
+            .firstElement().toObservable()
     }
 
 

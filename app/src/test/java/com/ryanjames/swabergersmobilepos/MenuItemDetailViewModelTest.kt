@@ -6,7 +6,6 @@ import com.ryanjames.swabergersmobilepos.data.LineItemTestData
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
-import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -28,11 +27,6 @@ class MenuItemDetailViewModelTest {
         viewModel = MenuItemDetailViewModel()
     }
 
-    @After
-    fun tearDown() {
-        viewModel.lineItemObservable.value?.modifiers?.clear()
-        viewModel.lineItemObservable.value?.productsInBundle?.clear()
-    }
 
     @Test
     fun test_add_to_bag_cta() {
@@ -154,8 +148,31 @@ class MenuItemDetailViewModelTest {
         assertEquals(hashMapOf(KEY_CHEESE to listOf<ModifierInfo>()), viewModel.lineItemObservable.value?.modifiers)
     }
 
+    @Test
+    fun test_adding_unknown_product_selection_in_product_group() {
+        viewModel.lineItemObservable.observeForever { }
+        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setProductBundle(CHEESE_BURGER_MEAL)
+        viewModel.setDrink(PRODUCT_UNKNOWN_DRINK)
+        assertTrue(viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS)?.contains(PRODUCT_COKE) == true)
+        assertTrue(viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS)?.contains(PRODUCT_UNKNOWN_DRINK) == false)
+    }
+
+    @Test
+    fun test_adding_multiple_products_in_product_group() {
+        viewModel.lineItemObservable.observeForever { }
+        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setProductBundle(CHEESE_BURGER_MEAL)
+        viewModel.setDrinks(listOf(PRODUCT_UNKNOWN_DRINK, PRODUCT_PEPSI, PRODUCT_COKE))
+        assertEquals(listOf(PRODUCT_PEPSI, PRODUCT_COKE), viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS))
+    }
+
     private fun MenuItemDetailViewModel.setDrink(drink: Product) {
         this.setProductSelectionsForProductGroupByIds(PRODUCT_GROUP_DRINKS, listOf(drink.productId))
+    }
+
+    private fun MenuItemDetailViewModel.setDrinks(drinks: List<Product>) {
+        this.setProductSelectionsForProductGroupByIds(PRODUCT_GROUP_DRINKS, drinks.map { it.productId })
     }
 
     private fun MenuItemDetailViewModel.setCheese(cheese: ModifierInfo) {
@@ -214,6 +231,9 @@ class MenuItemDetailViewModelTest {
 
         private val UNKNOWN_MODIFIER
             get() = ModifierInfo("UNKNOWN", "Unknown Modifier", 100f, "")
+
+        private val PRODUCT_UNKNOWN_DRINK
+            get() = Product("D11000", "Unknown", "", 0f, "CKE", listOf(), listOf())
 
         private val KEY_CHEESE
             get() = ProductModifierGroupKey(PRODUCT_CHEESE_BURGER, MODIFIER_GROUP_CHEESE)

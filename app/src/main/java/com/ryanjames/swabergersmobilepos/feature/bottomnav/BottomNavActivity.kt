@@ -48,9 +48,10 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         }
         binding.bottomNav.setOnNavigationItemSelectedListener(this)
         navigateToMenuTab()
+
+        // Subscribe to Internet connectivity broadcast
         internetConnectivitySubscription = observeBroadcasts(ConnectivityManager.CONNECTIVITY_ACTION)
             .subscribe(this::onConnectivityChange)
-
     }
 
     private fun onConnectivityChange(intent: Intent) {

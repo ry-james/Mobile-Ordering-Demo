@@ -1,7 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.login
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -12,7 +11,9 @@ import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityLoginBinding
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
+import com.ryanjames.swabergersmobilepos.helper.setOnSingleClickListener
 import javax.inject.Inject
+
 
 class LoginActivity : BaseActivity() {
 
@@ -59,10 +60,10 @@ class LoginActivity : BaseActivity() {
                 .setPositiveButton(R.string.ok_cta) { dialog, _ -> dialog.dismiss() }
                 .show()
         })
-    }
 
-    fun onClickSubmit(view: View) {
-        showLoadingDialog(getString(R.string.signing_in))
-        viewModel.login()
+        binding.button.setOnSingleClickListener(this) {
+            showLoadingDialog(getString(R.string.signing_in))
+            viewModel.login()
+        }
     }
 }

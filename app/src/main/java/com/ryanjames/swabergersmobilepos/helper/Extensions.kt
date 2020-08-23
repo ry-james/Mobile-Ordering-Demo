@@ -1,12 +1,14 @@
 package com.ryanjames.swabergersmobilepos.helper
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.*
+import com.jakewharton.rxbinding.view.RxView
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 fun Float.toTwoDigitString(): String {
     return String.format(Locale.US, "%.2f", this)
@@ -72,4 +74,24 @@ fun String.isBlankOrEmpty(): Boolean {
 
 fun String.trimAllWhitespace(): String {
     return this.trim().replace("\\s+".toRegex(), " ")
+}
+
+fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -> Unit, throttle: Long) {
+
+    val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
+        val subscription = RxView.clicks(this@setOnSingleClickListener).throttleFirst(throttle, TimeUnit.MILLISECONDS).subscribe {
+            onClick(this@setOnSingleClickListener)
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        fun onDestroy() {
+            subscription?.unsubscribe()
+        }
+
+    }
+    activity.lifecycle.addObserver(lifecycleObserver)
+}
+
+fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -> Unit) {
+    setOnSingleClickListener(activity, onClick, 1000)
 }

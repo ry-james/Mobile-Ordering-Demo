@@ -28,16 +28,20 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
             _strProductName.value = product.productName
             _strProductDescription.value = product.productDescription
             if (!isModifying) {
-                for (modifierGroup in product.modifierGroups) {
-                    if (modifierGroup.defaultSelection != null) {
-                        this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
-                    }
-                }
+                initializeDefaultModifiers()
             }
 
             initialLineItem = this.lineItem.deepCopy()
             isInitialized = true
             updateAndNotifyObservers()
+        }
+    }
+
+    private fun initializeDefaultModifiers() {
+        for (modifierGroup in product.modifierGroups) {
+            if (modifierGroup.defaultSelection != null) {
+                this.lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            }
         }
     }
 
@@ -98,8 +102,12 @@ class MenuItemDetailViewModel @Inject constructor() : ViewModel() {
         for (productId in productIds) {
             productGroup.options.find { it.productId == productId }?.let { newProductList.add(it) }
         }
-        setProductSelectionsForProductGroup(productGroup, newProductList)
-        updateAndNotifyObservers()
+
+        // Don't update if all productIds are not part of the product group
+        if (newProductList.isNotEmpty()) {
+            setProductSelectionsForProductGroup(productGroup, newProductList)
+            updateAndNotifyObservers()
+        }
 
     }
 
