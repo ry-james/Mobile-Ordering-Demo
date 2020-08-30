@@ -4,7 +4,9 @@ import io.realm.Realm
 
 fun executeRealmTransaction(action: (realm: Realm) -> Unit) {
     val realm = Realm.getDefaultInstance()
-    realm.beginTransaction()
+    if (!realm.isInTransaction) {
+        realm.beginTransaction()
+    }
     action.invoke(realm)
     realm.commitTransaction()
     realm.close()

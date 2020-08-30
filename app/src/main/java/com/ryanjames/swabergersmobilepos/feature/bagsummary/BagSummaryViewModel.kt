@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,14 +7,11 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.helper.Event
-import com.ryanjames.swabergersmobilepos.helper.clearAndAddAll
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
@@ -60,8 +56,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
 
-    private val localBagStream: Single<List<LineItem>>
-        get() = orderRepository.getLocalBag().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+//    private val localBagStream: Single<List<LineItem>>
+//        get() = orderRepository.getLocalBag().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
     var customerInput: String? = null
 
@@ -71,12 +67,14 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
-            localBagStream
-                .subscribe({ lineItems ->
-                    order.lineItems.clearAndAddAll(lineItems)
+            orderRepository.getOrder().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ order ->
+                    this.order = order
                     _localBag.value = order
                     updateBagVisibility()
                     updatePrices()
+
                 }, { error ->
                     error.printStackTrace()
                 })
@@ -101,48 +99,48 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun putLineItem(lineItem: LineItem) {
-        compositeDisposable.add(
-            orderRepository.getLocalBag()
-                .subscribeOn(Schedulers.io())
-                .delay(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ lineItems ->
-                    for ((index, item) in lineItems.withIndex()) {
-                        if (item.id == lineItem.id) {
-                            order.lineItems[index] = lineItem
-                            _localBag.value = order
-                            updatePrices()
-                            orderRepository.updateLineItem(lineItem)
-                            break
-                        }
-                    }
-                    updateBagVisibility()
-                }, { error ->
-                    error.printStackTrace()
-                })
-        )
+//        compositeDisposable.add(
+//            orderRepository.getLocalBag()
+//                .subscribeOn(Schedulers.io())
+//                .delay(100, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ lineItems ->
+//                    for ((index, item) in lineItems.withIndex()) {
+//                        if (item.id == lineItem.id) {
+//                            order.lineItems[index] = lineItem
+//                            _localBag.value = order
+//                            updatePrices()
+//                            orderRepository.updateLineItem(lineItem)
+//                            break
+//                        }
+//                    }
+//                    updateBagVisibility()
+//                }, { error ->
+//                    error.printStackTrace()
+//                })
+//        )
     }
 
     fun removeLineItem(lineItem: LineItem) {
-        compositeDisposable.add(
-            orderRepository.getLocalBag()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ lineItems ->
-                    for ((index, item) in lineItems.withIndex()) {
-                        if (item.id == lineItem.id) {
-                            order.lineItems.removeAt(index)
-                            _localBag.value = order
-                            orderRepository.removeLineItem(lineItem)
-                            break
-                        }
-                    }
-                    updatePrices()
-                    updateBagVisibility()
-                }, { error ->
-                    error.printStackTrace()
-                })
-        )
+//        compositeDisposable.add(
+//            orderRepository.getLocalBag()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({ lineItems ->
+//                    for ((index, item) in lineItems.withIndex()) {
+//                        if (item.id == lineItem.id) {
+//                            order.lineItems.removeAt(index)
+//                            _localBag.value = order
+//                            orderRepository.removeLineItem(lineItem)
+//                            break
+//                        }
+//                    }
+//                    updatePrices()
+//                    updateBagVisibility()
+//                }, { error ->
+//                    error.printStackTrace()
+//                })
+//        )
     }
 
     fun clearBag() {
@@ -153,19 +151,19 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun postOrder() {
-        compositeDisposable.add(
-            orderRepository.postOrder(order.apply { this.customerName = customerInput ?: "" })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    Log.d("ORDER", "CREATED")
-                    clearBag()
-                    _onOrderSucceeded.value = Event(true)
-                }, {
-                    it.printStackTrace()
-                    _onOrderFailed.value = Event(true)
-                })
-        )
+//        compositeDisposable.add(
+//            orderRepository.postOrder(order.apply { this.customerName = customerInput ?: "" })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    Log.d("ORDER", "CREATED")
+//                    clearBag()
+//                    _onOrderSucceeded.value = Event(true)
+//                }, {
+//                    it.printStackTrace()
+//                    _onOrderFailed.value = Event(true)
+//                })
+//        )
     }
 
     override fun onCleared() {

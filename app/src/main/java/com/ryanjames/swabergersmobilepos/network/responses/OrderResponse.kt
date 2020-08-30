@@ -2,62 +2,71 @@ package com.ryanjames.swabergersmobilepos.network.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class OrderBody(
+data class GetOrderResponse(
     val orderId: String,
-    val lineItems: List<LineItemRequestBody>
-)
-
-data class LineItemRequestBody(
-    val lineItemId: String,
-    val lineItemName: String,
-    val quantity: Int,
-    val price: Float,
-    @SerializedName("unit_price") val unitPrice: Float,
-    val products: List<ProductInOrderRequestBody>,
-    val baseProduct: String
-)
-
-data class ProductInOrderRequestBody(
-    val productItemId: String,
-    val productId: String,
-    val modifierSelections: List<ModifierSelectionRequestBody>
-)
-
-data class ModifierSelectionRequestBody(
-    val productGroupId: String,
-    val modifierGroupId: String,
-    val priceDelta: Float,
-    val items: List<String>
-)
-
-data class OrderHistoryResponse(val orders: List<OrderResponse>)
-
-data class OrderResponse(
-    val orderId: String,
-    val lineItems: List<LineItemResponse>,
+    val lineItems: List<GetOrderLineItemResponse>,
     val price: Float,
     val creationDate: String
 )
 
-data class LineItemResponse(
+data class GetOrderLineItemResponse(
     val lineItemId: String,
-    val lineItemName: String,
-    val quantity: Int,
-    val price: Float,
     @SerializedName("unit_price") val unitPrice: Float,
-    val products: List<ProductInOrderResponse>,
-    val baseProduct: String
+    val price: Float,
+    val quantity: Int,
+    val lineItemName: String,
+    val products: List<GetOrderProductResponse>,
+    val menuProduct: ProductDetailsResponse,
+    val bundleId: String?
 )
 
-data class ProductInOrderResponse(
+data class GetOrderProductResponse(
+    val modifierSelections: List<GetOrderModifierSelectionResponse>,
     val productItemId: String,
     val productId: String,
-    val modifierSelections: List<ModifierSelectionResponse>
+    val productName: String,
+    val productGroupId: String
 )
 
-data class ModifierSelectionResponse(
+data class GetOrderModifierSelectionResponse(
     val productGroupId: String,
     val modifierGroupId: String,
-    val priceDelta: Float,
-    val items: List<String>
+    val priceDelta: Int,
+    val modifiers: List<ModifierInfoResponse>
 )
+
+data class ProductDetailsResponse(
+    val productId: String,
+    val productName: String,
+    val productDescription: String?,
+    val price: Float,
+    val receiptText: String,
+    val modifierGroups: List<ModifierGroupResponse>,
+    val bundles: List<GetOrderMenuBundleResponse>
+)
+
+data class GetOrderMenuBundleResponse(
+    val bundleId: String?,
+    val bundleName: String?,
+    val price: Float?,
+    val receiptText: String?,
+    val baseProduct: String?,
+    val productGroups: List<GetOrderMenuProductGroupResponse>?
+)
+
+data class GetOrderMenuProductGroupResponse(
+    val productGroupId: String?,
+    val productGroupName: String?,
+    val defaultProduct: String?,
+    val options: List<GetOrderProductGroupProductResponse>?,
+    val min: Int?,
+    val max: Int?
+)
+
+data class GetOrderProductGroupProductResponse(
+    val modifierGroups: List<ModifierGroupResponse>,
+    val productId: String,
+    val productName: String,
+    val price: Float
+)
+

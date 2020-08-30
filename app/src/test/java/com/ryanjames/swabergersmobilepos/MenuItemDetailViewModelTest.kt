@@ -24,7 +24,7 @@ class MenuItemDetailViewModelTest {
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        viewModel = MenuItemDetailViewModel()
+//        viewModel = MenuItemDetailViewModel()
     }
 
 

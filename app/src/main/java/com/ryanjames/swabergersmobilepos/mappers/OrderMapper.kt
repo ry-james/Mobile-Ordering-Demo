@@ -70,8 +70,8 @@ fun LineItemRealmEntity.toDomain(): LineItem {
     val bundleMapper = ProductBundleMapper()
 
 
-    val product = product?.let { productMapper.mapLocalToDomain(it) } ?: Product.EMPTY
-    val bundle = productBundle?.let { bundleMapper.mapLocalToDomain(it) }
+    val product = product?.let { productMapper.mapLocalDbToDomain(it) } ?: Product.EMPTY
+    val bundle = productBundle?.let { bundleMapper.mapLocalDbToDomain(it) }
 
     val products = hashMapOf<ProductGroup, List<Product>>()
     productsInBundle.map {
@@ -92,8 +92,8 @@ fun ProductsInBundleRealmEntity.toDomain(): Pair<ProductGroup, List<Product>> {
     val productGroupMapper = ProductGroupMapper()
     val productMapper = ProductMapper()
 
-    val productGroup = productGroupRealmEntity?.let { productGroupMapper.mapLocalToDomain(it) } ?: ProductGroup.EMPTY
-    val products = productMapper.mapLocalToDomain(products)
+    val productGroup = productGroupRealmEntity?.let { productGroupMapper.mapLocalDbToDomain(it) } ?: ProductGroup.EMPTY
+    val products = productMapper.mapLocalDbToDomain(products)
     return Pair(productGroup, products)
 }
 
@@ -102,14 +102,14 @@ fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List
     val modifierInfoMapper = ModifierInfoMapper()
     val productMapper = ProductMapper()
 
-    val modifiers = modifierInfoMapper.mapLocalToDomain(modifiers)
-    val product = product?.let { productMapper.mapLocalToDomain(it) } ?: Product.EMPTY
-    val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapLocalToDomain(it) } ?: ModifierGroup.EMPTY
+    val modifiers = modifierInfoMapper.mapLocalDbToDomain(modifiers)
+    val product = product?.let { productMapper.mapLocalDbToDomain(it) } ?: Product.EMPTY
+    val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapLocalDbToDomain(it) } ?: ModifierGroup.EMPTY
     return Pair(ProductModifierGroupKey(product, modifierGroup), modifiers)
 }
 
-fun Order.toRemoteEntity(orderId: String): OrderBody {
-    return OrderBody(orderId, lineItems.map { it.toRemoteEntity() })
+fun Order.toRemoteEntity(orderId: String): CreateUpdateOrderRequest {
+    return CreateUpdateOrderRequest(orderId, lineItems.map { it.toRemoteEntity() })
 }
 
 fun OrderHistoryResponse.toDomain(): List<Order> {
@@ -145,7 +145,7 @@ fun LineItem.toRemoteEntity(): LineItemRequestBody {
         )
     }
 
-    productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, baseProductModifierRequest))
+    productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, baseProductModifierRequest, product.productId))
 
 
 
@@ -168,10 +168,10 @@ fun LineItem.toRemoteEntity(): LineItemRequestBody {
             }
 
 
-            productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, modifierRequest))
+            productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, modifierRequest, productGroup.productGroupId))
         }
 
     }
 
-    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList, product.productId)
+    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList, product.productId, bundle?.bundleId)
 }

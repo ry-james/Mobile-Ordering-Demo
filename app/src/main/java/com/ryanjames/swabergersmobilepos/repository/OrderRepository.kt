@@ -18,7 +18,7 @@ class OrderRepository @Inject constructor(
     val globalRealmDao: GlobalRealmDao
 ) {
 
-    fun getLocalBag(): Single<List<LineItem>> {
+    private fun getLocalLineItems(): Single<List<LineItem>> {
         return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }
     }
 
@@ -26,13 +26,35 @@ class OrderRepository @Inject constructor(
         return swabergersService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
     }
 
-    fun insertLineItem(lineItem: LineItem) {
-        executeRealmTransaction { realm ->
-            if (orderRealmDao.lineItemsCount(realm) == 0) {
-                globalRealmDao.createLocalBagOrderId(realm)
+    fun addItem(lineItem: LineItem): Single<Boolean> {
+        var orderId = globalRealmDao.getLocalBagOrderId()
+        var newOrder = false
+
+        if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {
+            newOrder = true
+            executeRealmTransaction { realm ->
+                orderId = globalRealmDao.createLocalBagOrderId(realm)
             }
-            orderRealmDao.insertLineItem(realm, lineItem.toEntity(realm))
         }
+
+        return getLocalLineItems()
+            .flatMap { lineItems ->
+                val updatedLineItems = lineItems.toMutableList()
+                updatedLineItems.add(lineItem)
+                val order = Order(lineItems = updatedLineItems, orderId = orderId)
+
+                if (newOrder) {
+                    swabergersService.postOrder(order.toRemoteEntity(orderId))
+                } else {
+                    swabergersService.putOrder(order.toRemoteEntity(orderId))
+                }
+            }
+            .map { true }
+            .doOnSuccess {
+                executeRealmTransaction { realm ->
+                    orderRealmDao.insertLineItem(realm, lineItem.toEntity(realm))
+                }
+            }
     }
 
     fun updateLineItem(lineItem: LineItem) {
@@ -51,6 +73,12 @@ class OrderRepository @Inject constructor(
             }
         }
         return swabergersService.postOrder(order.toRemoteEntity(orderId)).map { true }
+    }
+
+    fun getOrder(): Single<Order> {
+        val orderId = globalRealmDao.getLocalBagOrderId()
+        return swabergersService.getOrderById(orderId).map {
+            it.toDomain() }
     }
 
     fun clearLocalBag() {

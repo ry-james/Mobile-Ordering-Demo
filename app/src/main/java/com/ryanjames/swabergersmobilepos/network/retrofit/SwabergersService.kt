@@ -38,6 +38,10 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
         return createService().getMenu()
     }
 
+    fun getBasicMenu(): Single<BasicMenuResponse> {
+        return createService().getBasicMenu()
+    }
+
     fun authenticate(username: String, password: String): Single<LoginResponse> {
         val loginRequestBody = LoginRequestBody(username, password)
         return createService(withAuth = false).login(loginRequestBody)
@@ -54,11 +58,25 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
             }.delaySubscription(3000, TimeUnit.MILLISECONDS)
     }
 
-    fun postOrder(orderBody: OrderBody): Single<OrderBody> {
-        return createService().postOrder(orderBody)
+    fun postOrder(createUpdateOrderRequest: CreateUpdateOrderRequest): Single<GetOrderResponse> {
+        return createService().postOrder(createUpdateOrderRequest)
     }
+
+    fun putOrder(createUpdateOrderRequest: CreateUpdateOrderRequest): Single<GetOrderResponse> {
+        return createService().putOrder(createUpdateOrderRequest)
+    }
+
+    fun getProductDetails(productId: String): Single<ProductDetailsResponse> {
+        return createService().getProductDetails(productId)
+    }
+
 
     fun getOrderHistory(): Single<OrderHistoryResponse> {
         return createService().getOrderHistory()
+    }
+
+    fun getOrderById(orderId: String): Single<GetOrderResponse> {
+        val getOrderRequest = GetOrderRequest(orderId)
+        return createService().getOrder(getOrderRequest)
     }
 }

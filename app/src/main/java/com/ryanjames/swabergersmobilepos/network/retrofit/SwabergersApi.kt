@@ -2,14 +2,9 @@ package com.ryanjames.swabergersmobilepos.network.retrofit
 
 import com.ryanjames.swabergersmobilepos.network.responses.*
 import io.reactivex.Single
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface SwabergersApi {
-
-    @GET("/modifiers")
-    fun getModifierInfos(): Single<ModifierInfosResponse>
 
     @POST("/login")
     fun login(@Body loginRequestBody: LoginRequestBody): Single<LoginResponse>
@@ -21,8 +16,20 @@ interface SwabergersApi {
     fun getMenu(): Single<MenuResponse>
 
     @POST("/order")
-    fun postOrder(@Body orderBody: OrderBody): Single<OrderBody>
+    fun postOrder(@Body createUpdateOrderRequest: CreateUpdateOrderRequest): Single<GetOrderResponse>
+
+    @PUT("/order")
+    fun putOrder(@Body createUpdateOrderRequest: CreateUpdateOrderRequest): Single<GetOrderResponse>
 
     @GET("/ordersummary")
     fun getOrderHistory(): Single<OrderHistoryResponse>
+
+    @POST("/retrieveOrder")
+    fun getOrder(@Body getOrderRequest: GetOrderRequest): Single<GetOrderResponse>
+
+    @GET("/productDetail/{product_id}")
+    fun getProductDetails(@Path(value = "product_id", encoded = true) productId: String): Single<ProductDetailsResponse>
+
+    @GET("/basicMenu")
+    fun getBasicMenu(): Single<BasicMenuResponse>
 }

@@ -34,7 +34,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     private lateinit var binding: ActivityMenuItemDetailBinding
     private lateinit var viewModel: MenuItemDetailViewModel
-    private lateinit var product: Product
     private lateinit var adapter: MenuItemDetailAdapter
     private var lineItem: LineItem? = null
     private var selectedProductGroup: ProductGroup? = null
@@ -45,28 +44,25 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         SwabergersApplication.appComponent.inject(this)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuItemDetailViewModel::class.java)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+        addSubscriptions()
 
         lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also { lineItem ->
-            product = lineItem.product
             viewModel.setupWithLineItem(lineItem)
         }
 
         if (lineItem == null) {
-            product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
+            val product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
             viewModel.setupWithProduct(product)
         }
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
 
         binding.ivBack.setOnClickListener {
             onUpPressed()
         }
 
         setupRecyclerView()
-        addSubscriptions()
-
     }
 
     private fun showCancelChangesDialog() {
@@ -100,14 +96,43 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     private fun addSubscriptions() {
-        viewModel.lineItemObservable.observe(this, Observer { lineItem ->
-            adapter.lineItem = lineItem
+        viewModel.lineItemObservable.observe(this, Observer { result ->
+            when (result) {
+                is Resource.InProgress -> {
+                    showLoadingDialog()
+                }
+                is Resource.Success -> {
+                    hideLoadingDialog()
+                    lineItem = result.data
+                    adapter.update(result.data)
+                }
+                is Resource.Error -> {
+                    hideLoadingDialog()
+                    showActivityFinishingDialog("Sorry, we're having trouble loading the product. Try again later.")
+                }
+            }
+        })
+
+        viewModel.onAddItemSuccess.observe(this, Observer {
+            val intent = Intent().apply {
+                putExtra(EXTRA_LINE_ITEM, lineItem)
+            }
+            setResult(RESULT_ADD_OR_UPDATE, intent)
+            finish()
+        })
+
+        viewModel.errorAddingItemObservable.observe(this, Observer {
+            AlertDialog.Builder(this)
+                .setMessage("There's an error adding the item")
+                .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                    dialog.dismiss()
+                }.show()
         })
     }
 
     private fun setupRecyclerView() {
 
-        adapter = MenuItemDetailAdapter(product, object : MenuItemDetailAdapter.OnClickRowListener {
+        adapter = MenuItemDetailAdapter(object : MenuItemDetailAdapter.OnClickRowListener {
 
             override fun onClickRowMealOptions() {
                 showBottomFragmentForMealSelection()
@@ -137,15 +162,16 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     private fun showBottomFragmentForMealSelection() {
+        viewModel.getLineItem()?.product?.let { product ->
+            val options = arrayListOf(BottomPickerAdapter.BottomPickerItem(product.productId, getString(R.string.ala_carte), getString(R.string.usd_price, product.price)))
+            options.addAll(product.bundles.map { bundle ->
+                BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.usd_price, bundle.price))
+            })
 
-        val options = arrayListOf(BottomPickerAdapter.BottomPickerItem(product.productId, getString(R.string.ala_carte), getString(R.string.usd_price, product.price)))
-        options.addAll(product.bundles.map { bundle ->
-            BottomPickerAdapter.BottomPickerItem(bundle.bundleId, bundle.bundleName, getString(R.string.usd_price, bundle.price))
-        })
-
-        val selectedItemId = arrayListOf(viewModel.lineItemObservable.value?.bundle?.bundleId ?: product.productId)
-        val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), null, 1, 1, options, selectedItemId)
-        bottomFragment.show(supportFragmentManager, "Meal Selection")
+            val selectedItemId = arrayListOf(lineItem?.bundle?.bundleId ?: product.productId)
+            val bottomFragment = BottomPickerFragment.createInstance(ID_MEAL_OPTIONS, getString(R.string.select_meal_option), null, 1, 1, options, selectedItemId)
+            bottomFragment.show(supportFragmentManager, "Meal Selection")
+        }
     }
 
     private fun showBottomFragmentForProductGroup(productGroup: ProductGroup) {
@@ -155,7 +181,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val selectedId = viewModel.lineItemObservable.value?.productsInBundle?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
+        val selectedId = lineItem?.productsInBundle?.get(productGroup)?.map { it.productId } ?: listOf(productGroup.defaultProduct.productId)
         val subtitle = if (productGroup.min >= 1) getString(R.string.subtitle_required, productGroup.max) else getString(R.string.subtitle_optional, productGroup.max)
 
         val bottomFragment = BottomPickerFragment.createInstance(
@@ -178,7 +204,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             options.add(item)
         }
 
-        val modifierId = viewModel.lineItemObservable.value?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId }
+        val modifierId = lineItem?.modifiers?.get(ProductModifierGroupKey(product, modifierGroup))?.map { it.modifierId }
 
         val selectedId = when {
             modifierId != null -> modifierId
@@ -208,11 +234,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     private fun handleMealSelection(selectedId: String) {
-        if (product.productId == selectedId) {
-            viewModel.setProductBundle(null)
-            return
-        }
-        product.bundles.find { it.bundleId == selectedId }.let { viewModel.setProductBundle(it) }
+        viewModel.handleMealSelection(selectedId)
     }
 
     private fun handleProductGroupSelections(productGroupIds: List<String>) {
@@ -224,16 +246,12 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     fun onClickAddToBag(view: View) {
-        val intent = Intent().apply {
-            putExtra(EXTRA_LINE_ITEM, viewModel.lineItemObservable.value)
-        }
-        setResult(RESULT_ADD_OR_UPDATE, intent)
-        finish()
+        viewModel.addToBag()
     }
 
     fun onClickRemove(view: View) {
         val intent = Intent().apply {
-            putExtra(EXTRA_LINE_ITEM, viewModel.lineItemObservable.value)
+            putExtra(EXTRA_LINE_ITEM, lineItem)
         }
         setResult(RESULT_REMOVE, intent)
         finish()

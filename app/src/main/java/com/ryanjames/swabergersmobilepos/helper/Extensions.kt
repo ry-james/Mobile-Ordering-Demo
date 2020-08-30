@@ -4,6 +4,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.jakewharton.rxbinding.view.RxView
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -94,4 +96,8 @@ fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -
 
 fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -> Unit) {
     setOnSingleClickListener(activity, onClick, 1000)
+}
+
+fun Disposable.disposedBy(bag: CompositeDisposable) {
+    bag.add(this)
 }

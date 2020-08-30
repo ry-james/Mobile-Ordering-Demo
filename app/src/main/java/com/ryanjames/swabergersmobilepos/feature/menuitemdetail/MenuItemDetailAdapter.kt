@@ -16,17 +16,20 @@ private const val ID_QUANTITY = 4
 private const val ID_PRODUCT_GROUP_HEADER = 5
 
 class MenuItemDetailAdapter(
-    val product: Product,
     private val onClickRowListener: OnClickRowListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var data: List<RowDataHolder> = createRowDataHolders()
+    private var data: List<RowDataHolder> = listOf()
 
-    var lineItem: LineItem? = null
+    private var lineItem: LineItem? = null
         set(value) {
             field = value
-            notifyChange()
         }
+
+    fun update(lineItem: LineItem) {
+        this.lineItem = lineItem.deepCopy()
+        notifyChange()
+    }
 
     private fun notifyChange() {
         data = createRowDataHolders()
@@ -211,28 +214,31 @@ class MenuItemDetailAdapter(
         val list = mutableListOf<RowDataHolder>()
         list.add(RowDataHolder.RowQuantity())
 
-        if (product.bundles.isNotEmpty()) {
-            list.add(RowDataHolder.RowSelectMealDataHolder())
-        }
+        lineItem?.product?.let { product ->
 
-        for (modifierGroup in product.modifierGroups) {
-            list.add(RowDataHolder.RowProductGroupModifierDataHolder(product, modifierGroup))
-        }
-
-        lineItem?.bundle?.productGroups?.forEach { productGroup ->
-            // Hide line separator for the row before the product group header
-            val lastItemIndex = list.size - 1
-            if (lastItemIndex >= 0) {
-                list[lastItemIndex].hideLineSeparator = true
+            if (lineItem?.product?.bundles?.isNotEmpty() == true) {
+                list.add(RowDataHolder.RowSelectMealDataHolder())
             }
 
-            list.add(RowDataHolder.RowProductGroupHeaderDataHolder(productGroup))
-            list.add(RowDataHolder.RowProductGroupDataHolder(productGroup))
+            for (modifierGroup in product.modifierGroups) {
+                list.add(RowDataHolder.RowProductGroupModifierDataHolder(product, modifierGroup))
+            }
 
-            val productSelection = lineItem?.productsInBundle?.get(productGroup)
-            productSelection?.forEach {
-                it.modifierGroups.forEach { modifierGroup ->
-                    list.add(RowDataHolder.RowProductGroupModifierDataHolder(it, modifierGroup))
+            lineItem?.bundle?.productGroups?.forEach { productGroup ->
+                // Hide line separator for the row before the product group header
+                val lastItemIndex = list.size - 1
+                if (lastItemIndex >= 0) {
+                    list[lastItemIndex].hideLineSeparator = true
+                }
+
+                list.add(RowDataHolder.RowProductGroupHeaderDataHolder(productGroup))
+                list.add(RowDataHolder.RowProductGroupDataHolder(productGroup))
+
+                val productSelection = lineItem?.productsInBundle?.get(productGroup)
+                productSelection?.forEach {
+                    it.modifierGroups.forEach { modifierGroup ->
+                        list.add(RowDataHolder.RowProductGroupModifierDataHolder(it, modifierGroup))
+                    }
                 }
             }
         }

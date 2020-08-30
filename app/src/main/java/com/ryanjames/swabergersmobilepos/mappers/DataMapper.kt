@@ -2,24 +2,24 @@ package com.ryanjames.swabergersmobilepos.mappers
 
 import io.realm.RealmList
 
-interface DataMapper<Entity, Api, Domain> {
+interface DataMapper<LocalDb, Api, Domain> {
 
-    fun mapRemoteToLocal(input: Api): Entity
+    fun mapRemoteToLocalDb(input: Api): LocalDb
 
-    fun mapLocalToDomain(input: Entity): Domain
+    fun mapLocalDbToDomain(input: LocalDb): Domain
 
-    fun mapDomainToLocal(input: Domain): Entity
+    fun mapDomainToLocalDb(input: Domain): LocalDb
 
-    fun mapRemoteToLocal(input: List<Api>): List<Entity> {
-        return input.map { this.mapRemoteToLocal(it) }
+    fun mapRemoteToLocalDb(input: List<Api>): List<LocalDb> {
+        return input.map { this.mapRemoteToLocalDb(it) }
     }
 
-    fun mapLocalToDomain(input: List<Entity>): List<Domain> {
-        return input.map { this.mapLocalToDomain(it) }
+    fun mapLocalDbToDomain(input: List<LocalDb>): List<Domain> {
+        return input.map { this.mapLocalDbToDomain(it) }
     }
 
-    fun mapDomainToLocal(input: List<Domain>): RealmList<Entity> {
-        return RealmList<Entity>().apply { addAll(input.map { this@DataMapper.mapDomainToLocal(it) }) }
+    fun mapDomainToLocalDb(input: List<Domain>): RealmList<LocalDb> {
+        return RealmList<LocalDb>().apply { addAll(input.map { this@DataMapper.mapDomainToLocalDb(it) }) }
     }
 }
 

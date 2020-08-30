@@ -5,12 +5,12 @@ import io.realm.Realm
 
 class MenuRealmDao {
 
-    fun getMenu(): Single<MenuRealmEntity> {
+    fun getBasicMenu(): Single<BasicMenuRealmEntity> {
         return Single.create { emitter ->
             val realm = Realm.getDefaultInstance()
-            val result = realm.where(MenuRealmEntity::class.java).findFirst()
+            val result = realm.where(BasicMenuRealmEntity::class.java).findFirst()
             if (result == null) {
-                emitter.onSuccess(MenuRealmEntity())
+                emitter.onSuccess(BasicMenuRealmEntity())
             } else {
                 emitter.onSuccess(result)
             }
@@ -18,24 +18,10 @@ class MenuRealmDao {
         }
     }
 
-    fun saveMenu(menuRealmEntity: MenuRealmEntity) {
-        val realm = Realm.getDefaultInstance()
-        realm.beginTransaction()
-        realm.insertOrUpdate(menuRealmEntity)
-        realm.commitTransaction()
-        realm.close()
-    }
-
-    fun deleteMenu() {
+    fun saveBasicMenu(basicMenuRealmEntity: BasicMenuRealmEntity) {
         executeRealmTransaction { realm ->
-            realm.delete(MenuRealmEntity::class.java)
-            realm.delete(ProductRealmEntity::class.java)
-            realm.delete(ProductGroupRealmEntity::class.java)
-            realm.delete(ModifierInfoRealmEntity::class.java)
-            realm.delete(ModifierGroupRealmEntity::class.java)
-            realm.delete(ProductBundleRealmEntity::class.java)
-            realm.delete(CategoryRealmEntity::class.java)
+            realm.delete(BasicMenuRealmEntity::class.java)
+            realm.insertOrUpdate(basicMenuRealmEntity)
         }
     }
-
 }

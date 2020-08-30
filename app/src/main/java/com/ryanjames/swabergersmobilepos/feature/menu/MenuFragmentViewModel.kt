@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
@@ -33,7 +32,7 @@ class MenuFragmentViewModel @Inject constructor(
 
     fun retrieveMenu() {
         compositeDisposable.add(
-            menuRepository.getMenu()
+            menuRepository.getBasicMenu()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -46,10 +45,6 @@ class MenuFragmentViewModel @Inject constructor(
                         _errorLoadingMenu.value = Event(true)
                     })
         )
-    }
-
-    fun addLineItem(lineItem: LineItem) {
-        orderRepository.insertLineItem(lineItem)
     }
 
     override fun onCleared() {

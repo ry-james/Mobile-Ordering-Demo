@@ -106,6 +106,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT): Snackbar {
         return Snackbar.make(binding.coordinatorLayout, message, duration).apply {
             anchorView = binding.bottomNav
+            show()
         }
     }
 

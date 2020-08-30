@@ -40,7 +40,6 @@ data class Product(
         val EMPTY: Product
             get() = Product("", "", "", 0f, "", listOf(), listOf())
     }
-
 }
 
 @Parcelize

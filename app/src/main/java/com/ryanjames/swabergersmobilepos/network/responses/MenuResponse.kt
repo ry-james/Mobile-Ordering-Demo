@@ -2,6 +2,22 @@ package com.ryanjames.swabergersmobilepos.network.responses
 
 import com.google.gson.annotations.SerializedName
 
+data class BasicMenuResponse(
+    val categories: List<BasicCategoryResponse>
+)
+
+data class BasicCategoryResponse(
+    val categoryId: String?,
+    val categoryName: String?,
+    val products: List<BasicProductResponse>?
+)
+
+data class BasicProductResponse(
+    val productId: String?,
+    val productName: String?,
+    val price: Float?
+)
+
 data class MenuResponse(
     val categories: List<CategoryResponse>?,
     val products: List<ProductResponse>?,

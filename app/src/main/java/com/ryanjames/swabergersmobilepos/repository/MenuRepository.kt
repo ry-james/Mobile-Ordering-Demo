@@ -2,7 +2,9 @@ package com.ryanjames.swabergersmobilepos.repository
 
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
-import com.ryanjames.swabergersmobilepos.mappers.MenuMapper
+import com.ryanjames.swabergersmobilepos.domain.Product
+import com.ryanjames.swabergersmobilepos.mappers.BasicMenuMapper
+import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Maybe
@@ -15,40 +17,46 @@ class MenuRepository @Inject constructor(
     val menuRealmDao: MenuRealmDao
 ) {
 
-    private val menuMapper = MenuMapper()
+    private val basicMenuMapper = BasicMenuMapper()
 
     fun authenticate(username: String, password: String): Single<LoginResponse> {
         return swabergersService.authenticate(username, password)
     }
 
-    private fun databaseObservable(): Maybe<Menu> {
-        return menuRealmDao.getMenu().map { menuRealm ->
+    private fun basicMenuDatabaseObservable(): Maybe<Menu> {
+        return menuRealmDao.getBasicMenu().map { basicMenuRealm ->
             // Disabling cache for now
-            val dateCreated = menuRealm.createdAt
+            val dateCreated = basicMenuRealm.createdAt
 //            val diffInMillies = Math.abs(Date(System.currentTimeMillis()).time - dateCreated.time)
 //            val cacheLifeInSeconds = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS)
 //            if (cacheLifeInSeconds >= 60 || cacheLifeInSeconds < 0) {
 //                menuRealmDao.deleteMenu()
 //                Menu.EMPTY
 //            } else {
-            menuMapper.mapLocalToDomain(menuRealm)
+            basicMenuMapper.mapLocalDbToDomain(basicMenuRealm)
 //            }
         }.filter { menu ->
             menu.categories.isNotEmpty()
         }
     }
 
-    private fun apiObservable(): Single<Menu> {
-        return swabergersService.getMenu()
-            .doOnSuccess { menuResponse -> menuRealmDao.saveMenu(menuMapper.mapRemoteToLocal(menuResponse)) }
-            .map { menu ->
-                menuMapper.mapLocalToDomain(menuMapper.mapRemoteToLocal(menu))
+    private fun basicMenuApiObservable(): Single<Menu> {
+        return swabergersService.getBasicMenu()
+            .doOnSuccess { menuResponse ->
+                menuRealmDao.saveBasicMenu(basicMenuMapper.mapRemoteToLocalDb(menuResponse))
+            }
+            .map { menuResponse ->
+                basicMenuMapper.mapLocalDbToDomain(basicMenuMapper.mapRemoteToLocalDb(menuResponse))
             }
     }
 
-    fun getMenu(): Observable<Menu> {
-        return Observable.concat(databaseObservable().toObservable(), apiObservable().toObservable())
+    fun getBasicMenu(): Observable<Menu> {
+        return Observable.concat(basicMenuDatabaseObservable().toObservable(), basicMenuApiObservable().toObservable())
             .firstElement().toObservable()
+    }
+
+    fun getProductDetails(productId: String): Single<Product> {
+        return swabergersService.getProductDetails(productId).map { it.toDomain() }
     }
 
 

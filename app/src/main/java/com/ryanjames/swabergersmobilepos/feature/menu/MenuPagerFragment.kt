@@ -70,8 +70,6 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_ADD_OR_UPDATE) {
             data?.let {
-                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
-                viewModel.addLineItem(lineItem)
                 fragmentCallback.onAddLineItem()
             }
         }

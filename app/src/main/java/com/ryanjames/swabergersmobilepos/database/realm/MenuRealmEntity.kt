@@ -4,19 +4,28 @@ import io.realm.RealmList
 import io.realm.RealmObject
 import java.util.*
 
-open class MenuRealmEntity(
-    var categories: RealmList<CategoryRealmEntity>,
+open class BasicMenuRealmEntity(
+    var categories: RealmList<BasicCategoryRealmEntity>,
     var createdAt: Date
 ) : RealmObject() {
     constructor() : this(RealmList(), Date())
 }
 
-open class CategoryRealmEntity(
+open class BasicCategoryRealmEntity(
     var categoryId: String,
     var categoryName: String,
-    var products: RealmList<ProductRealmEntity>
+    var products: RealmList<BasicProductRealmEntity>
 ) : RealmObject() {
+
     constructor() : this("", "", RealmList())
+}
+
+open class BasicProductRealmEntity(
+    var productId: String,
+    var productName: String,
+    var price: Float
+) : RealmObject() {
+    constructor() : this("", "", 0f)
 }
 
 open class ProductRealmEntity(
@@ -29,6 +38,13 @@ open class ProductRealmEntity(
     var bundles: RealmList<ProductBundleRealmEntity>
 ) : RealmObject() {
     constructor() : this("", "", "", 0f, "", RealmList(), RealmList())
+
+    fun deleteChildren() {
+        bundles.map { it.deleteChildren() }
+        bundles.deleteAllFromRealm()
+        modifierGroups.map { it.deleteChildren() }
+        modifierGroups.deleteAllFromRealm()
+    }
 }
 
 open class ModifierInfoRealmEntity(
@@ -55,6 +71,10 @@ open class ModifierGroupRealmEntity(
     fun getDefaultSelection(): ModifierInfoRealmEntity? {
         return options.find { it.modifierId == defaultSelection }
     }
+
+    fun deleteChildren() {
+        options.deleteAllFromRealm()
+    }
 }
 
 open class ProductBundleRealmEntity(
@@ -64,6 +84,11 @@ open class ProductBundleRealmEntity(
     var receiptText: String,
     var productGroups: RealmList<ProductGroupRealmEntity>
 ) : RealmObject() {
+
+    fun deleteChildren() {
+        productGroups.deleteAllFromRealm()
+    }
+
     constructor() : this("", "", 0f, "", RealmList())
 }
 
