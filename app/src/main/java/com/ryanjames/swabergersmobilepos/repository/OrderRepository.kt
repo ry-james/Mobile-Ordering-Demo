@@ -1,13 +1,18 @@
 package com.ryanjames.swabergersmobilepos.repository
 
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
+import com.ryanjames.swabergersmobilepos.database.realm.LineItemRealmEntity
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
+import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Order
+import com.ryanjames.swabergersmobilepos.helper.replace
+import com.ryanjames.swabergersmobilepos.mappers.toBagSummary
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
-import com.ryanjames.swabergersmobilepos.mappers.toEntity
-import com.ryanjames.swabergersmobilepos.mappers.toRemoteEntity
+import com.ryanjames.swabergersmobilepos.mappers.toLineItemRequest
+import com.ryanjames.swabergersmobilepos.mappers.toLocal
+import com.ryanjames.swabergersmobilepos.network.responses.CreateUpdateOrderRequest
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
 import io.reactivex.Single
 import javax.inject.Inject
@@ -18,15 +23,15 @@ class OrderRepository @Inject constructor(
     val globalRealmDao: GlobalRealmDao
 ) {
 
-    private fun getLocalLineItems(): Single<List<LineItem>> {
-        return orderRealmDao.getLineItems().map { it.lineItems.map { lineItem -> lineItem.toDomain() } }
+    private fun getLocalLineItems(): Single<List<LineItemRealmEntity>> {
+        return orderRealmDao.getLocalBag().map { it.lineItems }
     }
 
     fun getOrderHistory(): Single<List<Order>> {
         return swabergersService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
     }
 
-    fun addItem(lineItem: LineItem): Single<Boolean> {
+    fun addOrUpdateLineItem(lineItem: LineItem): Single<BagSummary> {
         var orderId = globalRealmDao.getLocalBagOrderId()
         var newOrder = false
 
@@ -36,49 +41,66 @@ class OrderRepository @Inject constructor(
                 orderId = globalRealmDao.createLocalBagOrderId(realm)
             }
         }
-
         return getLocalLineItems()
-            .flatMap { lineItems ->
-                val updatedLineItems = lineItems.toMutableList()
-                updatedLineItems.add(lineItem)
-                val order = Order(lineItems = updatedLineItems, orderId = orderId)
+            .flatMap { lineItemsEntities ->
+                var lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
+                val newLineItem = lineItem.toLineItemRequest()
+                lineItemListRequest = if (lineItemListRequest.find { it.lineItemId == newLineItem.lineItemId } != null) {
+                    lineItemListRequest.replace(newValue = newLineItem) { it.lineItemId == lineItem.lineItemId }
+                } else {
+                    lineItemListRequest.plus(newLineItem)
+                }
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest)
 
                 if (newOrder) {
-                    swabergersService.postOrder(order.toRemoteEntity(orderId))
+                    swabergersService.postOrder(request)
+                        .doOnSuccess { orderResponse ->
+                            executeRealmTransaction { realm ->
+                                orderResponse.lineItems.find { newLineItem.lineItemId == it.lineItemId }?.let {
+                                    orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
+                                }
+                            }
+                        }
                 } else {
-                    swabergersService.putOrder(order.toRemoteEntity(orderId))
+                    swabergersService.putOrder(request)
+                        .doOnSuccess { orderResponse ->
+                            executeRealmTransaction { realm ->
+                                orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
+                            }
+                        }
                 }
-            }
-            .map { true }
-            .doOnSuccess {
-                executeRealmTransaction { realm ->
-                    orderRealmDao.insertLineItem(realm, lineItem.toEntity(realm))
+            }.map { it.toBagSummary() }
+    }
+
+    fun removeLineItem(lineItem: LineItem): Single<BagSummary> {
+        return getLocalLineItems()
+            .flatMap { lineItemsEntities ->
+                val orderId = globalRealmDao.getLocalBagOrderId()
+                var lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
+                lineItemListRequest.find { it.lineItemId == lineItem.lineItemId }?.let {
+                    lineItemListRequest = lineItemListRequest.minus(it)
                 }
-            }
+
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest)
+                swabergersService.putOrder(request)
+                    .doOnSuccess { orderResponse ->
+                        executeRealmTransaction { realm ->
+                            orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
+                        }
+                    }
+            }.map { it.toBagSummary() }
     }
 
-    fun updateLineItem(lineItem: LineItem) {
-        executeRealmTransaction { realm -> orderRealmDao.updateLineItem(realm, lineItem.toEntity(realm)) }
-    }
-
-    fun removeLineItem(lineItem: LineItem) {
-        executeRealmTransaction { realm -> orderRealmDao.removeLineItem(realm, lineItem.toEntity(realm)) }
-    }
-
-    fun postOrder(order: Order): Single<Boolean> {
-        var orderId = globalRealmDao.getLocalBagOrderId()
-        if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {
-            executeRealmTransaction { realm ->
-                orderId = globalRealmDao.createLocalBagOrderId(realm)
-            }
-        }
-        return swabergersService.postOrder(order.toRemoteEntity(orderId)).map { true }
-    }
-
-    fun getOrder(): Single<Order> {
+    fun getCurrentOrder(): Single<BagSummary> {
         val orderId = globalRealmDao.getLocalBagOrderId()
-        return swabergersService.getOrderById(orderId).map {
-            it.toDomain() }
+        return swabergersService.getOrderById(orderId)
+            .doOnSuccess { orderResponse ->
+                executeRealmTransaction { realm ->
+                    orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
+                }
+            }.map {
+                it.toBagSummary()
+            }
     }
 
     fun clearLocalBag() {

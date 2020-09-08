@@ -22,10 +22,12 @@ private const val EXTRA_PRODUCT = "extra.product"
 private const val ID_MEAL_OPTIONS = "id.meal.options"
 private const val ID_PRODUCT_GROUP = "id.product.group"
 private const val ID_PRODUCT_GROUP_MODIFIER = "id.product.group.modifier"
-const val REQUEST_LINE_ITEM = 0
+const val REQUEST_LINEITEM = 0
 private const val EXTRA_LINE_ITEM = "extra.line.item"
-const val RESULT_ADD_OR_UPDATE = 1000
-const val RESULT_REMOVE = 1001
+private const val EXTRA_BAG_SUMMARY = "extra.bag.summary"
+private const val EXTRA_BAG_LINE_ITEM = "extra.bag.line.item"
+const val RESULT_ADD_OR_UPDATE_ITEM = 1000
+const val RESULT_REMOVE_ITEM = 1001
 
 class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPickerListener {
 
@@ -49,13 +51,13 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         binding.lifecycleOwner = this
         addSubscriptions()
 
-        lineItem = (intent.getParcelableExtra(EXTRA_LINE_ITEM) as? LineItem)?.also { lineItem ->
-            viewModel.setupWithLineItem(lineItem)
+        val bagLineItem = (intent.getParcelableExtra(EXTRA_BAG_LINE_ITEM) as? BagLineItem)?.also { lineItem ->
+            viewModel.setupWithBagLineItem(lineItem)
         }
 
-        if (lineItem == null) {
-            val product = intent.getParcelableExtra(EXTRA_PRODUCT) as Product
-            viewModel.setupWithProduct(product)
+        if (bagLineItem == null) {
+            val productId = intent.getStringExtra(EXTRA_PRODUCT)
+            viewModel.setupWithProductId(productId)
         }
 
         binding.ivBack.setOnClickListener {
@@ -113,20 +115,36 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             }
         })
 
-        viewModel.onAddItemSuccess.observe(this, Observer {
+        viewModel.onAddItemSuccess.observe(this, Observer { bagSummary ->
             val intent = Intent().apply {
-                putExtra(EXTRA_LINE_ITEM, lineItem)
+                putExtra(EXTRA_BAG_SUMMARY, bagSummary.peekContent())
             }
-            setResult(RESULT_ADD_OR_UPDATE, intent)
+            setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
             finish()
         })
 
-        viewModel.errorAddingItemObservable.observe(this, Observer {
-            AlertDialog.Builder(this)
-                .setMessage("There's an error adding the item")
-                .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                    dialog.dismiss()
-                }.show()
+        viewModel.onRemoveItemSuccess.observe(this, Observer { bagSummary ->
+            val intent = Intent().apply {
+                putExtra(EXTRA_BAG_SUMMARY, bagSummary.peekContent())
+            }
+            setResult(RESULT_REMOVE_ITEM, intent)
+            finish()
+        })
+
+        viewModel.errorObservable.observe(this, Observer { errorEvent ->
+            errorEvent?.getContentIfNotHandled()?.let { error ->
+                val message = when (error) {
+                    MenuItemDetailViewModel.Error.ErrorAddingItem -> getString(R.string.error_add_item)
+                    MenuItemDetailViewModel.Error.ErrorUpdatingItem -> getString(R.string.error_modify_item)
+                    MenuItemDetailViewModel.Error.ErrorRemovingItem -> getString(R.string.error_remove_item)
+                }
+                AlertDialog.Builder(this)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                        dialog.dismiss()
+                    }.show()
+            }
+
         })
     }
 
@@ -250,28 +268,24 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     fun onClickRemove(view: View) {
-        val intent = Intent().apply {
-            putExtra(EXTRA_LINE_ITEM, lineItem)
-        }
-        setResult(RESULT_REMOVE, intent)
-        finish()
+        viewModel.removeFromBag()
     }
 
     companion object {
-        fun createIntent(context: Context?, product: Product): Intent {
+        fun createIntent(context: Context?, productId: String): Intent {
             return Intent(context, MenuItemDetailActivity::class.java).apply {
-                putExtra(EXTRA_PRODUCT, product)
+                putExtra(EXTRA_PRODUCT, productId)
             }
         }
 
-        fun createIntent(context: Context?, lineItem: LineItem): Intent {
+        fun createIntent(context: Context?, bagLineItem: BagLineItem): Intent {
             return Intent(context, MenuItemDetailActivity::class.java).apply {
-                putExtra(EXTRA_LINE_ITEM, lineItem)
+                putExtra(EXTRA_BAG_LINE_ITEM, bagLineItem)
             }
         }
 
-        fun getExtraLineItem(intent: Intent): LineItem {
-            return intent.getParcelableExtra(EXTRA_LINE_ITEM)
+        fun getBagSummaryExtra(intent: Intent): BagSummary {
+            return intent.getParcelableExtra(EXTRA_BAG_SUMMARY)
         }
     }
 }

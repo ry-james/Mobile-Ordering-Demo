@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.databinding.RowBagItemBinding
-import com.ryanjames.swabergersmobilepos.domain.LineItem
+import com.ryanjames.swabergersmobilepos.domain.BagLineItem
+import com.ryanjames.swabergersmobilepos.domain.BagSummary
 
 class BagItemAdapter(
-    lineItems: List<LineItem>,
+    lineItems: List<BagLineItem>,
     private val listener: BagItemAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -26,8 +27,8 @@ class BagItemAdapter(
         }
     }
 
-    fun updateLineItems(lineItems: List<LineItem>) {
-        viewModels = lineItems.map { BagItemViewModel(it) }
+    fun updateBag(bagSummary: BagSummary) {
+        viewModels = bagSummary.lineItems.map { BagItemViewModel(it) }
         notifyDataSetChanged()
     }
 
@@ -55,6 +56,6 @@ class BagItemAdapter(
     }
 
     interface BagItemAdapterListener {
-        fun onClickLineItem(lineItem: LineItem)
+        fun onClickLineItem(lineItem: BagLineItem)
     }
 }

@@ -16,7 +16,7 @@ data class GetOrderLineItemResponse(
     val quantity: Int,
     val lineItemName: String,
     val products: List<GetOrderProductResponse>,
-    val menuProduct: ProductDetailsResponse,
+    val baseProduct: String,
     val bundleId: String?
 )
 
@@ -29,10 +29,14 @@ data class GetOrderProductResponse(
 )
 
 data class GetOrderModifierSelectionResponse(
-    val productGroupId: String,
     val modifierGroupId: String,
-    val priceDelta: Int,
-    val modifiers: List<ModifierInfoResponse>
+    val modifiers: List<GetOrderModifierResponse>
+)
+
+data class GetOrderModifierResponse(
+    val modifierId: String,
+    val modifierName: String,
+    val priceDelta: Int
 )
 
 data class ProductDetailsResponse(

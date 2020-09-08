@@ -1,10 +1,15 @@
 package com.ryanjames.swabergersmobilepos.database.realm
 
+import androidx.room.PrimaryKey
 import io.realm.RealmList
 import io.realm.RealmObject
-import io.realm.RealmResults
-import io.realm.annotations.LinkingObjects
-import io.realm.annotations.PrimaryKey
+
+open class OrderRealmEntity(
+    var orderId: String,
+    var lineItems: RealmList<LineItemRealmEntity>
+) : RealmObject() {
+    constructor() : this("", RealmList())
+}
 
 open class LocalBagRealmEntity(
     var lineItems: RealmList<LineItemRealmEntity>
@@ -13,30 +18,37 @@ open class LocalBagRealmEntity(
 }
 
 open class LineItemRealmEntity(
-    @PrimaryKey @JvmField
-    var id: String,
-    var product: ProductRealmEntity? = null,
-    var productBundle: ProductBundleRealmEntity? = null,
-    var productsInBundle: RealmList<ProductsInBundleRealmEntity> = RealmList(),
-    var modifiers: RealmList<ModifiersInProductRealmEntity> = RealmList(),
-    var quantity: Int
+    @PrimaryKey
+    var lineItemId: String,
+    var productId: String,
+    var bundleId: String?,
+    var quantity: Int,
+    var productsInBundle: RealmList<ProductsInLineItemRealmEntity>
 ) : RealmObject() {
-    constructor() : this("", null, null, RealmList(), RealmList(), 1)
+    constructor() : this("", "", "", 0, RealmList())
+
+    fun deleteChildrenFromRealm() {
+        productsInBundle.map { it.deleteChildrenFromRealm() }
+        productsInBundle.deleteAllFromRealm()
+    }
 }
 
-open class ProductsInBundleRealmEntity(
-    var productGroupRealmEntity: ProductGroupRealmEntity? = null,
-    var products: RealmList<ProductRealmEntity> = RealmList()
+open class ProductsInLineItemRealmEntity(
+    var productItemId: String,
+    var productId: String,
+    var productGroupId: String,
+    var modifiers: RealmList<ModifiersInProductRealmEntity>
 ) : RealmObject() {
-    constructor() : this(null, RealmList())
+    constructor() : this("", "", "", RealmList())
+
+    fun deleteChildrenFromRealm() {
+        modifiers.deleteAllFromRealm()
+    }
 }
 
 open class ModifiersInProductRealmEntity(
-    var product: ProductRealmEntity? = null,
-    var modifierGroup: ModifierGroupRealmEntity? = null,
-    var modifiers: RealmList<ModifierInfoRealmEntity> = RealmList(),
-    @LinkingObjects("modifiers")
-    val lineItems: RealmResults<LineItemRealmEntity>? = null
+    var modifierGroupId: String,
+    var modifierIds: RealmList<String>
 ) : RealmObject() {
-    constructor() : this(null, null, RealmList())
+    constructor() : this("", RealmList())
 }

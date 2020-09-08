@@ -36,11 +36,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MenuItemDetailViewModel::class)
-    internal abstract fun bindMenuItemDetailViewModel(viewModel: MenuItemDetailViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(LoginViewModel::class)
     internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
 
@@ -48,6 +43,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(OrderHistoryViewModel::class)
     internal abstract fun bindOrderHistoryViewModel(viewModel: OrderHistoryViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MenuItemDetailViewModel::class)
+    internal abstract fun bindMenuItemDetailViewModel2(viewModel: MenuItemDetailViewModel): ViewModel
 
     //Add more ViewModels here
 }

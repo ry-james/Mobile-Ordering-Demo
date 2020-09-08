@@ -26,45 +26,16 @@ class MenuItemDetailViewModel @Inject constructor(
     private var lineItem: LineItem = LineItem.EMPTY
     private var initialLineItem: LineItem = LineItem.EMPTY
     private var isModifying = false
-    private var isInitialized = false
     private val compositeDisposable = CompositeDisposable()
+    private var bagLineItem: BagLineItem? = null
 
-//    private fun initialize(product: Product, lineItem: LineItem, isModifying: Boolean) {
-//        if (!isInitialized) {
-//            this.product = product
-//            this.lineItem = lineItem
-//            this.isModifying = isModifying
-//
-//            _strProductName.value = product.productName
-//            _strProductDescription.value = product.productDescription
-//            if (!isModifying) {
-//                initializeDefaultModifiers()
-//            }
-//
-//            initialLineItem = this.lineItem.deepCopy()
-//            isInitialized = true
-//            updateAndNotifyObservers()
-//        }
-//    }
-
-    private fun initializeDefaultModifiers() {
-        for (modifierGroup in lineItem.product.modifierGroups) {
-            if (modifierGroup.defaultSelection != null) {
-                this.lineItem.modifiers[ProductModifierGroupKey(lineItem.product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
-            }
-        }
+    fun setupWithProductId(productId: String) {
+        initialize(productId, false)
     }
 
-    fun setupWithProduct(product: Product) {
-//        initialize(product, LineItem.ofProduct(product), false)
-//        this.lineItem = LineItem.ofProduct(product)
-        initialize(product.productId, false)
-    }
-
-    fun setupWithLineItem(lineItem: LineItem) {
-//        initialize(lineItem.product, lineItem, true)
-        this.lineItem = lineItem
-        initialize(lineItem.product.productId, true)
+    fun setupWithBagLineItem(bagLineItem: BagLineItem) {
+        this.bagLineItem = bagLineItem
+        initialize(bagLineItem.productId, true)
     }
 
 
@@ -81,28 +52,70 @@ class MenuItemDetailViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { _lineItemObservable.value = Resource.InProgress }
             .subscribe({ product ->
-                if (!isInitialized) {
+                _strProductName.value = product.productName
+                _strProductDescription.value = product.productDescription
 
-                    _strProductName.value = product.productName
-                    _strProductDescription.value = product.productDescription
+                this.lineItem = LineItem.ofProduct(product)
 
-                    if (!isModifying) {
-                        this.lineItem = LineItem.ofProduct(product)
-                        initializeDefaultModifiers()
-                    } else {
-                        this.lineItem = lineItem.copy(product = product)
-                    }
-
-                    initialLineItem = this.lineItem.deepCopy()
-                    isInitialized = true
-                    updateAndNotifyObservers()
+                if (!isModifying) {
+                    initializeDefaultModifiers()
+                } else {
+                    initializeLineItemSelections(product)
                 }
+
+                initialLineItem = this.lineItem.deepCopy()
+                updateAndNotifyObservers()
+
             }, { error ->
                 error.printStackTrace()
                 _lineItemObservable.value = Resource.Error(Exception(error))
             })
             .disposedBy(compositeDisposable)
+    }
 
+    private fun initializeLineItemSelections(product: Product) {
+        // Base Product Modifiers
+        initializeModifierSelectionsFor(product)
+
+        // Products in bundle
+        val bundle = product.bundles.find { bagLineItem?.bundleId == it.bundleId }
+        lineItem = lineItem.copy(bundle = bundle, quantity = bagLineItem?.quantity ?: 1, lineItemId = bagLineItem?.lineItemId ?: lineItem.lineItemId)
+        bagLineItem?.productsInBundle?.forEach { map ->
+            val productGroupId = map.key
+            val productIds = map.value
+
+            bundle?.productGroups?.find { it.productGroupId == productGroupId }?.let { productGroup ->
+                val products = productIds.mapNotNull { productId -> productGroup.options.find { it.productId == productId } }
+                lineItem.productsInBundle[productGroup] = products
+
+                // Modifiers in bundle products
+                products.forEach { bundleProduct ->
+                    initializeModifierSelectionsFor(bundleProduct)
+                }
+            }
+
+        }
+    }
+
+    private fun initializeModifierSelectionsFor(product: Product) {
+        val productModifiers = bagLineItem?.modifiers?.filterKeys { it.productId == product.productId }
+        productModifiers?.forEach {
+            val modifierGroupId = it.key.modifierGroupId
+            val modifierIds = it.value
+            product.modifierGroups.find { it.modifierGroupId == modifierGroupId }?.let { modifierGroup ->
+                val modifiers = modifierIds.mapNotNull { modifierId -> modifierGroup.options.find { it.modifierId == modifierId } }
+                lineItem.modifiers[ProductModifierGroupKey(product, modifierGroup)] = modifiers
+            }
+        }
+    }
+
+
+    private fun initializeDefaultModifiers() {
+        for (modifierGroup in lineItem.product.modifierGroups) {
+            if (modifierGroup.defaultSelection != null) {
+                this.lineItem.modifiers[ProductModifierGroupKey(lineItem.product, modifierGroup)] = listOf(modifierGroup.defaultSelection)
+            }
+        }
     }
 
     private val _lineItemObservable = MutableLiveData<Resource<LineItem>>()
@@ -127,13 +140,17 @@ class MenuItemDetailViewModel @Inject constructor(
     val btnRemoveVisibility: LiveData<Int>
         get() = _btnRemoveVisibility
 
-    private val _errorAddingItem = MutableLiveData<Event<Boolean>>()
-    val errorAddingItemObservable: LiveData<Event<Boolean>>
-        get() = _errorAddingItem
+    private val _errorObservable = MutableLiveData<Event<Error>>()
+    val errorObservable: LiveData<Event<Error>>
+        get() = _errorObservable
 
-    private val _onAddItemSuccess = MutableLiveData<Event<Boolean>>()
-    val onAddItemSuccess: LiveData<Event<Boolean>>
+    private val _onAddItemSuccess = MutableLiveData<Event<BagSummary>>()
+    val onAddItemSuccess: LiveData<Event<BagSummary>>
         get() = _onAddItemSuccess
+
+    private val _onRemoveItemSuccess = MutableLiveData<Event<BagSummary>>()
+    val onRemoveItemSuccess: LiveData<Event<BagSummary>>
+        get() = _onRemoveItemSuccess
 
     fun setProductBundle(bundle: ProductBundle?) {
 
@@ -257,17 +274,40 @@ class MenuItemDetailViewModel @Inject constructor(
 
     fun addToBag() {
         compositeDisposable.add(
-            orderRepository.addItem(lineItem)
+            orderRepository.addOrUpdateLineItem(lineItem)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ lineItem ->
-                    _onAddItemSuccess.value = Event(true)
+                .subscribe({ bagSummary ->
+                    _onAddItemSuccess.value = Event(bagSummary)
                 }, { error ->
+                    _errorObservable.value = if (isModifying) {
+                        Event(Error.ErrorUpdatingItem)
+                    } else {
+                        Event(Error.ErrorAddingItem)
+                    }
                     error.printStackTrace()
-                    _errorAddingItem.value = Event(true)
                 })
         )
+    }
 
+    fun removeFromBag() {
+        compositeDisposable.add(
+            orderRepository.removeLineItem(lineItem)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ bagSummary ->
+                    _onRemoveItemSuccess.value = Event(bagSummary)
+                }, { error ->
+                    _errorObservable.value = Event(Error.ErrorRemovingItem)
+                    error.printStackTrace()
+                })
+        )
+    }
+
+    sealed class Error {
+        object ErrorAddingItem : Error()
+        object ErrorUpdatingItem : Error()
+        object ErrorRemovingItem : Error()
     }
 
     override fun onCleared() {

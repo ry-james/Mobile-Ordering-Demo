@@ -16,20 +16,16 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".feature.bottomnav.BottomNavActivity"
-            android:label="@string/title_activity_bottom_nav"></activity>
-        <activity android:name=".dagger.SampleActivity" />
-        <activity android:name=".feature.bagsummary.BagSummaryFragment" />
-        <activity android:name=".activity.MenuItemDetailActivity" />
+            android:label="@string/title_activity_bottom_nav" />
+        <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".feature.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".core.BaseActivity" />
-        <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
     </application>
 
 </manifest>

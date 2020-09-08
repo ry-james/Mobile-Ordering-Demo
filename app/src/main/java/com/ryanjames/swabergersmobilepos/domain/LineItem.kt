@@ -7,7 +7,7 @@ import kotlin.collections.HashMap
 
 @Parcelize
 data class LineItem(
-    val id: String,
+    val lineItemId: String,
     val product: Product,
     val bundle: ProductBundle?,
     val productsInBundle: HashMap<ProductGroup, List<Product>>,
@@ -43,7 +43,7 @@ data class LineItem(
             get() = LineItem("", Product.EMPTY, null, hashMapOf(), hashMapOf(), 1)
 
         fun ofProduct(product: Product): LineItem {
-            return EMPTY.copy(id = UUID.randomUUID().toString(), product = product)
+            return EMPTY.copy(lineItemId = UUID.randomUUID().toString(), product = product)
         }
     }
 }

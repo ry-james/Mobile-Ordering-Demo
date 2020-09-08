@@ -4,8 +4,7 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ryanjames.swabergersmobilepos.domain.LineItem
-import com.ryanjames.swabergersmobilepos.domain.Order
+import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -17,8 +16,6 @@ import javax.inject.Inject
 class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-
-    private var order: Order = Order(mutableListOf())
 
     private val _emptyBagVisibility = MutableLiveData<Int>()
     val emptyBagVisibility: LiveData<Int>
@@ -48,16 +45,13 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val orderFailed: LiveData<Event<Boolean>>
         get() = _onOrderFailed
 
-    private val _localBag = MutableLiveData<Order>()
-    val getLocalBag: LiveData<Order>
+    private val _localBag = MutableLiveData<BagSummary>()
+    val getLocalBag: LiveData<BagSummary>
         get() = _localBag
 
     private val _onClearBag = MutableLiveData<Boolean>()
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
-
-//    private val localBagStream: Single<List<LineItem>>
-//        get() = orderRepository.getLocalBag().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 
     var customerInput: String? = null
 
@@ -67,103 +61,38 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
-            orderRepository.getOrder().subscribeOn(Schedulers.io())
+            orderRepository.getCurrentOrder()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ order ->
-                    this.order = order
-                    _localBag.value = order
+                .subscribe({ bagSummary ->
+                    _localBag.value = bagSummary
                     updateBagVisibility()
                     updatePrices()
-
-                }, { error ->
-                    error.printStackTrace()
-                })
+                },
+                    { error -> error.printStackTrace() })
         )
-
     }
 
     private fun updateBagVisibility() {
-        if (order.lineItems.isEmpty()) {
-            _emptyBagVisibility.value = View.VISIBLE
-            _nonEmptyBagVisibility.value = View.GONE
-        } else {
+        if (getLocalBag.value?.lineItems?.isNotEmpty() == true) {
             _emptyBagVisibility.value = View.GONE
             _nonEmptyBagVisibility.value = View.VISIBLE
+        } else {
+            _emptyBagVisibility.value = View.VISIBLE
+            _nonEmptyBagVisibility.value = View.GONE
         }
     }
 
     private fun updatePrices() {
-        _tax.value = order.tax.toTwoDigitString()
-        _subtotal.value = order.subTotal.toTwoDigitString()
-        _total.value = "$${order.total.toTwoDigitString()}"
+        _tax.value = getLocalBag.value?.tax()?.toTwoDigitString() ?: "0.00"
+        _subtotal.value = getLocalBag.value?.subtotal()?.toTwoDigitString() ?: "0.00"
+        _total.value = getLocalBag.value?.price?.toTwoDigitString() ?: "0.00"
     }
 
-    fun putLineItem(lineItem: LineItem) {
-//        compositeDisposable.add(
-//            orderRepository.getLocalBag()
-//                .subscribeOn(Schedulers.io())
-//                .delay(100, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({ lineItems ->
-//                    for ((index, item) in lineItems.withIndex()) {
-//                        if (item.id == lineItem.id) {
-//                            order.lineItems[index] = lineItem
-//                            _localBag.value = order
-//                            updatePrices()
-//                            orderRepository.updateLineItem(lineItem)
-//                            break
-//                        }
-//                    }
-//                    updateBagVisibility()
-//                }, { error ->
-//                    error.printStackTrace()
-//                })
-//        )
-    }
-
-    fun removeLineItem(lineItem: LineItem) {
-//        compositeDisposable.add(
-//            orderRepository.getLocalBag()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({ lineItems ->
-//                    for ((index, item) in lineItems.withIndex()) {
-//                        if (item.id == lineItem.id) {
-//                            order.lineItems.removeAt(index)
-//                            _localBag.value = order
-//                            orderRepository.removeLineItem(lineItem)
-//                            break
-//                        }
-//                    }
-//                    updatePrices()
-//                    updateBagVisibility()
-//                }, { error ->
-//                    error.printStackTrace()
-//                })
-//        )
-    }
-
-    fun clearBag() {
-        orderRepository.clearLocalBag()
-        order.lineItems.clear()
-        _onClearBag.value = true
+    fun setBagSummary(bagSummary: BagSummary) {
+        _localBag.value = bagSummary
+        updatePrices()
         updateBagVisibility()
-    }
-
-    fun postOrder() {
-//        compositeDisposable.add(
-//            orderRepository.postOrder(order.apply { this.customerName = customerInput ?: "" })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({
-//                    Log.d("ORDER", "CREATED")
-//                    clearBag()
-//                    _onOrderSucceeded.value = Event(true)
-//                }, {
-//                    it.printStackTrace()
-//                    _onOrderFailed.value = Event(true)
-//                })
-//        )
     }
 
     override fun onCleared() {

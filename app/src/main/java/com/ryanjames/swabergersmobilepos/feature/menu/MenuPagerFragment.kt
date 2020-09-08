@@ -19,8 +19,8 @@ import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
 import javax.inject.Inject
 
 const val EXTRA_CATEGORY_ID = "extra.category.id"
@@ -33,7 +33,7 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
     private lateinit var fragmentCallback: MenuFragment.MenuFragmentCallback
 
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
-        startActivityForResult(MenuItemDetailActivity.createIntent(context, product), REQUEST_LINE_ITEM)
+        startActivityForResult(MenuItemDetailActivity.createIntent(context, product.productId), REQUEST_LINEITEM)
     }
 
     private lateinit var viewModel: MenuFragmentViewModel
@@ -68,7 +68,7 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_ADD_OR_UPDATE) {
+        if (requestCode == REQUEST_LINEITEM && resultCode == RESULT_ADD_OR_UPDATE_ITEM) {
             data?.let {
                 fragmentCallback.onAddLineItem()
             }

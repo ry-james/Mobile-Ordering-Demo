@@ -1,115 +1,223 @@
 package com.ryanjames.swabergersmobilepos.mappers
 
-import com.ryanjames.swabergersmobilepos.database.realm.*
+import com.ryanjames.swabergersmobilepos.database.realm.LineItemRealmEntity
+import com.ryanjames.swabergersmobilepos.database.realm.ModifiersInProductRealmEntity
+import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmEntity
+import com.ryanjames.swabergersmobilepos.database.realm.ProductsInLineItemRealmEntity
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.network.responses.*
-import io.realm.Realm
 import io.realm.RealmList
 import java.util.*
+import kotlin.collections.HashMap
 
-fun LineItem.toEntity(realm: Realm): LineItemRealmEntity {
+fun LineItem.toLineItemRequest(): LineItemRequestBody {
 
-    val productRealm = realm.where(ProductRealmEntity::class.java).equalTo("productId", product.productId).findFirst()
-    val bundleRealm = realm.where(ProductBundleRealmEntity::class.java).equalTo("bundleId", bundle?.bundleId ?: "").findFirst()
+    val productInOrderRequestList = mutableListOf<ProductInOrderRequestBody>()
 
-    val productsInBundleRealmList = RealmList<ProductsInBundleRealmEntity>()
-    for ((key, productList) in productsInBundle) {
-        val prodGroupRealm = realm.where(ProductGroupRealmEntity::class.java).equalTo("productGroupId", key.productGroupId).findFirst()
+    // Base Product
+    val baseProductModifierList = mutableListOf<ModifierSelectionRequestBody>()
+    val baseProductModifiers = this.modifiers.filterKeys { it.product.productId == this.product.productId }
 
-        prodGroupRealm?.let {
-            val productListRealm = RealmList<ProductRealmEntity>()
-            productList.mapNotNull {
-                realm.where(ProductRealmEntity::class.java).equalTo("productId", it.productId).findFirst()?.apply {
-                    productListRealm.add(this)
-                }
+    for (productModifierGroup in baseProductModifiers.keys) {
+        val modifierRequest = ModifierSelectionRequestBody(
+            modifierGroupId = productModifierGroup.modifierGroup.modifierGroupId,
+            items = modifiers[productModifierGroup]?.map { it.modifierId } ?: listOf())
+        baseProductModifierList.add(modifierRequest)
+    }
+
+    val baseProductRequest = ProductInOrderRequestBody(
+        productItemId = UUID.randomUUID().toString(),
+        productId = this.product.productId,
+        productGroupId = this.product.productId,
+        modifierSelections = baseProductModifierList
+    )
+
+    productInOrderRequestList.add(baseProductRequest)
+
+
+    // Products in bundle
+    for (productGroup in this.productsInBundle.keys) {
+        val products = productsInBundle[productGroup] ?: listOf()
+
+        for (product in products) {
+
+            val modifiers = this.modifiers.filterKeys { it.product.productId == product.productId }
+            val modifierSelectionsRequest = mutableListOf<ModifierSelectionRequestBody>()
+
+            for (productModifierGroup in modifiers.keys) {
+                val modifierRequest = ModifierSelectionRequestBody(
+                    modifierGroupId = productModifierGroup.modifierGroup.modifierGroupId,
+                    items = modifiers[productModifierGroup]?.map { it.modifierId } ?: listOf())
+                modifierSelectionsRequest.add(modifierRequest)
             }
-            productsInBundleRealmList.add(realm.createObject(ProductsInBundleRealmEntity::class.java).apply {
-                this.productGroupRealmEntity = prodGroupRealm
-                this.products = productListRealm
-            })
+
+            val productInOrderRequest = ProductInOrderRequestBody(
+                productItemId = UUID.randomUUID().toString(),
+                productId = product.productId,
+                productGroupId = productGroup.productGroupId,
+                modifierSelections = modifierSelectionsRequest
+            )
+            productInOrderRequestList.add(productInOrderRequest)
         }
 
     }
 
-    val modifiersRealm = mutableListOf<ModifiersInProductRealmEntity>()
-    for ((productModifierGroupKey, modifierInfoList) in modifiers) {
-        val productKey = productModifierGroupKey.product
-        val modifierGroupKey = productModifierGroupKey.modifierGroup
+    return LineItemRequestBody(
+        lineItemId = lineItemId,
+        quantity = quantity,
+        products = productInOrderRequestList,
+        baseProduct = product.productId,
+        bundleId = bundle?.bundleId
+    )
+}
 
-        val prodRealm = realm.where(ProductRealmEntity::class.java).equalTo("productId", productKey.productId).findFirst()
-        val mgRealm = realm.where(ModifierGroupRealmEntity::class.java).equalTo("modifierGroupId", modifierGroupKey.modifierGroupId).findFirst()
+fun LineItemRealmEntity.toLineItemRequest(): LineItemRequestBody {
 
-        if (prodRealm != null && mgRealm != null) {
-            val modifierInfoRealmList = RealmList<ModifierInfoRealmEntity>()
-            modifierInfoList.mapNotNull {
-                realm.where(ModifierInfoRealmEntity::class.java).equalTo("modifierId", it.modifierId).findFirst()?.apply {
-                    modifierInfoRealmList.add(this)
-                }
-            }
+    val productInOrderRequestBodyList = mutableListOf<ProductInOrderRequestBody>()
+    productsInBundle.map { productInBundle ->
+        val modifierSelectionRequestBodyList = mutableListOf<ModifierSelectionRequestBody>()
+        productInBundle.modifiers.map { modifier ->
+            val modifierSelectionRequestBody = ModifierSelectionRequestBody(
+                modifierGroupId = modifier.modifierGroupId,
+                items = modifier.modifierIds
+            )
+            modifierSelectionRequestBodyList.add(modifierSelectionRequestBody)
+        }
 
-            modifiersRealm.add(realm.createObject(ModifiersInProductRealmEntity::class.java).apply {
-                modifierGroup = mgRealm
-                product = prodRealm
-                modifiers = modifierInfoRealmList
-            })
+        val productInOrderRequestBody = ProductInOrderRequestBody(
+            productItemId = productInBundle.productItemId,
+            productId = productInBundle.productId,
+            productGroupId = productInBundle.productGroupId,
+            modifierSelections = modifierSelectionRequestBodyList
+        )
+        productInOrderRequestBodyList.add(productInOrderRequestBody)
+    }
+
+    return LineItemRequestBody(
+        lineItemId = lineItemId,
+        quantity = quantity,
+        products = productInOrderRequestBodyList,
+        baseProduct = productId,
+        bundleId = bundleId
+    )
+}
+
+fun GetOrderResponse.toBagSummary(): BagSummary {
+    return BagSummary(lineItems = lineItems.map { it.toBagLineItem() }, price = price)
+}
+
+fun GetOrderLineItemResponse.toBagLineItem(): BagLineItem {
+
+    val productsInBundle = HashMap(products.groupBy({ it.productGroupId }, { it.productId }))
+
+    val modifierSelections = mutableMapOf<ProductIdModifierGroupIdKey, List<String>>()
+    var modifiersDisplay = ""
+    for (productResponse in products) {
+
+        if (productResponse.modifierSelections.isEmpty() && bundleId != null) {
+            modifiersDisplay += productResponse.productName + "\n"
+        }
+
+        for (modifierResponse in productResponse.modifierSelections) {
+            val key = ProductIdModifierGroupIdKey(productResponse.productId, modifierResponse.modifierGroupId)
+            val newList = modifierSelections.getOrElse(key) { listOf() }.toMutableList()
+            newList.addAll(modifierResponse.modifiers.map { it.modifierId })
+            modifierSelections[ProductIdModifierGroupIdKey(productResponse.productId, modifierResponse.modifierGroupId)] = newList
+
+            modifiersDisplay += modifierResponse.modifiers.joinToString(",") { it.modifierName } + "\n"
         }
 
     }
 
-    return LineItemRealmEntity(id, quantity = quantity).apply {
-        product = productRealm
-        productBundle = bundleRealm
-        modifiers.addAll(modifiersRealm)
-        productsInBundle.addAll(productsInBundleRealmList)
-    }
+    return BagLineItem(
+        lineItemId = lineItemId,
+        productId = baseProduct,
+        bundleId = bundleId,
+        lineItemName = lineItemName,
+        price = price,
+        productsInBundle = productsInBundle,
+        modifiers = HashMap(modifierSelections),
+        quantity = quantity,
+        modifiersDisplay = modifiersDisplay.trim()
+    )
 }
 
-fun LineItemRealmEntity.toDomain(): LineItem {
 
-    val productMapper = ProductMapper()
-    val bundleMapper = ProductBundleMapper()
+fun GetOrderResponse.toLocal(): OrderRealmEntity {
+    return OrderRealmEntity(
+        orderId = orderId,
+        lineItems = RealmList<LineItemRealmEntity>().apply { addAll(lineItems.map { it.toLocal() }) }
+    )
 
-
-    val product = product?.let { productMapper.mapLocalDbToDomain(it) } ?: Product.EMPTY
-    val bundle = productBundle?.let { bundleMapper.mapLocalDbToDomain(it) }
-
-    val products = hashMapOf<ProductGroup, List<Product>>()
-    productsInBundle.map {
-        val productGroupProductsPair = it.toDomain()
-        products[productGroupProductsPair.first] = productGroupProductsPair.second
-    }
-
-    val modifiers = hashMapOf<ProductModifierGroupKey, List<ModifierInfo>>()
-    this.modifiers.map {
-        val productGroupModifiersPair = it.toDomain()
-        modifiers[productGroupModifiersPair.first] = productGroupModifiersPair.second
-    }
-
-    return LineItem(id, product, bundle, products, modifiers, quantity)
 }
 
-fun ProductsInBundleRealmEntity.toDomain(): Pair<ProductGroup, List<Product>> {
-    val productGroupMapper = ProductGroupMapper()
-    val productMapper = ProductMapper()
-
-    val productGroup = productGroupRealmEntity?.let { productGroupMapper.mapLocalDbToDomain(it) } ?: ProductGroup.EMPTY
-    val products = productMapper.mapLocalDbToDomain(products)
-    return Pair(productGroup, products)
+fun GetOrderLineItemResponse.toLocal(): LineItemRealmEntity {
+    return LineItemRealmEntity(
+        lineItemId = lineItemId,
+        productId = baseProduct,
+        bundleId = bundleId,
+        quantity = quantity,
+        productsInBundle = RealmList<ProductsInLineItemRealmEntity>().apply { addAll(products.map { it.toLocal() }) }
+    )
 }
 
-fun ModifiersInProductRealmEntity.toDomain(): Pair<ProductModifierGroupKey, List<ModifierInfo>> {
-    val modifierGroupMapper = ModifierGroupMapper()
-    val modifierInfoMapper = ModifierInfoMapper()
-    val productMapper = ProductMapper()
-
-    val modifiers = modifierInfoMapper.mapLocalDbToDomain(modifiers)
-    val product = product?.let { productMapper.mapLocalDbToDomain(it) } ?: Product.EMPTY
-    val modifierGroup = modifierGroup?.let { modifierGroupMapper.mapLocalDbToDomain(it) } ?: ModifierGroup.EMPTY
-    return Pair(ProductModifierGroupKey(product, modifierGroup), modifiers)
+fun GetOrderProductResponse.toLocal(): ProductsInLineItemRealmEntity {
+    return ProductsInLineItemRealmEntity(
+        productItemId = productItemId,
+        productGroupId = productGroupId,
+        productId = productId,
+        modifiers = RealmList<ModifiersInProductRealmEntity>().apply { addAll(modifierSelections.map { it.toLocal() }) }
+    )
 }
 
-fun Order.toRemoteEntity(orderId: String): CreateUpdateOrderRequest {
-    return CreateUpdateOrderRequest(orderId, lineItems.map { it.toRemoteEntity() })
+fun GetOrderModifierSelectionResponse.toLocal(): ModifiersInProductRealmEntity {
+    return ModifiersInProductRealmEntity(
+        modifierGroupId = modifierGroupId,
+        modifierIds = RealmList<String>().apply { addAll(modifiers.map { it.modifierId }) }
+    )
+}
+
+fun ProductDetailsResponse.toDomain(): Product {
+
+    return Product(
+        productId,
+        productName,
+        productDescription ?: "",
+        price,
+        receiptText,
+        bundles = bundles.map { it.toDomain() },
+        modifierGroups = modifierGroups.toDomain()
+    )
+}
+
+private fun GetOrderMenuBundleResponse.toDomain(): ProductBundle {
+
+    return ProductBundle(
+        bundleId ?: "",
+        bundleName ?: "",
+        price ?: 0f,
+        receiptText ?: "",
+        productGroups = productGroups?.map { it.toDomain() } ?: listOf()
+    )
+}
+
+private fun GetOrderMenuProductGroupResponse.toDomain(): ProductGroup {
+
+    val products = options?.map { it.toDomain() }
+    val defaultProd = products?.find { it.productId == defaultProduct }
+
+    return ProductGroup(
+        productGroupId ?: "",
+        productGroupName ?: "",
+        defaultProduct = defaultProd ?: Product.EMPTY,
+        min = min ?: 1,
+        max = max ?: 1,
+        options = products ?: listOf()
+    )
+}
+
+private fun GetOrderProductGroupProductResponse.toDomain(): Product {
+    return Product(productId, productName, "", 0f, "", bundles = listOf(), modifierGroups = this.modifierGroups.toDomain())
 }
 
 fun OrderHistoryResponse.toDomain(): List<Order> {
@@ -128,50 +236,8 @@ fun LineItemResponse.toDomain(): LineItem {
     return LineItem(lineItemId, product, null, hashMapOf(), hashMapOf(), quantity)
 }
 
-fun LineItem.toRemoteEntity(): LineItemRequestBody {
-
-    val productInOrderRequestBodyList = mutableListOf<ProductInOrderRequestBody>()
-
-    val baseProductModifierRequest = mutableListOf<ModifierSelectionRequestBody>()
-    for (modifierGroup in product.modifierGroups) {
-        val key = ProductModifierGroupKey(product, modifierGroup)
-        baseProductModifierRequest.add(
-            ModifierSelectionRequestBody(
-                product.productId,
-                modifierGroup.modifierGroupId,
-                modifiers[key]?.sumByDouble { it.priceDelta.toDouble() }?.toFloat() ?: 0f,
-                modifiers[key]?.map { it.modifierId }.orEmpty()
-            )
-        )
-    }
-
-    productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, baseProductModifierRequest, product.productId))
-
-
-
-    this.productsInBundle.forEach { (productGroup, productList) ->
-        productList.forEach { product ->
-
-            val modifierRequest = mutableListOf<ModifierSelectionRequestBody>()
-
-            for (modifierGroup in product.modifierGroups) {
-                val key = ProductModifierGroupKey(product, modifierGroup)
-                modifierRequest.add(
-                    ModifierSelectionRequestBody(
-                        productGroup.productGroupId,
-                        modifierGroup.modifierGroupId,
-                        modifiers[key]?.sumByDouble { it.priceDelta.toDouble() }?.toFloat() ?: 0f,
-                        modifiers[key]?.map { it.modifierId }.orEmpty()
-                    )
-                )
-
-            }
-
-
-            productInOrderRequestBodyList.add(ProductInOrderRequestBody(UUID.randomUUID().toString(), product.productId, modifierRequest, productGroup.productGroupId))
-        }
-
-    }
-
-    return LineItemRequestBody(id, lineItemName, quantity, price, unitPrice, productInOrderRequestBodyList, product.productId, bundle?.bundleId)
+private fun List<ModifierGroupResponse>.toDomain(): List<ModifierGroup> {
+    val modifierGroupMapper = ModifierGroupMapper()
+    val modifierGroupDb = modifierGroupMapper.mapRemoteToLocalDb(this)
+    return modifierGroupMapper.mapLocalDbToDomain(modifierGroupDb)
 }

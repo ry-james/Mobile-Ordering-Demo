@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Swabergers Mobile POS</string>
+    <string name="app_name">Mobile POS</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -63,4 +63,7 @@
     <string name="item_updated_snackbar">Item is updated successfully.</string>
     <string name="item_added_snackbar">Item is added successfully.</string>
     <string name="item_removed_snackbar">Item is removed successfully.</string>
+    <string name="error_add_item">There\'s an error adding the item</string>
+    <string name="error_modify_item">There\'s an error modifying the item</string>
+    <string name="error_remove_item">There\'s an error removing the item</string>
 </resources>

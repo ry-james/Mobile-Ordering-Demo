@@ -18,11 +18,11 @@ import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
-import com.ryanjames.swabergersmobilepos.domain.LineItem
+import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINE_ITEM
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE
-import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE_ITEM
 import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
@@ -72,15 +72,14 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                     .setMessage(getString(R.string.something_went_wrong))
                     .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
                         dialogInterface.dismiss()
-                        viewModel.postOrder()
                     }
                     .setNegativeButton(getString(R.string.later_cta)) { dialogInterface, _ -> dialogInterface.dismiss() }
                     .show()
             }
         })
 
-        viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { order ->
-            adapter.updateLineItems(order.lineItems)
+        viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { bagSummary ->
+            adapter.updateBag(bagSummary)
         })
 
         viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
@@ -115,7 +114,6 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                 val inputText = etCustomerName.text.toString()
                 if (!inputText.isBlank()) {
                     viewModel.customerInput = etCustomerName.text.toString().trimAllWhitespace()
-                    viewModel.postOrder()
                 }
                 dialogInterface.dismiss()
 
@@ -140,10 +138,9 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
     private fun setupRecyclerView() {
         adapter = BagItemAdapter(listOf(), object : BagItemAdapter.BagItemAdapterListener {
-            override fun onClickLineItem(lineItem: LineItem) {
-                startActivityForResult(MenuItemDetailActivity.createIntent(activity, lineItem), REQUEST_LINE_ITEM)
+            override fun onClickLineItem(lineItem: BagLineItem) {
+                startActivityForResult(MenuItemDetailActivity.createIntent(activity, lineItem), REQUEST_LINEITEM)
             }
-
         })
         binding.rvItems.also {
             it.layoutManager = LinearLayoutManager(activity)
@@ -153,16 +150,16 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_ADD_OR_UPDATE) {
+        if (requestCode == REQUEST_LINEITEM && resultCode == RESULT_ADD_OR_UPDATE_ITEM) {
             data?.let {
-                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
-                viewModel.putLineItem(lineItem)
+                val bagSummary = MenuItemDetailActivity.getBagSummaryExtra(data)
+                viewModel.setBagSummary(bagSummary)
                 fragmentCallback.onUpdateLineItem()
             }
-        } else if (requestCode == REQUEST_LINE_ITEM && resultCode == RESULT_REMOVE) {
+        } else if (requestCode == REQUEST_LINEITEM && resultCode == RESULT_REMOVE_ITEM) {
             data?.let {
-                val lineItem = MenuItemDetailActivity.getExtraLineItem(data)
-                viewModel.removeLineItem(lineItem)
+                val bagSummary = MenuItemDetailActivity.getBagSummaryExtra(data)
+                viewModel.setBagSummary(bagSummary)
                 fragmentCallback.onRemoveLineItem()
             }
         }
