@@ -34,6 +34,9 @@ class OrderRealmDao {
     }
 
     fun deleteAllLineItems(realm: Realm) {
-
+        realm.where(LocalBagRealmEntity::class.java).findFirst()?.apply {
+            lineItems.map { it.deleteChildrenFromRealm() }
+            lineItems.deleteAllFromRealm()
+        }
     }
 }

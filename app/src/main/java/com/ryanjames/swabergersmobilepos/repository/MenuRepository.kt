@@ -4,6 +4,7 @@ import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.domain.Product
 import com.ryanjames.swabergersmobilepos.mappers.BasicMenuMapper
+import com.ryanjames.swabergersmobilepos.mappers.ProductMapper
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
@@ -18,6 +19,7 @@ class MenuRepository @Inject constructor(
 ) {
 
     private val basicMenuMapper = BasicMenuMapper()
+    private val productMapper = ProductMapper()
 
     fun authenticate(username: String, password: String): Single<LoginResponse> {
         return swabergersService.authenticate(username, password)
@@ -56,7 +58,19 @@ class MenuRepository @Inject constructor(
     }
 
     fun getProductDetails(productId: String): Single<Product> {
-        return swabergersService.getProductDetails(productId).map { it.toDomain() }
+        return Observable.concat(
+            menuRealmDao.getProductDetailsById(productId).map {
+                productMapper.mapLocalDbToDomain(it)
+            }.toObservable(),
+            swabergersService.getProductDetails(productId)
+                .map { it.toDomain() }
+                .doOnSuccess {
+                    val productRealm = productMapper.mapDomainToLocalDb(it)
+                    menuRealmDao.saveProductDetail(productRealm)
+                }
+                .toObservable()
+        ).firstElement().toSingle()
+
     }
 
 

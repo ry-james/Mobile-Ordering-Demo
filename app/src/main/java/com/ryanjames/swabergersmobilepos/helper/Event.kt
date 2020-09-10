@@ -24,4 +24,14 @@ open class Event<out T>(private val content: T) {
      * Returns the content, even if it's already been handled.
      */
     fun peekContent(): T = content
+
+    /**
+     * Accepts a functional block and only executes it on first invocation of handleEvent() function
+     */
+    fun handleEvent(block: (T) -> Unit) {
+        if (!hasBeenHandled) {
+            hasBeenHandled = true
+            block.invoke(content)
+        }
+    }
 }

@@ -103,7 +103,11 @@ fun LineItemRealmEntity.toLineItemRequest(): LineItemRequestBody {
 }
 
 fun GetOrderResponse.toBagSummary(): BagSummary {
-    return BagSummary(lineItems = lineItems.map { it.toBagLineItem() }, price = price)
+    return BagSummary(
+        lineItems = lineItems.map { it.toBagLineItem() },
+        price = price,
+        status = status.toOrderStatus()
+    )
 }
 
 fun GetOrderLineItemResponse.toBagLineItem(): BagLineItem {
@@ -180,11 +184,11 @@ fun GetOrderModifierSelectionResponse.toLocal(): ModifiersInProductRealmEntity {
 fun ProductDetailsResponse.toDomain(): Product {
 
     return Product(
-        productId,
-        productName,
-        productDescription ?: "",
-        price,
-        receiptText,
+        productId = productId,
+        productName = productName,
+        productDescription = productDescription ?: "",
+        price = price,
+        receiptText = receiptText,
         bundles = bundles.map { it.toDomain() },
         modifierGroups = modifierGroups.toDomain()
     )
@@ -193,10 +197,10 @@ fun ProductDetailsResponse.toDomain(): Product {
 private fun GetOrderMenuBundleResponse.toDomain(): ProductBundle {
 
     return ProductBundle(
-        bundleId ?: "",
-        bundleName ?: "",
-        price ?: 0f,
-        receiptText ?: "",
+        bundleId = bundleId ?: "",
+        bundleName = bundleName ?: "",
+        price = price ?: 0f,
+        receiptText = receiptText ?: "",
         productGroups = productGroups?.map { it.toDomain() } ?: listOf()
     )
 }
@@ -222,12 +226,22 @@ private fun GetOrderProductGroupProductResponse.toDomain(): Product {
 
 fun OrderHistoryResponse.toDomain(): List<Order> {
     return this.orders.map { orderResponse ->
-        Order(orderResponse.lineItems.map { lineItemResponse -> lineItemResponse.toDomain() }.toMutableList())
-            .apply {
-                orderId = orderResponse.orderId
-                price = orderResponse.price
-                formattedDate = orderResponse.creationDate
-            }
+        Order(
+            lineItems = orderResponse.lineItems.map { lineItemResponse -> lineItemResponse.toDomain() }.toMutableList(),
+            orderId = orderResponse.orderId,
+            price = orderResponse.price,
+            formattedDate = orderResponse.creationDate,
+            status = orderResponse.status.toOrderStatus()
+        )
+    }
+}
+
+private fun String.toOrderStatus(): OrderStatus {
+    return when (this) {
+        "CREATED" -> OrderStatus.CREATED
+        "CANCELLED" -> OrderStatus.CANCELLED
+        "CHECKOUT" -> OrderStatus.CHECKOUT
+        else -> OrderStatus.UNKNOWN
     }
 }
 

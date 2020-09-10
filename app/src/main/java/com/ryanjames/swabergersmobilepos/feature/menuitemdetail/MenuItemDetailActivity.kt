@@ -105,8 +105,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 }
                 is Resource.Success -> {
                     hideLoadingDialog()
-                    lineItem = result.data
-                    adapter.update(result.data)
+                    lineItem = result.data.peekContent()
+                    adapter.update(result.data.peekContent())
                 }
                 is Resource.Error -> {
                     hideLoadingDialog()
@@ -132,7 +132,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         })
 
         viewModel.errorObservable.observe(this, Observer { errorEvent ->
-            errorEvent?.getContentIfNotHandled()?.let { error ->
+            errorEvent?.handleEvent { error ->
                 val message = when (error) {
                     MenuItemDetailViewModel.Error.ErrorAddingItem -> getString(R.string.error_add_item)
                     MenuItemDetailViewModel.Error.ErrorUpdatingItem -> getString(R.string.error_modify_item)

@@ -78,7 +78,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
 
     private fun addSubscriptions() {
         viewModel.onClickContinueButtonObservable.observe(this, Observer {
-            it.getContentIfNotHandled()?.let {
+            it.handleEvent {
                 dismiss()
             }
         })
@@ -91,8 +91,6 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
         viewModel.enableCheckboxesObservable.observe(this, Observer { enable ->
             if (enable) pickerAdapter.enableSelections() else pickerAdapter.disableSelections()
         })
-
-
     }
 
 

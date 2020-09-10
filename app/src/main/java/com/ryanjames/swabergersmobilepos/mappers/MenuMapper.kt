@@ -148,46 +148,43 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
 
     override fun mapLocalDbToDomain(input: ProductGroupRealmEntity): ProductGroup {
         return ProductGroup(
-            input.productGroupId,
-            input.productGroupName,
-            mapToEmptyBundleDomain(input.defaultProduct ?: ProductRealmEntity()),
-            mapToEmptyBundleDomain(input.options),
-            input.min,
-            input.max
+            productGroupId = input.productGroupId,
+            productGroupName = input.productGroupName,
+            defaultProduct = mapToEmptyBundleDomain(input.defaultProduct ?: ProductGroupOptionRealmEntity()),
+            options = mapToEmptyBundleDomain(input.options),
+            min = input.min,
+            max = input.max
         )
     }
 
 
-    private fun mapToEmptyBundleDomain(input: ProductRealmEntity): Product {
+    private fun mapToEmptyBundleDomain(input: ProductGroupOptionRealmEntity): Product {
         return Product(
-            input.productId,
-            input.productName,
-            input.productDescription,
-            input.price,
-            input.receiptText,
-            listOf(),
-            modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups)
+            productId = input.productId,
+            productName = input.productName,
+            productDescription = "",
+            price = input.price,
+            receiptText = "",
+            bundles = listOf(),
+            modifierGroups = modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups)
         )
     }
 
-    private fun mapToEmptyBundleDomain(input: List<ProductRealmEntity>): List<Product> {
+    private fun mapToEmptyBundleDomain(input: List<ProductGroupOptionRealmEntity>): List<Product> {
         return input.map { mapToEmptyBundleDomain(it) }
     }
 
-    private fun mapDomainToEmptyBundleEntity(input: Product): ProductRealmEntity {
-        return ProductRealmEntity(
-            input.productId,
-            input.productName,
-            input.productDescription,
-            input.price,
-            input.receiptText,
-            modifierGroupMapper.mapDomainToLocalDb(input.modifierGroups),
-            RealmList()
+    private fun mapDomainToEmptyBundleEntity(input: Product): ProductGroupOptionRealmEntity {
+        return ProductGroupOptionRealmEntity(
+            productId = input.productId,
+            productName = input.productName,
+            price = input.price,
+            modifierGroups = modifierGroupMapper.mapDomainToLocalDb(input.modifierGroups)
         )
     }
 
-    private fun mapDomainToEmptyBundleEntity(input: List<Product>): RealmList<ProductRealmEntity> {
-        return RealmList<ProductRealmEntity>().apply {
+    private fun mapDomainToEmptyBundleEntity(input: List<Product>): RealmList<ProductGroupOptionRealmEntity> {
+        return RealmList<ProductGroupOptionRealmEntity>().apply {
             addAll(input.map { mapDomainToEmptyBundleEntity(it) })
         }
     }
@@ -195,13 +192,16 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
 
     override fun mapDomainToLocalDb(input: ProductGroup): ProductGroupRealmEntity {
 
+        val options = mapDomainToEmptyBundleEntity(input.options)
+        val defaultProduct = options.find { it.productId == input.defaultProduct.productId }
+
         return ProductGroupRealmEntity(
-            input.productGroupId,
-            input.productGroupName,
-            mapDomainToEmptyBundleEntity(input.options),
-            null,
-            input.min,
-            input.max
+            productGroupId = input.productGroupId,
+            productGroupName = input.productGroupName,
+            options = options,
+            defaultProduct = defaultProduct,
+            min = input.min,
+            max = input.max
         )
     }
 }
@@ -273,7 +273,6 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
         )
     }
 }
-
 
 private fun String?.toModifierGroupAction(): ModifierGroupAction {
     return when (this) {

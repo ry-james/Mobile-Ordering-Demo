@@ -44,7 +44,7 @@ open class BaseActivity : AppCompatActivity() {
         tvToolbar.text = title
     }
 
-    protected fun showLoadingDialog(message: String = getString(R.string.loading)) {
+    fun showLoadingDialog(message: String = getString(R.string.loading)) {
         val loadingView = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
         val tvLoadingMessage = loadingView.findViewById(R.id.tvLoadingMessage) as TextView
         tvLoadingMessage.text = message
@@ -55,7 +55,7 @@ open class BaseActivity : AppCompatActivity() {
             .show()
     }
 
-    protected fun showActivityFinishingDialog(message: String) {
+    fun showActivityFinishingDialog(message: String) {
         AlertDialog.Builder(this)
             .setCancelable(false)
             .setMessage(message)
@@ -65,7 +65,7 @@ open class BaseActivity : AppCompatActivity() {
             }.show()
     }
 
-    protected fun hideLoadingDialog() {
+    fun hideLoadingDialog() {
         loadingDialog?.dismiss()
     }
 

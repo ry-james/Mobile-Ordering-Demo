@@ -6,7 +6,8 @@ data class GetOrderResponse(
     val orderId: String,
     val lineItems: List<GetOrderLineItemResponse>,
     val price: Float,
-    val creationDate: String
+    val creationDate: String,
+    val status: String
 )
 
 data class GetOrderLineItemResponse(

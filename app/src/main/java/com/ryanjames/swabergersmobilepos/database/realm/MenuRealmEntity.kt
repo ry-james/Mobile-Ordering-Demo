@@ -95,10 +95,19 @@ open class ProductBundleRealmEntity(
 open class ProductGroupRealmEntity(
     var productGroupId: String,
     var productGroupName: String,
-    var options: RealmList<ProductRealmEntity>,
-    var defaultProduct: ProductRealmEntity?,
+    var options: RealmList<ProductGroupOptionRealmEntity>,
+    var defaultProduct: ProductGroupOptionRealmEntity?,
     var min: Int,
     var max: Int
 ) : RealmObject() {
     constructor() : this("", "", RealmList(), null, 1, 1)
+}
+
+open class ProductGroupOptionRealmEntity(
+    var productId: String,
+    var productName: String,
+    var price: Float,
+    var modifierGroups: RealmList<ModifierGroupRealmEntity>
+) : RealmObject() {
+    constructor() : this("", "", 0f, RealmList())
 }

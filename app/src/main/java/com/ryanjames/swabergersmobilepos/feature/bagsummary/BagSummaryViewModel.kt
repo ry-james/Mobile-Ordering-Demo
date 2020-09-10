@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
+import com.ryanjames.swabergersmobilepos.domain.OrderStatus
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -53,7 +55,9 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
 
-    var customerInput: String? = null
+    private val _checkoutObservable = MutableLiveData<Resource<BagSummary>>()
+    val checkoutObservable: LiveData<Resource<BagSummary>>
+        get() = _checkoutObservable
 
     init {
         updateBagVisibility()
@@ -93,6 +97,27 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         _localBag.value = bagSummary
         updatePrices()
         updateBagVisibility()
+    }
+
+    fun clearBag() {
+        _localBag.value = BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN)
+        updatePrices()
+        updateBagVisibility()
+    }
+
+    fun checkout(customerName: String) {
+        compositeDisposable.add(orderRepository.checkout(customerName)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                _checkoutObservable.value = Resource.InProgress
+            }
+            .subscribe({ bagSummary ->
+                _checkoutObservable.value = Resource.Success(Event(bagSummary))
+            }, { error ->
+                _checkoutObservable.value = Resource.Error(Event(Exception(error)))
+            })
+        )
     }
 
     override fun onCleared() {

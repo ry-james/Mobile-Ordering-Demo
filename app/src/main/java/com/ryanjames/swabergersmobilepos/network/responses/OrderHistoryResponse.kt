@@ -8,7 +8,8 @@ data class OrderHistoryItemResponse(
     val orderId: String,
     val lineItems: List<LineItemResponse>,
     val price: Float,
-    val creationDate: String
+    val creationDate: String,
+    val status: String
 )
 
 data class LineItemResponse(

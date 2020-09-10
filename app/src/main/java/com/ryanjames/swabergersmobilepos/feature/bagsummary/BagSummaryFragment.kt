@@ -14,11 +14,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
@@ -56,7 +58,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
     private fun subscribe() {
         viewModel.onOrderSucceeded.observe(viewLifecycleOwner, Observer { event ->
-            if (event.getContentIfNotHandled() == true) {
+            event.handleEvent {
                 AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.order_created_message))
                     .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
@@ -67,7 +69,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
         })
 
         viewModel.orderFailed.observe(viewLifecycleOwner, Observer { event ->
-            if (event.getContentIfNotHandled() == true) {
+            event.handleEvent {
                 AlertDialog.Builder(activity)
                     .setMessage(getString(R.string.something_went_wrong))
                     .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
@@ -84,6 +86,36 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
         viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
             adapter.clear()
+        })
+
+        viewModel.checkoutObservable.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    it.data.handleEvent {
+                        (activity as BaseActivity).hideLoadingDialog()
+                        AlertDialog.Builder(activity)
+                            .setCancelable(false)
+                            .setMessage(getString(R.string.checkout_successful))
+                            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                                viewModel.clearBag()
+                                dialog.dismiss()
+                            }.show()
+                    }
+                }
+                is Resource.Error -> {
+                    it.exception.handleEvent {
+                        (activity as BaseActivity).hideLoadingDialog()
+                        AlertDialog.Builder(activity)
+                            .setCancelable(false)
+                            .setMessage(getString(R.string.checkout_failure))
+                            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                                dialog.dismiss()
+                            }.show()
+                    }
+                }
+                Resource.InProgress -> (activity as BaseActivity).showLoadingDialog("Checking out")
+            }
+
         })
     }
 
@@ -113,7 +145,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
             .setPositiveButton(getString(R.string.cta_set)) { dialogInterface, _ ->
                 val inputText = etCustomerName.text.toString()
                 if (!inputText.isBlank()) {
-                    viewModel.customerInput = etCustomerName.text.toString().trimAllWhitespace()
+                    viewModel.checkout(etCustomerName.text.toString().trimAllWhitespace())
                 }
                 dialogInterface.dismiss()
 

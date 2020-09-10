@@ -66,4 +66,6 @@
     <string name="error_add_item">There\'s an error adding the item</string>
     <string name="error_modify_item">There\'s an error modifying the item</string>
     <string name="error_remove_item">There\'s an error removing the item</string>
+    <string name="checkout_successful">You\'re order was checked out successfully.</string>
+    <string name="checkout_failure">We\'re having trouble checking out your order. Please try again later.</string>
 </resources>

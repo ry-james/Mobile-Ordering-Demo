@@ -7,6 +7,7 @@ import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Order
+import com.ryanjames.swabergersmobilepos.domain.OrderStatus
 import com.ryanjames.swabergersmobilepos.helper.replace
 import com.ryanjames.swabergersmobilepos.mappers.toBagSummary
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
@@ -50,7 +51,7 @@ class OrderRepository @Inject constructor(
                 } else {
                     lineItemListRequest.plus(newLineItem)
                 }
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null)
 
                 if (newOrder) {
                     swabergersService.postOrder(request)
@@ -81,7 +82,7 @@ class OrderRepository @Inject constructor(
                     lineItemListRequest = lineItemListRequest.minus(it)
                 }
 
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null)
                 swabergersService.putOrder(request)
                     .doOnSuccess { orderResponse ->
                         executeRealmTransaction { realm ->
@@ -89,6 +90,24 @@ class OrderRepository @Inject constructor(
                         }
                     }
             }.map { it.toBagSummary() }
+    }
+
+    fun checkout(customerName: String): Single<BagSummary> {
+        return getLocalLineItems().flatMap { lineItemsEntities ->
+            val orderId = globalRealmDao.getLocalBagOrderId()
+            val lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
+            val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString())
+            swabergersService.putOrder(request)
+                .doOnSuccess {
+                    executeRealmTransaction { realm ->
+                        orderRealmDao.deleteAllLineItems(realm)
+                        globalRealmDao.clearLocalBagOrderId(realm)
+                    }
+                }.map { it.toBagSummary() }
+                .doOnError { error ->
+                    error.printStackTrace()
+                }
+        }
     }
 
     fun getCurrentOrder(): Single<BagSummary> {

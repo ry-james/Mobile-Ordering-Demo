@@ -68,7 +68,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
             }, { error ->
                 error.printStackTrace()
-                _lineItemObservable.value = Resource.Error(Exception(error))
+                _lineItemObservable.value = Resource.Error(Event(Exception(error)))
             })
             .disposedBy(compositeDisposable)
     }
@@ -242,7 +242,7 @@ class MenuItemDetailViewModel @Inject constructor(
     fun getLineItem(): LineItem? {
         val lineItem = lineItemObservable.value
         return if (lineItem is Resource.Success) {
-            lineItem.data
+            lineItem.data.peekContent()
         } else {
             null
         }
@@ -269,7 +269,7 @@ class MenuItemDetailViewModel @Inject constructor(
         } else {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
         }
-        _lineItemObservable.value = Resource.Success(lineItem)
+        _lineItemObservable.value = Resource.Success(Event(lineItem))
     }
 
     fun addToBag() {

@@ -24,7 +24,7 @@ class TokenAuthenticator(
 
 
             val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
             httpClientBuilder.addInterceptor(loggingInterceptor)
             val client = httpClientBuilder.build()
 

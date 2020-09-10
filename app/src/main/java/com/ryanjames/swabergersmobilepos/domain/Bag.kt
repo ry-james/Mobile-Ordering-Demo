@@ -7,7 +7,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class BagSummary(
     val lineItems: List<BagLineItem>,
-    val price: Float
+    val price: Float,
+    val status: OrderStatus
 ) : Parcelable {
 
     // TODO: Replace with API value

@@ -2,7 +2,8 @@ package com.ryanjames.swabergersmobilepos.network.responses
 
 data class CreateUpdateOrderRequest(
     val orderId: String,
-    val lineItems: List<LineItemRequestBody>
+    val lineItems: List<LineItemRequestBody>,
+    val status: String?
 )
 
 data class LineItemRequestBody(

@@ -6,12 +6,12 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Order(
     val lineItems: MutableList<LineItem>,
-    var orderId: String = "",
-    var price: Float = 0f,
-    var formattedDate: String = "",
-    var customerName: String = ""
+    val orderId: String = "",
+    val price: Float = 0f,
+    val formattedDate: String = "",
+    val customerName: String = "",
+    val status: OrderStatus? = null
 ) : Parcelable {
-
 
     val total: Float
         get() {
@@ -31,4 +31,8 @@ data class Order(
     val noOfItems: Int
         get() = lineItems.map { it.quantity }.sum()
 
+}
+
+enum class OrderStatus {
+    CREATED, CANCELLED, CHECKOUT, UNKNOWN
 }

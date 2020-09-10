@@ -51,7 +51,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
         })
 
         viewModel.errorLoadingMenuObservable.observe(viewLifecycleOwner, Observer { event ->
-            if (event.getContentIfNotHandled() == true) {
+            event.handleEvent {
                 showMenuErrorLoading()
             }
         })
