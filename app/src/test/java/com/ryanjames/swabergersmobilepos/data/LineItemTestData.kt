@@ -5,7 +5,7 @@ import java.util.*
 
 object LineItemTestData {
 
-    private val basicProduct: Product
+    val basicProduct: Product
         get() = Product("P1000", "Sample Product", "Sample description", 12.5f, "sample", listOf(), listOf())
 
     private val basicBundle: ProductBundle
@@ -43,4 +43,29 @@ object LineItemTestData {
         return basicLineItem.copy(bundle = basicBundle, modifiers = lineItemModifiers())
     }
 
+}
+
+fun LineItem.toBagLineItem(): BagLineItem {
+    val bundleProducts = hashMapOf<String, List<String>>()
+    this.productsInBundle.keys.forEach { key ->
+        bundleProducts[key.productGroupId] = this.productsInBundle[key]?.map { it.productId } ?: listOf()
+    }
+
+    val modifiers = hashMapOf<ProductIdModifierGroupIdKey, List<String>>()
+    this.modifiers.keys.forEach { key ->
+        val productIdModifierGroupIdKey = ProductIdModifierGroupIdKey(key.product.productId, key.modifierGroup.modifierGroupId)
+        modifiers[productIdModifierGroupIdKey] = this.modifiers[key]?.map { it.modifierId } ?: listOf()
+    }
+
+    return BagLineItem(
+        lineItemId = lineItemId,
+        lineItemName = lineItemName,
+        productId = product.productId,
+        bundleId = bundle?.bundleId,
+        price = price,
+        modifiersDisplay = "",
+        productsInBundle = bundleProducts,
+        modifiers = modifiers,
+        quantity = quantity
+    )
 }

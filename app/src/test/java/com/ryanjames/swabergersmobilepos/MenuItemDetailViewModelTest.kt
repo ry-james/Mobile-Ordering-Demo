@@ -2,36 +2,63 @@ package com.ryanjames.swabergersmobilepos
 
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import com.ryanjames.swabergersmobilepos.data.LineItemTestData
+import com.ryanjames.swabergersmobilepos.data.LineItemTestData.basicProduct
+import com.ryanjames.swabergersmobilepos.data.toBagLineItem
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
+import com.ryanjames.swabergersmobilepos.repository.MenuRepository
+import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import io.reactivex.Single
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnit
+import org.hamcrest.CoreMatchers.`is` as Is
+
 
 @RunWith(JUnit4::class)
 class MenuItemDetailViewModelTest {
 
+    @Rule
+    @JvmField
+    var testSchedulerRule = RxImmediateSchedulerRule()
+
     @get:Rule
     var instantExecutorRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var viewModel: MenuItemDetailViewModel
+    @Rule
+    @JvmField
+    val rule = MockitoJUnit.rule()
+
+    @Mock
+    lateinit var orderRepository: OrderRepository
+
+    @Mock
+    lateinit var menuRepository: MenuRepository
+
+    @InjectMocks
+    lateinit var viewModel: MenuItemDetailViewModel
+
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
-//        viewModel = MenuItemDetailViewModel2()
+        Mockito.`when`(menuRepository.getProductDetails(PRODUCT_CHEESE_BURGER.productId)).thenReturn(Single.just(PRODUCT_CHEESE_BURGER))
+        Mockito.`when`(menuRepository.getProductDetails(basicProduct.productId)).thenReturn(Single.just(basicProduct))
     }
-
 
     @Test
     fun test_add_to_bag_cta() {
-        viewModel.strAddToBag.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         val formattedPrice = PRODUCT_CHEESE_BURGER.price.toTwoDigitString()
         assertEquals(R.string.add_to_bag, viewModel.strAddToBag.value?.id)
         assertEquals(1, viewModel.strAddToBag.value?.formatArgs?.size)
@@ -41,9 +68,8 @@ class MenuItemDetailViewModelTest {
 
     @Test
     fun test_update_bag_cta() {
-        viewModel.strAddToBag.observeForever { }
         val lineItem = LineItemTestData.lineItemProductNoModifier()
-//        viewModel.setupWithLineItem(lineItem)
+        viewModel.setupWithBagLineItem(lineItem.toBagLineItem())
         val formattedPrice = lineItem.price.toTwoDigitString()
         assertEquals(R.string.update_item, viewModel.strAddToBag.value?.id)
         assertEquals(1, viewModel.strAddToBag.value?.formatArgs?.size)
@@ -53,63 +79,55 @@ class MenuItemDetailViewModelTest {
 
     @Test
     fun test_product_name_and_description() {
-
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
-        assertEquals(PRODUCT_CHEESE_BURGER.productName, viewModel.strProductName.value)
-        assertEquals(PRODUCT_CHEESE_BURGER.productDescription, viewModel.strProductDescription.value)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
+        assertThat(viewModel.strProductName.value, Is(PRODUCT_CHEESE_BURGER.productName))
+        assertThat(viewModel.strProductDescription.value, Is(PRODUCT_CHEESE_BURGER.productDescription))
     }
 
     @Test
     fun test_line_item_name_and_description() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithLineItem(LINE_ITEM_MEAL)
+        viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
         assertEquals(PRODUCT_CHEESE_BURGER.productName, viewModel.strProductName.value)
         assertEquals(PRODUCT_CHEESE_BURGER.productDescription, viewModel.strProductDescription.value)
     }
 
     @Test
     fun test_product_default_modifiers() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         val defaultModifiers = hashMapOf(KEY_CHEESE to listOf(AMERICAN_CHEESE))
-//        assertEquals(defaultModifiers, viewModel.lineItemObservable.value?.modifiers)
+        assertEquals(defaultModifiers, viewModel.lineItemObservable.value().modifiers)
     }
 
     @Test
     fun test_make_a_meal() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setProductBundle(CHEESE_BURGER_MEAL)
         val modifiers = hashMapOf(KEY_CHEESE to listOf(AMERICAN_CHEESE), KEY_FRIES to listOf(SMALL_FRIES))
-//        assertEquals(modifiers, viewModel.lineItemObservable.value?.modifiers)
-//        assertEquals(DEFAULT_MEAL_SELECTION, viewModel.lineItemObservable.value?.productsInBundle)
+        assertEquals(modifiers, viewModel.lineItemObservable.value().modifiers)
+        assertEquals(DEFAULT_MEAL_SELECTION, viewModel.lineItemObservable.value().productsInBundle)
     }
 
     @Test
     fun test_line_item_current_selections() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setProductBundle(CHEESE_BURGER_MEAL)
         val modifiers = hashMapOf(KEY_CHEESE to listOf(AMERICAN_CHEESE), KEY_FRIES to listOf(SMALL_FRIES))
-//        assertEquals(modifiers, viewModel.lineItemObservable.value?.modifiers)
-//        assertEquals(DEFAULT_MEAL_SELECTION, viewModel.lineItemObservable.value?.productsInBundle)
+        assertEquals(modifiers, viewModel.lineItemObservable.value().modifiers)
+        assertEquals(DEFAULT_MEAL_SELECTION, viewModel.lineItemObservable.value().productsInBundle)
     }
 
     @Test
     fun test_meal_to_ala_carte() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithLineItem(LINE_ITEM_MEAL)
-//        assertEquals(MODIFIER_SELECTIONS, viewModel.lineItemObservable.value?.modifiers)
+        viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
+        assertEquals(MODIFIER_SELECTIONS, viewModel.lineItemObservable.value().modifiers)
         viewModel.setProductBundle(null)
-//        assertEquals(hashMapOf<ProductGroup, List<Product>>(), viewModel.lineItemObservable.value?.productsInBundle)
-//        assertEquals(hashMapOf(KEY_CHEESE to listOf(NO_CHEESE), KEY_TOPPING to listOf(LETTUCE, BACON)), viewModel.lineItemObservable.value?.modifiers)
+        assertEquals(hashMapOf<ProductGroup, List<Product>>(), viewModel.lineItemObservable.value().productsInBundle)
+        assertEquals(hashMapOf(KEY_CHEESE to listOf(NO_CHEESE), KEY_TOPPING to listOf(LETTUCE, BACON)), viewModel.lineItemObservable.value().modifiers)
     }
 
     @Test
     fun test_discard_changes() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithLineItem(LINE_ITEM_MEAL)
+        viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
         assertFalse(viewModel.shouldShowDiscardChanges())
 
         viewModel.setProductBundle(null)
@@ -133,38 +151,34 @@ class MenuItemDetailViewModelTest {
 
     @Test
     fun test_adding_modifiers() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setCheese(NO_CHEESE)
         viewModel.setToppings(BACON, MUSHROOM, LETTUCE)
-//        assertEquals(hashMapOf(KEY_CHEESE to listOf(NO_CHEESE), KEY_TOPPING to listOf(BACON, MUSHROOM, LETTUCE)), viewModel.lineItemObservable.value?.modifiers)
+        assertEquals(hashMapOf(KEY_CHEESE to listOf(NO_CHEESE), KEY_TOPPING to listOf(BACON, MUSHROOM, LETTUCE)), viewModel.lineItemObservable.value().modifiers)
     }
 
     @Test
     fun test_adding_unknown_modifier() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setCheese(UNKNOWN_MODIFIER)
-//        assertEquals(hashMapOf(KEY_CHEESE to listOf<ModifierInfo>()), viewModel.lineItemObservable.value?.modifiers)
+        assertEquals(hashMapOf(KEY_CHEESE to listOf<ModifierInfo>()), viewModel.lineItemObservable.value().modifiers)
     }
 
     @Test
     fun test_adding_unknown_product_selection_in_product_group() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setProductBundle(CHEESE_BURGER_MEAL)
         viewModel.setDrink(PRODUCT_UNKNOWN_DRINK)
-//        assertTrue(viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS)?.contains(PRODUCT_COKE) == true)
-//        assertTrue(viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS)?.contains(PRODUCT_UNKNOWN_DRINK) == false)
+        assertTrue(viewModel.lineItemObservable.value().productsInBundle[PRODUCT_GROUP_DRINKS]?.contains(PRODUCT_COKE) == true)
+        assertTrue(viewModel.lineItemObservable.value().productsInBundle[PRODUCT_GROUP_DRINKS]?.contains(PRODUCT_UNKNOWN_DRINK) == false)
     }
 
     @Test
     fun test_adding_multiple_products_in_product_group() {
-        viewModel.lineItemObservable.observeForever { }
-//        viewModel.setupWithProduct(PRODUCT_CHEESE_BURGER)
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setProductBundle(CHEESE_BURGER_MEAL)
-//        viewModel.setDrinks(listOf(PRODUCT_UNKNOWN_DRINK, PRODUCT_PEPSI, PRODUCT_COKE))
-//        assertEquals(listOf(PRODUCT_PEPSI, PRODUCT_COKE), viewModel.lineItemObservable.value?.productsInBundle?.get(PRODUCT_GROUP_DRINKS))
+        viewModel.setDrinks(listOf(PRODUCT_UNKNOWN_DRINK, PRODUCT_PEPSI, PRODUCT_COKE))
+        assertEquals(listOf(PRODUCT_PEPSI, PRODUCT_COKE), viewModel.lineItemObservable.value().productsInBundle[PRODUCT_GROUP_DRINKS])
     }
 
     private fun MenuItemDetailViewModel.setDrink(drink: Product) {
@@ -185,6 +199,10 @@ class MenuItemDetailViewModelTest {
 
     private fun MenuItemDetailViewModel.setToppings(vararg toppings: ModifierInfo) {
         this.setProductModifiersByIds(PRODUCT_CHEESE_BURGER, MODIFIER_GROUP_TOPPING, toppings.map { it.modifierId })
+    }
+
+    private fun LiveData<Resource<LineItem>>.value(): LineItem {
+        return (viewModel.lineItemObservable.value as Resource.Success).data.peekContent()
     }
 
 
@@ -228,6 +246,7 @@ class MenuItemDetailViewModelTest {
             get() = ProductBundle("B1000", "Cheese Burger Meal", 12f, "CBM", listOf(PRODUCT_GROUP_DRINKS, PRODUCT_GROUP_SIDES))
         private val PRODUCT_CHEESE_BURGER
             get() = Product("C1000", "Cheese Burger", "Description", 6.5f, "CHB", listOf(CHEESE_BURGER_MEAL), listOf(MODIFIER_GROUP_CHEESE, MODIFIER_GROUP_TOPPING))
+
 
         private val UNKNOWN_MODIFIER
             get() = ModifierInfo("UNKNOWN", "Unknown Modifier", 100f, "")
