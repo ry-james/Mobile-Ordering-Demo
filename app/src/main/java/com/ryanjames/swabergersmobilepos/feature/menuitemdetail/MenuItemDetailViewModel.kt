@@ -41,11 +41,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
     private fun initialize(productId: String, isModifying: Boolean) {
         this.isModifying = isModifying
-        if (isModifying) {
-            _btnRemoveVisibility.value = View.VISIBLE
-        } else {
-            _btnRemoveVisibility.value = View.GONE
-        }
+
 
         menuRepository.getProductDetails(productId)
             .subscribeOn(Schedulers.io())
@@ -136,7 +132,7 @@ class MenuItemDetailViewModel @Inject constructor(
     val strAddToBag: LiveData<StringResourceWithArgs>
         get() = _strAddToBagBtn
 
-    private val _btnRemoveVisibility = MutableLiveData<Int>()
+    private val _btnRemoveVisibility = MutableLiveData<Int>().apply { View.GONE }
     val btnRemoveVisibility: LiveData<Int>
         get() = _btnRemoveVisibility
 
@@ -266,8 +262,10 @@ class MenuItemDetailViewModel @Inject constructor(
     private fun updateAndNotifyObservers() {
         if (isModifying) {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, lineItem.price.toTwoDigitString())
+            _btnRemoveVisibility.value = View.VISIBLE
         } else {
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
+            _btnRemoveVisibility.value = View.GONE
         }
         _lineItemObservable.value = Resource.Success(Event(lineItem))
     }

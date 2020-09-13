@@ -11,7 +11,7 @@ open class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideSwabergersService(sharedPreferences: SharedPreferences): SwabergersService {
+    open fun provideSwabergersService(sharedPreferences: SharedPreferences): SwabergersService {
         return SwabergersService(sharedPreferences)
     }
 

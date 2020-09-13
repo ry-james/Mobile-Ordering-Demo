@@ -23,6 +23,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
+        <Constraint android:id="@id/btnRemove">
+            <PropertySet app:visibilityMode="ignore" />
+        </Constraint>
+
         <Constraint
             android:id="@id/title"
             android:layout_width="0dp"
@@ -70,6 +74,9 @@
             app:layout_constraintStart_toStartOf="@id/iv_back"
             app:layout_constraintTop_toBottomOf="@id/iv_back" />
 
+        <Constraint android:id="@id/btnRemove">
+            <PropertySet app:visibilityMode="ignore" />
+        </Constraint>
 
         <Constraint
             android:id="@id/description"

@@ -10,13 +10,13 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.databinding.RowOrderCardBinding
 import com.ryanjames.swabergersmobilepos.domain.Order
 
-class OrderHistoryAdapter(orderList: List<Order>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class OrderHistoryAdapter(orderList: List<Order>, val listener: OrderHistoryListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var viewModels = orderList.map { OrderItemViewModel(it) }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = RowOrderCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return OrderCardViewHolder(binding)
+        return OrderCardViewHolder(binding, listener)
     }
 
     override fun getItemCount(): Int = viewModels.size
@@ -33,7 +33,7 @@ class OrderHistoryAdapter(orderList: List<Order>) : RecyclerView.Adapter<Recycle
         notifyDataSetChanged()
     }
 
-    class OrderCardViewHolder(val binding: RowOrderCardBinding) : RecyclerView.ViewHolder(binding.root) {
+    class OrderCardViewHolder(val binding: RowOrderCardBinding, val listener: OrderHistoryListener) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(viewModel: OrderItemViewModel) {
             binding.viewModel = viewModel
@@ -49,7 +49,14 @@ class OrderHistoryAdapter(orderList: List<Order>) : RecyclerView.Adapter<Recycle
                 buttonLabel.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             binding.tvViewOrder.text = buttonLabel
+            binding.tvViewOrder.setOnClickListener {
+                listener.onClickViewOrder(orderId = viewModel.order.orderId)
+            }
         }
 
+    }
+
+    interface OrderHistoryListener {
+        fun onClickViewOrder(orderId: String)
     }
 }

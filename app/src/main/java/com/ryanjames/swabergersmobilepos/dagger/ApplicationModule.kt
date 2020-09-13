@@ -17,28 +17,27 @@ import javax.inject.Singleton
 @Module
 open class ApplicationModule {
 
-
     @Singleton
     @Provides
-    fun provideSharedPreferences(application: Application): SharedPreferences {
+    open fun provideSharedPreferences(application: Application): SharedPreferences {
         return application.getSharedPreferences("Preference File", Context.MODE_PRIVATE)
     }
 
     @Singleton
     @Provides
-    fun provideOrderRepository(swabergersService: SwabergersService, orderRealmDao: OrderRealmDao, globalRealmDao: GlobalRealmDao): OrderRepository {
+    open fun provideOrderRepository(swabergersService: SwabergersService, orderRealmDao: OrderRealmDao, globalRealmDao: GlobalRealmDao): OrderRepository {
         return OrderRepository(swabergersService, orderRealmDao, globalRealmDao)
     }
 
     @Singleton
     @Provides
-    fun provideMenuRepository(swabergersService: SwabergersService, menuRealmDao: MenuRealmDao): MenuRepository {
+    open fun provideMenuRepository(swabergersService: SwabergersService, menuRealmDao: MenuRealmDao): MenuRepository {
         return MenuRepository(swabergersService, menuRealmDao)
     }
 
     @Singleton
     @Provides
-    fun provideResources(application: Application): Resources {
+    open fun provideResources(application: Application): Resources {
         return application.resources
     }
 

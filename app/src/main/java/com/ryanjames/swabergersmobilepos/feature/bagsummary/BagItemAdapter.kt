@@ -23,7 +23,7 @@ class BagItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is BagItemViewHolder) {
-            holder.bind(viewModels[holder.adapterPosition], viewModels.size - 1 == holder.adapterPosition)
+            holder.bind(viewModels[holder.adapterPosition], isLastItem = viewModels.size - 1 == holder.adapterPosition)
         }
     }
 

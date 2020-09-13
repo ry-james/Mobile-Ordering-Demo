@@ -48,7 +48,6 @@ class MenuItemDetailViewModelTest {
     @InjectMocks
     lateinit var viewModel: MenuItemDetailViewModel
 
-
     @Before
     @Throws(Exception::class)
     fun setUp() {
@@ -108,7 +107,7 @@ class MenuItemDetailViewModelTest {
     }
 
     @Test
-    fun test_line_item_current_selections() {
+    fun test_line_item_default_selections() {
         viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         viewModel.setProductBundle(CHEESE_BURGER_MEAL)
         val modifiers = hashMapOf(KEY_CHEESE to listOf(AMERICAN_CHEESE), KEY_FRIES to listOf(SMALL_FRIES))
@@ -181,6 +180,30 @@ class MenuItemDetailViewModelTest {
         assertEquals(listOf(PRODUCT_PEPSI, PRODUCT_COKE), viewModel.lineItemObservable.value().productsInBundle[PRODUCT_GROUP_DRINKS])
     }
 
+    @Test
+    fun test_error_adding_item() {
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
+        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        viewModel.addToBag()
+        assertEquals(MenuItemDetailViewModel.Error.ErrorAddingItem, viewModel.errorObservable.value?.peekContent())
+    }
+
+    @Test
+    fun test_error_modifying_item() {
+        viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
+        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        viewModel.addToBag()
+        assertEquals(MenuItemDetailViewModel.Error.ErrorUpdatingItem, viewModel.errorObservable.value?.peekContent())
+    }
+
+    @Test
+    fun test_error_removing_item() {
+        viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
+        Mockito.`when`(orderRepository.removeLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        viewModel.removeFromBag()
+        assertEquals(MenuItemDetailViewModel.Error.ErrorRemovingItem, viewModel.errorObservable.value?.peekContent())
+    }
+
     private fun MenuItemDetailViewModel.setDrink(drink: Product) {
         this.setProductSelectionsForProductGroupByIds(PRODUCT_GROUP_DRINKS, listOf(drink.productId))
     }
@@ -202,7 +225,7 @@ class MenuItemDetailViewModelTest {
     }
 
     private fun LiveData<Resource<LineItem>>.value(): LineItem {
-        return (viewModel.lineItemObservable.value as Resource.Success).data.peekContent()
+        return (this.value as Resource.Success).data.peekContent()
     }
 
 

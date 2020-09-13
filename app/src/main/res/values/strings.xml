@@ -68,4 +68,5 @@
     <string name="error_remove_item">There\'s an error removing the item</string>
     <string name="checkout_successful">You\'re order was checked out successfully.</string>
     <string name="checkout_failure">We\'re having trouble checking out your order. Please try again later.</string>
+    <string name="order_details">Order Details</string>
 </resources>

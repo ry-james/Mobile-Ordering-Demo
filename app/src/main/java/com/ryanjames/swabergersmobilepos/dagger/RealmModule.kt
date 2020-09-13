@@ -12,19 +12,19 @@ open class RealmModule {
 
     @Singleton
     @Provides
-    fun provideOrderRealmDao(): OrderRealmDao {
+    open fun provideOrderRealmDao(): OrderRealmDao {
         return OrderRealmDao()
     }
 
     @Singleton
     @Provides
-    fun provideGlobalRealmDao(): GlobalRealmDao {
+    open fun provideGlobalRealmDao(): GlobalRealmDao {
         return GlobalRealmDao()
     }
 
     @Singleton
     @Provides
-    fun provideMenuRealmDao(): MenuRealmDao {
+    open fun provideMenuRealmDao(): MenuRealmDao {
         return MenuRealmDao()
     }
 }

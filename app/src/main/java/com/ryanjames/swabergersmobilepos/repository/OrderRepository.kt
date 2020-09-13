@@ -122,6 +122,12 @@ class OrderRepository @Inject constructor(
             }
     }
 
+    fun getOrderById(orderId: String): Single<BagSummary> {
+        return swabergersService.getOrderById(orderId).map {
+            it.toBagSummary()
+        }
+    }
+
     fun clearLocalBag() {
         executeRealmTransaction { realm ->
             orderRealmDao.deleteAllLineItems(realm)

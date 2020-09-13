@@ -14,6 +14,8 @@ import com.ryanjames.swabergersmobilepos.core.MarginItemDecoration
 import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderHistoryBinding
+import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
+import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryAdapter.OrderHistoryListener
 import javax.inject.Inject
 
 private const val EXTRA_RV_STATE = "rv.state"
@@ -25,7 +27,11 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
 
     private lateinit var viewModel: OrderHistoryViewModel
 
-    private val orderHistoryAdapter = OrderHistoryAdapter(listOf())
+    private val orderHistoryAdapter = OrderHistoryAdapter(listOf(), object : OrderHistoryListener {
+        override fun onClickViewOrder(orderId: String) {
+            activity?.supportFragmentManager?.let { OrderDetailsDialogFragment.display(it, orderId) }
+        }
+    })
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)

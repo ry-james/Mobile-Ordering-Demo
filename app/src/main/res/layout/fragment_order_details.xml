@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackgroundGray"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/white"
+                android:paddingStart="8dp"
+                android:paddingEnd="16dp"
+                app:contentInsetStartWithNavigation="0dp"
+                app:navigationIcon="@drawable/ic_close" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_items"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
+        <TextView
+            android:id="@+id/tvTotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/texgyreheros_bold"
+            android:text="@string/total"
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvTotal"
+            app:layout_constraintTop_toTopOf="@+id/tvTotal" />
+
+        <TextView
+            android:id="@+id/tvTaxLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@string/tax"
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTax"
+            app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
+            app:layout_constraintTop_toTopOf="@+id/tvTax" />
+
+        <TextView
+            android:id="@+id/tvSubtotalLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@string/subtotal"
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvSubtotal"
+            app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
+            app:layout_constraintTop_toTopOf="@+id/tvSubtotal" />
+
+        <TextView
+            android:id="@+id/tvTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/texgyreheros_bold"
+            android:text="@{viewModel.total}"
+            android:textAlignment="textEnd"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@id/tvSubtotal"
+            app:layout_constraintTop_toBottomOf="@+id/tvTax"
+            tools:text="0.00" />
+
+        <TextView
+            android:id="@+id/tvTax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.tax}"
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorLightGray"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvSubtotal"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtotal"
+            tools:text="0.00" />
+
+        <TextView
+            android:id="@+id/tvSubtotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/texgyreheros_regular"
+            android:text="@{viewModel.subtotal}"
+            android:textAlignment="textEnd"
+            android:textColor="@color/colorLightGray"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_items"
+            tools:text="0.00" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
