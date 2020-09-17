@@ -115,37 +115,73 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             }
         })
 
-        viewModel.onAddItemSuccess.observe(this, Observer { bagSummary ->
-            val intent = Intent().apply {
-                putExtra(EXTRA_BAG_SUMMARY, bagSummary.peekContent())
-            }
-            setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
-            finish()
-        })
-
-        viewModel.onRemoveItemSuccess.observe(this, Observer { bagSummary ->
-            val intent = Intent().apply {
-                putExtra(EXTRA_BAG_SUMMARY, bagSummary.peekContent())
-            }
-            setResult(RESULT_REMOVE_ITEM, intent)
-            finish()
-        })
-
-        viewModel.errorObservable.observe(this, Observer { errorEvent ->
-            errorEvent?.handleEvent { error ->
-                val message = when (error) {
-                    MenuItemDetailViewModel.Error.ErrorAddingItem -> getString(R.string.error_add_item)
-                    MenuItemDetailViewModel.Error.ErrorUpdatingItem -> getString(R.string.error_modify_item)
-                    MenuItemDetailViewModel.Error.ErrorRemovingItem -> getString(R.string.error_remove_item)
+        viewModel.onAddItem.observe(this, Observer { result ->
+            when (result) {
+                is Resource.InProgress -> {
+                    showLoadingDialog("Adding to bag...")
                 }
-                AlertDialog.Builder(this)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                        dialog.dismiss()
-                    }.show()
+                is Resource.Success -> {
+                    hideLoadingDialog()
+                    val intent = Intent().apply {
+                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                    }
+                    setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
+                    finish()
+                }
+                is Resource.Error -> {
+                    showErrorDialog(getString(R.string.error_add_item))
+                }
+            }
+        })
+
+        viewModel.onUpdateItem.observe(this, Observer { result ->
+            when (result) {
+                is Resource.InProgress -> {
+                    showLoadingDialog("Updating item...")
+                }
+                is Resource.Success -> {
+                    hideLoadingDialog()
+                    val intent = Intent().apply {
+                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                    }
+                    setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
+                    finish()
+                }
+                is Resource.Error -> {
+                    hideLoadingDialog()
+                    showErrorDialog(getString(R.string.error_modify_item))
+                }
+            }
+        })
+
+        viewModel.onRemoveItem.observe(this, Observer { result ->
+            when (result) {
+                is Resource.InProgress -> {
+                    showLoadingDialog("Removing from bag...")
+                }
+                is Resource.Success -> {
+                    hideLoadingDialog()
+                    val intent = Intent().apply {
+                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                    }
+                    setResult(RESULT_REMOVE_ITEM, intent)
+                    finish()
+                }
+                is Resource.Error -> {
+                    hideLoadingDialog()
+                    showErrorDialog(getString(R.string.error_remove_item))
+                }
             }
 
         })
+    }
+
+    private fun showErrorDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
     private fun setupRecyclerView() {
@@ -264,7 +300,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     }
 
     fun onClickAddToBag(view: View) {
-        viewModel.addToBag()
+        viewModel.addOrUpdateItem()
     }
 
     fun onClickRemove(view: View) {

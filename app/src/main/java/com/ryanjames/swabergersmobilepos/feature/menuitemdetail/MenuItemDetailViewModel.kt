@@ -136,17 +136,17 @@ class MenuItemDetailViewModel @Inject constructor(
     val btnRemoveVisibility: LiveData<Int>
         get() = _btnRemoveVisibility
 
-    private val _errorObservable = MutableLiveData<Event<Error>>()
-    val errorObservable: LiveData<Event<Error>>
-        get() = _errorObservable
+    private val _onAddItem = MutableLiveData<Resource<BagSummary>>()
+    val onAddItem: LiveData<Resource<BagSummary>>
+        get() = _onAddItem
 
-    private val _onAddItemSuccess = MutableLiveData<Event<BagSummary>>()
-    val onAddItemSuccess: LiveData<Event<BagSummary>>
-        get() = _onAddItemSuccess
+    private val _onUpdateItem = MutableLiveData<Resource<BagSummary>>()
+    val onUpdateItem: LiveData<Resource<BagSummary>>
+        get() = _onUpdateItem
 
-    private val _onRemoveItemSuccess = MutableLiveData<Event<BagSummary>>()
-    val onRemoveItemSuccess: LiveData<Event<BagSummary>>
-        get() = _onRemoveItemSuccess
+    private val _onRemoveItem = MutableLiveData<Resource<BagSummary>>()
+    val onRemoveItem: LiveData<Resource<BagSummary>>
+        get() = _onRemoveItem
 
     fun setProductBundle(bundle: ProductBundle?) {
 
@@ -270,19 +270,43 @@ class MenuItemDetailViewModel @Inject constructor(
         _lineItemObservable.value = Resource.Success(Event(lineItem))
     }
 
-    fun addToBag() {
+    fun addOrUpdateItem() {
+        if (isModifying) {
+            updateItem()
+        } else {
+            addToBag()
+        }
+    }
+
+    private fun addToBag() {
         compositeDisposable.add(
             orderRepository.addOrUpdateLineItem(lineItem)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _onAddItem.value = Resource.InProgress
+                }
                 .subscribe({ bagSummary ->
-                    _onAddItemSuccess.value = Event(bagSummary)
+                    _onAddItem.value = Resource.Success(Event(bagSummary))
                 }, { error ->
-                    _errorObservable.value = if (isModifying) {
-                        Event(Error.ErrorUpdatingItem)
-                    } else {
-                        Event(Error.ErrorAddingItem)
-                    }
+                    _onAddItem.value = Resource.Error(Event(Exception(error)))
+                    error.printStackTrace()
+                })
+        )
+    }
+
+    private fun updateItem() {
+        compositeDisposable.add(
+            orderRepository.addOrUpdateLineItem(lineItem)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _onUpdateItem.value = Resource.InProgress
+                }
+                .subscribe({ bagSummary ->
+                    _onUpdateItem.value = Resource.Success(Event(bagSummary))
+                }, { error ->
+                    _onUpdateItem.value = Resource.Error(Event(Exception(error)))
                     error.printStackTrace()
                 })
         )
@@ -293,19 +317,16 @@ class MenuItemDetailViewModel @Inject constructor(
             orderRepository.removeLineItem(lineItem)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _onRemoveItem.value = Resource.InProgress
+                }
                 .subscribe({ bagSummary ->
-                    _onRemoveItemSuccess.value = Event(bagSummary)
+                    _onRemoveItem.value = Resource.Success(Event(bagSummary))
                 }, { error ->
-                    _errorObservable.value = Event(Error.ErrorRemovingItem)
+                    _onRemoveItem.value = Resource.Error(Event(Exception(error)))
                     error.printStackTrace()
                 })
         )
-    }
-
-    sealed class Error {
-        object ErrorAddingItem : Error()
-        object ErrorUpdatingItem : Error()
-        object ErrorRemovingItem : Error()
     }
 
     override fun onCleared() {

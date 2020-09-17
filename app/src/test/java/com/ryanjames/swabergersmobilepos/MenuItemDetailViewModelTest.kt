@@ -184,16 +184,16 @@ class MenuItemDetailViewModelTest {
     fun test_error_adding_item() {
         viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
         Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
-        viewModel.addToBag()
-        assertEquals(MenuItemDetailViewModel.Error.ErrorAddingItem, viewModel.errorObservable.value?.peekContent())
+        viewModel.addOrUpdateItem()
+        assertTrue(viewModel.onAddItem.value is Resource.Error)
     }
 
     @Test
     fun test_error_modifying_item() {
         viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
         Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
-        viewModel.addToBag()
-        assertEquals(MenuItemDetailViewModel.Error.ErrorUpdatingItem, viewModel.errorObservable.value?.peekContent())
+        viewModel.addOrUpdateItem()
+        assertTrue(viewModel.onUpdateItem.value is Resource.Error)
     }
 
     @Test
@@ -201,7 +201,7 @@ class MenuItemDetailViewModelTest {
         viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
         Mockito.`when`(orderRepository.removeLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
         viewModel.removeFromBag()
-        assertEquals(MenuItemDetailViewModel.Error.ErrorRemovingItem, viewModel.errorObservable.value?.peekContent())
+        assertTrue(viewModel.onRemoveItem.value is Resource.Error)
     }
 
     private fun MenuItemDetailViewModel.setDrink(drink: Product) {

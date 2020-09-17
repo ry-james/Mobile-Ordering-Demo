@@ -18,6 +18,9 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
     private fun createService(withAuth: Boolean = true): SwabergersApi {
 
         val httpClientBuilder = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
 
         if (withAuth) {
             httpClientBuilder.addInterceptor(AuthTokenInterceptor(sharedPrefs))
@@ -55,7 +58,7 @@ class SwabergersService(private val sharedPrefs: SharedPreferences) {
                 }
             }.doOnError { error ->
                 Log.e("ERROR", error.message, error)
-            }.delaySubscription(3000, TimeUnit.MILLISECONDS)
+            }
     }
 
     fun postOrder(createUpdateOrderRequest: CreateUpdateOrderRequest): Single<GetOrderResponse> {

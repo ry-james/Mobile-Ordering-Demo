@@ -231,7 +231,8 @@ fun OrderHistoryResponse.toDomain(): List<Order> {
             orderId = orderResponse.orderId,
             price = orderResponse.price,
             formattedDate = orderResponse.creationDate,
-            status = orderResponse.status.toOrderStatus()
+            status = orderResponse.status.toOrderStatus(),
+            customerName = orderResponse.customerName ?: "Anonymous"
         )
     }
 }

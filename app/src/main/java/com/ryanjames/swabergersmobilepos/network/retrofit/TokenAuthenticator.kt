@@ -8,6 +8,7 @@ import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.RefreshAu
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.create
+import java.util.concurrent.TimeUnit
 
 class TokenAuthenticator(
     val sharedPreferences: SharedPreferences
@@ -19,14 +20,16 @@ class TokenAuthenticator(
 
             Log.d("401", response.body().toString())
 
-            val httpClientBuilder = OkHttpClient.Builder()
-            httpClientBuilder.addInterceptor(RefreshAuthTokenInterceptor(sharedPreferences))
-
-
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            httpClientBuilder.addInterceptor(loggingInterceptor)
-            val client = httpClientBuilder.build()
+            val client = OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(RefreshAuthTokenInterceptor(sharedPreferences))
+                .apply {
+                    val loggingInterceptor = HttpLoggingInterceptor()
+                    loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+                    addInterceptor(loggingInterceptor)
+                }.build()
 
             val retrofit = ServiceGenerator.builder.client(client).build()
             val tokenApiClient = retrofit.create<SwabergersApi>()

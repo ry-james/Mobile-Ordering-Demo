@@ -51,7 +51,7 @@ class OrderRepository @Inject constructor(
                 } else {
                     lineItemListRequest.plus(newLineItem)
                 }
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
 
                 if (newOrder) {
                     swabergersService.postOrder(request)
@@ -82,7 +82,7 @@ class OrderRepository @Inject constructor(
                     lineItemListRequest = lineItemListRequest.minus(it)
                 }
 
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
                 swabergersService.putOrder(request)
                     .doOnSuccess { orderResponse ->
                         executeRealmTransaction { realm ->
@@ -96,7 +96,7 @@ class OrderRepository @Inject constructor(
         return getLocalLineItems().flatMap { lineItemsEntities ->
             val orderId = globalRealmDao.getLocalBagOrderId()
             val lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
-            val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString())
+            val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName)
             swabergersService.putOrder(request)
                 .doOnSuccess {
                     executeRealmTransaction { realm ->

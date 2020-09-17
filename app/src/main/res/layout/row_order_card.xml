@@ -45,6 +45,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvDateAndTime" />
 
             <TextView
+                android:id="@+id/tvCustomerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.customerNameText}"
+                android:textColor="@android:color/white"
+                app:layout_constraintBaseline_toBaselineOf="@+id/tvOrderForLabel"
+                app:layout_constraintStart_toEndOf="@+id/tvOrderForLabel"
+                tools:text="Ryan" />
+
+            <TextView
                 android:id="@+id/tvItems"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
