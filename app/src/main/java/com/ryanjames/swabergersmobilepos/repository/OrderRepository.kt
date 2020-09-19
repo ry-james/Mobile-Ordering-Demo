@@ -112,6 +112,9 @@ class OrderRepository @Inject constructor(
 
     fun getCurrentOrder(): Single<BagSummary> {
         val orderId = globalRealmDao.getLocalBagOrderId()
+        if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {
+            return Single.just(BagSummary.emptyBag)
+        }
         return swabergersService.getOrderById(orderId)
             .doOnSuccess { orderResponse ->
                 executeRealmTransaction { realm ->

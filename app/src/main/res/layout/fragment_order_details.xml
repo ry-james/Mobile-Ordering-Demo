@@ -36,10 +36,22 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <include
+            android:id="@+id/progressView"
+            layout="@layout/view_progress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:binding="@{viewModel.loadingViewBinding}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_items"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
@@ -54,6 +66,7 @@
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
             android:textSize="18sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintEnd_toStartOf="@+id/tvTotal"
             app:layout_constraintTop_toTopOf="@+id/tvTotal" />
 
@@ -66,6 +79,7 @@
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
             android:textSize="16sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/tvTax"
             app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
             app:layout_constraintTop_toTopOf="@+id/tvTax" />
@@ -79,6 +93,7 @@
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
             android:textSize="16sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/tvSubtotal"
             app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
             app:layout_constraintTop_toTopOf="@+id/tvSubtotal" />
@@ -93,6 +108,7 @@
             android:textAlignment="textEnd"
             android:textColor="@android:color/white"
             android:textSize="18sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintEnd_toEndOf="@id/tvSubtotal"
             app:layout_constraintTop_toBottomOf="@+id/tvTax"
             tools:text="0.00" />
@@ -107,6 +123,7 @@
             android:textAlignment="textEnd"
             android:textColor="@color/colorLightGray"
             android:textSize="16sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintEnd_toEndOf="@+id/tvSubtotal"
             app:layout_constraintTop_toBottomOf="@id/tvSubtotal"
             tools:text="0.00" />
@@ -122,6 +139,7 @@
             android:textAlignment="textEnd"
             android:textColor="@color/colorLightGray"
             android:textSize="16sp"
+            android:visibility="@{viewModel.orderDetailsVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rv_items"
             tools:text="0.00" />

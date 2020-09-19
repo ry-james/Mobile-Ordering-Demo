@@ -21,6 +21,11 @@ data class BagSummary(
         return price / 1.12f
     }
 
+    companion object {
+        val emptyBag: BagSummary
+            get() = BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN)
+    }
+
 }
 
 @Parcelize

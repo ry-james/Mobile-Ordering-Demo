@@ -4,7 +4,9 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
+import com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding
 import com.ryanjames.swabergersmobilepos.domain.OrderStatus
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.helper.Event
@@ -23,6 +25,14 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val emptyBagVisibility: LiveData<Int>
         get() = _emptyBagVisibility
 
+    private val _serverIssueVisibility = MutableLiveData<Int>()
+    val serverIssueVisibility: LiveData<Int>
+        get() = _serverIssueVisibility
+
+    private val _loadingViewBinding = MutableLiveData<LoadingDialogBinding>()
+    val loadingViewBinding: LiveData<LoadingDialogBinding>
+        get() = _loadingViewBinding
+
     private val _nonEmptyBagVisibility = MutableLiveData<Int>()
     val nonEmptyBagVisibility: LiveData<Int>
         get() = _nonEmptyBagVisibility
@@ -39,16 +49,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val total: LiveData<String>
         get() = _total
 
-    private val _onOrderSucceeded = MutableLiveData<Event<Boolean>>()
-    val onOrderSucceeded: LiveData<Event<Boolean>>
-        get() = _onOrderSucceeded
-
-    private val _onOrderFailed = MutableLiveData<Event<Boolean>>()
-    val orderFailed: LiveData<Event<Boolean>>
-        get() = _onOrderFailed
-
-    private val _localBag = MutableLiveData<BagSummary>()
-    val getLocalBag: LiveData<BagSummary>
+    private val _localBag = MutableLiveData<Resource<BagSummary>>()
+    val getLocalBag: LiveData<Resource<BagSummary>>
         get() = _localBag
 
     private val _onClearBag = MutableLiveData<Boolean>()
@@ -68,17 +70,54 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
             orderRepository.getCurrentOrder()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _emptyBagVisibility.value = View.GONE
+                    _nonEmptyBagVisibility.value = View.GONE
+                    _serverIssueVisibility.value = View.GONE
+                    setLoadingViewVisibility(View.VISIBLE)
+                }
                 .subscribe({ bagSummary ->
-                    _localBag.value = bagSummary
-                    updateBagVisibility()
-                    updatePrices()
+                    if (bagSummary == BagSummary.emptyBag) {
+                        updateBagVisibility()
+                    } else {
+                        setLocalBag(bagSummary)
+                        updateBagVisibility()
+                        updatePrices()
+                    }
                 },
-                    { error -> error.printStackTrace() })
+                    { error ->
+                        error.printStackTrace()
+                        _emptyBagVisibility.value = View.GONE
+                        _nonEmptyBagVisibility.value = View.GONE
+                        _serverIssueVisibility.value = View.VISIBLE
+                        setLoadingViewVisibility(View.GONE)
+                    })
+        )
+    }
+
+    private fun localBag(): BagSummary? {
+        val resource = getLocalBag.value
+        if (resource is Resource.Success) {
+            return resource.data.peekContent()
+        }
+        return null
+    }
+
+    private fun setLocalBag(bagSummary: BagSummary) {
+        _localBag.value = Resource.Success(Event(bagSummary))
+    }
+
+    private fun setLoadingViewVisibility(visibility: Int) {
+        _loadingViewBinding.value = LoadingDialogBinding(
+            visibility = visibility,
+            loadingText = "Fetching bag...",
+            textColor = R.color.colorWhite
         )
     }
 
     private fun updateBagVisibility() {
-        if (getLocalBag.value?.lineItems?.isNotEmpty() == true) {
+        setLoadingViewVisibility(View.GONE)
+        if (localBag()?.lineItems?.isNotEmpty() == true) {
             _emptyBagVisibility.value = View.GONE
             _nonEmptyBagVisibility.value = View.VISIBLE
         } else {
@@ -88,19 +127,19 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     private fun updatePrices() {
-        _tax.value = getLocalBag.value?.tax()?.toTwoDigitString() ?: "0.00"
-        _subtotal.value = getLocalBag.value?.subtotal()?.toTwoDigitString() ?: "0.00"
-        _total.value = getLocalBag.value?.price?.toTwoDigitString() ?: "0.00"
+        _tax.value = localBag()?.tax()?.toTwoDigitString() ?: "0.00"
+        _subtotal.value = localBag()?.subtotal()?.toTwoDigitString() ?: "0.00"
+        _total.value = localBag()?.price?.toTwoDigitString() ?: "0.00"
     }
 
     fun setBagSummary(bagSummary: BagSummary) {
-        _localBag.value = bagSummary
+        setLocalBag(bagSummary)
         updatePrices()
         updateBagVisibility()
     }
 
     fun clearBag() {
-        _localBag.value = BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN)
+        setLocalBag(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN))
         updatePrices()
         updateBagVisibility()
     }

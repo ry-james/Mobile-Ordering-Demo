@@ -45,7 +45,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun showLoadingDialog(message: String = getString(R.string.loading)) {
-        val loadingView = LayoutInflater.from(this).inflate(R.layout.dialog_progress, null)
+        val loadingView = LayoutInflater.from(this).inflate(R.layout.view_progress, null)
         val tvLoadingMessage = loadingView.findViewById(R.id.tvLoadingMessage) as TextView
         tvLoadingMessage.text = message
 

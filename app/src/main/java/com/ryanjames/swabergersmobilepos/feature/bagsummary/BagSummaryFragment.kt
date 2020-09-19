@@ -57,41 +57,26 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     }
 
     private fun subscribe() {
-        viewModel.onOrderSucceeded.observe(viewLifecycleOwner, Observer { event ->
-            event.handleEvent {
-                AlertDialog.Builder(activity)
-                    .setMessage(getString(R.string.order_created_message))
-                    .setPositiveButton(R.string.ok_cta) { dialogInterface, _ ->
-                        dialogInterface.dismiss()
-                    }.setCancelable(false)
-                    .show()
-            }
-        })
 
-        viewModel.orderFailed.observe(viewLifecycleOwner, Observer { event ->
-            event.handleEvent {
-                AlertDialog.Builder(activity)
-                    .setMessage(getString(R.string.something_went_wrong))
-                    .setPositiveButton(getString(R.string.try_again_cta)) { dialogInterface, _ ->
-                        dialogInterface.dismiss()
+        viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    resource.data.handleEvent { bagSummary ->
+                        adapter.updateBag(bagSummary)
                     }
-                    .setNegativeButton(getString(R.string.later_cta)) { dialogInterface, _ -> dialogInterface.dismiss() }
-                    .show()
+                }
             }
-        })
 
-        viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { bagSummary ->
-            adapter.updateBag(bagSummary)
         })
 
         viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
             adapter.clear()
         })
 
-        viewModel.checkoutObservable.observe(viewLifecycleOwner, Observer {
-            when (it) {
+        viewModel.checkoutObservable.observe(viewLifecycleOwner, Observer { resource ->
+            when (resource) {
                 is Resource.Success -> {
-                    it.data.handleEvent {
+                    resource.data.handleEvent {
                         (activity as BaseActivity).hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)
@@ -103,7 +88,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                     }
                 }
                 is Resource.Error -> {
-                    it.exception.handleEvent {
+                    resource.exception.handleEvent {
                         (activity as BaseActivity).hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)
