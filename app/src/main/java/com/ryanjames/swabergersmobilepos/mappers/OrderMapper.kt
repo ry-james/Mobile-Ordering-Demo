@@ -190,7 +190,8 @@ fun ProductDetailsResponse.toDomain(): Product {
         price = price,
         receiptText = receiptText,
         bundles = bundles.map { it.toDomain() },
-        modifierGroups = modifierGroups.toDomain()
+        modifierGroups = modifierGroups.toDomain(),
+        imageUrl = imageUrl
     )
 }
 
@@ -221,7 +222,7 @@ private fun GetOrderMenuProductGroupResponse.toDomain(): ProductGroup {
 }
 
 private fun GetOrderProductGroupProductResponse.toDomain(): Product {
-    return Product(productId, productName, "", 0f, "", bundles = listOf(), modifierGroups = this.modifierGroups.toDomain())
+    return Product(productId, productName, "", 0f, "", bundles = listOf(), modifierGroups = this.modifierGroups.toDomain(), imageUrl = null)
 }
 
 fun OrderHistoryResponse.toDomain(): List<Order> {

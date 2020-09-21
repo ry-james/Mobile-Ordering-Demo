@@ -47,7 +47,8 @@ data class ProductDetailsResponse(
     val price: Float,
     val receiptText: String,
     val modifierGroups: List<ModifierGroupResponse>,
-    val bundles: List<GetOrderMenuBundleResponse>
+    val bundles: List<GetOrderMenuBundleResponse>,
+    val imageUrl: String?
 )
 
 data class GetOrderMenuBundleResponse(

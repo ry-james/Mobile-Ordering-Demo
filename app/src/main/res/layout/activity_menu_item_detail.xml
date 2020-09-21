@@ -29,6 +29,25 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnRemove" />
 
+        <ImageView
+            android:id="@+id/iv_itembg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:imageUrl="@{viewModel.imageSrc}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/ic_error" />
+
+        <ImageView
+            android:id="@+id/gradient"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:src="@drawable/image_gradient"
+            app:layout_constraintBottom_toBottomOf="@id/iv_itembg"
+            app:layout_constraintEnd_toEndOf="@id/iv_itembg"
+            app:layout_constraintStart_toStartOf="@id/iv_itembg"/>
+
 
         <ImageView
             android:id="@+id/iv_back"
@@ -51,6 +70,7 @@
             android:textSize="30sp"
             android:transformPivotX="0sp"
             android:transformPivotY="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/description"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="TITLE" />
 
@@ -64,11 +84,11 @@
             android:fontFamily="@font/texgyreheros_regular"
             android:paddingBottom="16dp"
             android:text="@{viewModel.strProductDescription}"
-            android:textColor="@color/colorGray"
+            android:textColor="@color/colorWhite"
             android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_itembg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Some kind of description" />
 
         <androidx.recyclerview.widget.RecyclerView

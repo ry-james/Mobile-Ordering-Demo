@@ -51,6 +51,10 @@ class MenuItemDetailViewModel @Inject constructor(
                 _strProductName.value = product.productName
                 _strProductDescription.value = product.productDescription
 
+                product.imageUrl?.let {
+                    _imageSrc.value = it
+                }
+
                 this.lineItem = LineItem.ofProduct(product)
 
                 if (!isModifying) {
@@ -147,6 +151,10 @@ class MenuItemDetailViewModel @Inject constructor(
     private val _onRemoveItem = MutableLiveData<Resource<BagSummary>>()
     val onRemoveItem: LiveData<Resource<BagSummary>>
         get() = _onRemoveItem
+
+    private val _imageSrc = MutableLiveData<String>()
+    val imageSrc: LiveData<String>
+        get() = _imageSrc
 
     fun setProductBundle(bundle: ProductBundle?) {
 

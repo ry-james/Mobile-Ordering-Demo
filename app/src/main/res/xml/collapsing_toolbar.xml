@@ -18,6 +18,7 @@
 
         <Constraint
             android:id="@id/rvMenuItem"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@id/btnCta"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,17 +29,24 @@
         </Constraint>
 
         <Constraint
+            android:id="@id/iv_itembg"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/parent" />
+
+        <Constraint
             android:id="@id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:scaleX="0.67"
-            android:scaleY="0.67"
-            app:layout_constraintBottom_toBottomOf="@id/iv_back"
-            app:layout_constraintStart_toEndOf="@id/iv_back"
-            app:layout_constraintTop_toTopOf="@id/iv_back">
+            android:layout_marginTop="8dp"
+            android:scaleX="1.0"
+            android:scaleY="1.0"
+            app:layout_constraintStart_toStartOf="@id/iv_back"
+            app:layout_constraintTop_toBottomOf="@id/iv_back" />
 
-        </Constraint>
 
         <Constraint
             android:id="@id/description"
@@ -69,10 +77,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginBottom="0dp"
             android:scaleX="1.0"
             android:scaleY="1.0"
-            app:layout_constraintStart_toStartOf="@id/iv_back"
-            app:layout_constraintTop_toBottomOf="@id/iv_back" />
+            app:layout_constraintBottom_toTopOf="@id/description"
+            app:layout_constraintStart_toStartOf="@id/iv_back" />
+
+        <Constraint
+            android:id="@id/iv_itembg"
+            android:layout_width="0dp"
+            android:layout_height="350dp"
+            android:alpha="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/parent" />
 
         <Constraint android:id="@id/btnRemove">
             <PropertySet app:visibilityMode="ignore" />
@@ -86,10 +104,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:alpha="1"
+            app:layout_constraintBottom_toBottomOf="@id/iv_itembg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title" />
-
+            app:layout_constraintStart_toStartOf="parent" />
     </ConstraintSet>
 
 

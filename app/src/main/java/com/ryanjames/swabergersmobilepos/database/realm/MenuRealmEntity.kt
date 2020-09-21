@@ -35,9 +35,10 @@ open class ProductRealmEntity(
     var price: Float,
     var receiptText: String,
     var modifierGroups: RealmList<ModifierGroupRealmEntity>,
-    var bundles: RealmList<ProductBundleRealmEntity>
+    var bundles: RealmList<ProductBundleRealmEntity>,
+    var imageUrl: String?
 ) : RealmObject() {
-    constructor() : this("", "", "", 0f, "", RealmList(), RealmList())
+    constructor() : this("", "", "", 0f, "", RealmList(), RealmList(), null)
 
     fun deleteChildren() {
         bundles.map { it.deleteChildren() }

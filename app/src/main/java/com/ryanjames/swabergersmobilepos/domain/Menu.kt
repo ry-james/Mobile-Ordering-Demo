@@ -33,12 +33,13 @@ data class Product(
     val price: Float,
     val receiptText: String,
     val bundles: List<ProductBundle>,
-    val modifierGroups: List<ModifierGroup>
+    val modifierGroups: List<ModifierGroup>,
+    val imageUrl: String?
 ) : Parcelable {
 
     companion object {
         val EMPTY: Product
-            get() = Product("", "", "", 0f, "", listOf(), listOf())
+            get() = Product("", "", "", 0f, "", listOf(), listOf(), null)
     }
 }
 

@@ -63,7 +63,8 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
             input.price ?: 0f,
             input.receiptText ?: "",
             RealmList(),
-            RealmList()
+            RealmList(),
+            null
         )
     }
 
@@ -75,7 +76,8 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
             input.price,
             input.receiptText,
             bundleMapper.mapLocalDbToDomain(input.bundles),
-            modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups)
+            modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups),
+            input.imageUrl
         )
     }
 
@@ -87,7 +89,8 @@ class ProductMapper : DataMapper<ProductRealmEntity, ProductResponse, Product> {
             input.price,
             input.receiptText,
             modifierGroupMapper.mapDomainToLocalDb(input.modifierGroups),
-            bundleMapper.mapDomainToLocalDb(input.bundles)
+            bundleMapper.mapDomainToLocalDb(input.bundles),
+            input.imageUrl
         )
     }
 }
@@ -166,7 +169,8 @@ class ProductGroupMapper : DataMapper<ProductGroupRealmEntity, ProductGroupRespo
             price = input.price,
             receiptText = "",
             bundles = listOf(),
-            modifierGroups = modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups)
+            modifierGroups = modifierGroupMapper.mapLocalDbToDomain(input.modifierGroups),
+            imageUrl = null
         )
     }
 
