@@ -152,7 +152,7 @@ class MenuItemDetailAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: Product, modifierGroup: ModifierGroup, modifierList: List<ModifierInfo>, hideLine: Boolean) {
-            binding.tvHeader.text = "SELECT ${modifierGroup.modifierGroupName.toUpperCase()}"
+            binding.tvHeader.text = modifierGroup.modifierGroupName.toUpperCase()
             if (modifierList.isEmpty()) {
                 binding.tvSubheader.setText(R.string.none_selected)
             } else {

@@ -129,6 +129,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                     finish()
                 }
                 is Resource.Error -> {
+                    hideLoadingDialog()
                     showErrorDialog(getString(R.string.error_add_item))
                 }
             }
@@ -268,7 +269,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
         val bottomFragment = BottomPickerFragment.createInstance(
             ID_PRODUCT_GROUP_MODIFIER,
-            getString(R.string.select_something, modifierGroup.modifierGroupName.toUpperCase()),
+            modifierGroup.modifierGroupName.toUpperCase(),
             product.productName,
             modifierGroup.min,
             modifierGroup.max,
