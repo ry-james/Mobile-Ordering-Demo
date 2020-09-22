@@ -12,11 +12,11 @@
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark"
-        app:layoutDescription="@xml/collapsing_toolbar">
+        app:layoutDescription="@xml/collapsing_toolbar"
+        app:transition="@{viewModel.transitionId}">
 
         <Button
             android:id="@+id/btnCta"

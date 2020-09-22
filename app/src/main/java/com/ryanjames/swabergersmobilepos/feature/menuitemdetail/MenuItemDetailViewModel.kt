@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.feature.menuitemdetail
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.StringResourceWithArgs
@@ -162,6 +163,16 @@ class MenuItemDetailViewModel @Inject constructor(
     private val _bgImageVisibility = MutableLiveData<Int>()
     val bgImageVisibility: LiveData<Int>
         get() = _bgImageVisibility
+
+    private val _transitionId = map(_bgImageVisibility) {
+        if (it == View.GONE) {
+            R.id.transitionNoImage
+        } else {
+            R.id.transitionWithImage
+        }
+    }
+    val transitionId: LiveData<Int>
+        get() = _transitionId
 
     fun setProductBundle(bundle: ProductBundle?) {
 

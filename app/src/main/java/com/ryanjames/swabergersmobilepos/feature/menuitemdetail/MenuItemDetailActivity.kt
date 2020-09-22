@@ -115,14 +115,6 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
             }
         })
 
-        viewModel.bgImageVisibility.observe(this, Observer {
-            if (it == View.GONE) {
-                binding.motionLayout.setTransition(R.id.transitionNoImage)
-            } else {
-                binding.motionLayout.setTransition(R.id.transitionWithImage)
-            }
-        })
-
         viewModel.onAddItem.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
