@@ -12,6 +12,7 @@
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark"
@@ -33,6 +34,7 @@
             android:id="@+id/iv_itembg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:visibility="@{viewModel.bgImageVisibility}"
             app:imageUrl="@{viewModel.imageSrc}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +48,7 @@
             android:src="@drawable/image_gradient"
             app:layout_constraintBottom_toBottomOf="@id/iv_itembg"
             app:layout_constraintEnd_toEndOf="@id/iv_itembg"
-            app:layout_constraintStart_toStartOf="@id/iv_itembg"/>
+            app:layout_constraintStart_toStartOf="@id/iv_itembg" />
 
 
         <ImageView
@@ -117,6 +119,20 @@
             app:layout_constraintEnd_toStartOf="@+id/btnCta"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:id="@+id/guideline3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/iv_itembg"
+            app:layout_constraintTop_toBottomOf="@id/iv_back" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="title,description" />
 
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

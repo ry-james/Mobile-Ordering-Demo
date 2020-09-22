@@ -51,8 +51,11 @@ class MenuItemDetailViewModel @Inject constructor(
                 _strProductName.value = product.productName
                 _strProductDescription.value = product.productDescription
 
-                product.imageUrl?.let {
-                    _imageSrc.value = it
+                if (product.imageUrl == null) {
+                    _bgImageVisibility.value = View.GONE
+                } else {
+                    _bgImageVisibility.value = View.VISIBLE
+                    _imageSrc.value = product.imageUrl
                 }
 
                 this.lineItem = LineItem.ofProduct(product)
@@ -155,6 +158,10 @@ class MenuItemDetailViewModel @Inject constructor(
     private val _imageSrc = MutableLiveData<String>()
     val imageSrc: LiveData<String>
         get() = _imageSrc
+
+    private val _bgImageVisibility = MutableLiveData<Int>()
+    val bgImageVisibility: LiveData<Int>
+        get() = _bgImageVisibility
 
     fun setProductBundle(bundle: ProductBundle?) {
 
