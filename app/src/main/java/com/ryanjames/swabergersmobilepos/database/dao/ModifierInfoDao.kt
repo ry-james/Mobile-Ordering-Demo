@@ -1,11 +1,8 @@
 package com.ryanjames.swabergersmobilepos.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import com.ryanjames.swabergersmobilepos.database.entity.ModifierInfoEntity
-import com.ryanjames.swabergersmobilepos.network.Resource
-import io.reactivex.Flowable
 import io.reactivex.Observable
 
 @Dao

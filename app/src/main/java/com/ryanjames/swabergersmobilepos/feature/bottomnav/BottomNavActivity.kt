@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
+import android.util.SparseArray
 import android.view.MenuItem
 import android.view.View
+import androidx.annotation.IdRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.ryanjames.swabergersmobilepos.R
@@ -31,6 +35,9 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     private lateinit var binding: ActivityBottomNavBinding
     private var internetConnectivitySubscription: Disposable? = null
     private var noInternetSnackbar: Snackbar? = null
+    private var currentSelectItemId = R.id.navigation_menu
+
+    private var savedStateSparseArray = SparseArray<Fragment.SavedState>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +45,11 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         binding = DataBindingUtil.setContentView(this, R.layout.activity_bottom_nav)
         binding.lifecycleOwner = this
 
+        if (savedInstanceState != null) {
+            savedStateSparseArray = savedInstanceState.getSparseParcelableArray(SAVED_STATE_CONTAINER_KEY)
+                ?: savedStateSparseArray
+            currentSelectItemId = savedInstanceState.getInt(SAVED_STATE_CURRENT_TAB_KEY)
+        }
 
         // Set bottom margin of fragment to be above the bottom nav
         binding.bottomNav.post {
@@ -47,7 +59,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         binding.bottomNav.setOnNavigationItemSelectedListener(this)
-        navigateToMenuTab()
+        binding.bottomNav.selectedItemId = currentSelectItemId
 
         // Subscribe to Internet connectivity broadcast
         internetConnectivitySubscription = observeBroadcasts(ConnectivityManager.CONNECTIVITY_ACTION)
@@ -79,16 +91,19 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val selectedFragment = when (item.itemId) {
-            R.id.navigation_menu -> MenuFragment()
-            R.id.navigation_bag -> BagSummaryFragment()
-            R.id.navigation_order -> OrderHistoryFragment()
+        when (item.itemId) {
+            R.id.navigation_menu -> swapFragments(item.itemId, "NAVIGATION_MENU")
+            R.id.navigation_bag -> swapFragments(item.itemId, "NAVIGATION_BAG")
+            R.id.navigation_order -> swapFragments(item.itemId, "NAVIGATION_ORDER")
             else -> return false
         }
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_content_bottom_nav, selectedFragment, selectedFragment::class.qualifiedName)
-            .commit()
         return true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState?.putSparseParcelableArray(SAVED_STATE_CONTAINER_KEY, savedStateSparseArray)
+        outState?.putInt(SAVED_STATE_CURRENT_TAB_KEY, currentSelectItemId)
     }
 
     override fun onBackPressed() {
@@ -122,11 +137,50 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         showSnackbar(getString(R.string.item_removed_snackbar))
     }
 
+    private fun swapFragments(@IdRes actionId: Int, key: String) {
+        // Check if the tab clicked is not the current tab
+        if (supportFragmentManager.findFragmentByTag(key) == null) {
+            savedFragmentState(actionId)
+            createFragment(key, actionId)
+        }
+    }
+
+    private fun savedFragmentState(actionId: Int) {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_bottom_nav)
+        if (currentFragment != null) {
+            savedStateSparseArray.put(
+                currentSelectItemId,
+                supportFragmentManager.saveFragmentInstanceState(currentFragment)
+            )
+        }
+        currentSelectItemId = actionId
+    }
+
+    private fun createFragment(key: String, actionId: Int) {
+
+        val fragment = when (actionId) {
+            R.id.navigation_menu -> MenuFragment()
+            R.id.navigation_bag -> BagSummaryFragment()
+            R.id.navigation_order -> OrderHistoryFragment()
+            else -> null
+        }
+
+        fragment?.let {
+            it.setInitialSavedState(savedStateSparseArray[actionId])
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_content_bottom_nav, fragment, key)
+                .commit()
+        }
+    }
+
     companion object {
 
         fun createIntent(context: Context): Intent {
             return Intent(context, BottomNavActivity::class.java)
         }
+
+        const val SAVED_STATE_CONTAINER_KEY = "ContainerKey"
+        const val SAVED_STATE_CURRENT_TAB_KEY = "CurrentTabKey"
 
     }
 

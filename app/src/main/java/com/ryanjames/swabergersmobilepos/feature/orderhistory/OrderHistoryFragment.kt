@@ -18,8 +18,6 @@ import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialog
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryAdapter.OrderHistoryListener
 import javax.inject.Inject
 
-private const val EXTRA_RV_STATE = "rv.state"
-
 class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.fragment_order_history) {
 
     @Inject
@@ -40,16 +38,6 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(OrderHistoryViewModel::class.java)
         binding.viewModel = viewModel
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.rvOrderHistory.layoutManager?.onRestoreInstanceState(outStateBundle.getParcelable(EXTRA_RV_STATE))
-    }
-
-    override fun onPause() {
-        super.onPause()
-        outStateBundle.putParcelable(EXTRA_RV_STATE, binding.rvOrderHistory.layoutManager?.onSaveInstanceState())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

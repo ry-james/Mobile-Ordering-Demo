@@ -28,8 +28,6 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE_IT
 import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
-private const val EXTRA_RV_STATE = "extra.rv.state"
-
 class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.fragment_bag_summary) {
 
     @Inject

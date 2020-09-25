@@ -67,9 +67,9 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
 
     private fun setupViewPager(categories: List<Category>) {
         activity?.let {
-            binding.tabLayout?.setupWithViewPager(binding.viewPager)
-            binding.viewPager?.adapter = ProgramDetailPagerAdapter(childFragmentManager, categories)
-            binding.viewPager?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            binding.tabLayout.setupWithViewPager(binding.viewPager)
+            binding.viewPager.adapter = ProgramDetailPagerAdapter(childFragmentManager, categories)
+            binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {}
 
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
@@ -78,7 +78,7 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
                     viewModel.selectedCategoryPosition = position
                 }
             })
-            binding.viewPager?.currentItem = viewModel.selectedCategoryPosition
+            binding.viewPager.currentItem = viewModel.selectedCategoryPosition
         }
     }
 

@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import com.ryanjames.swabergersmobilepos.network.retrofit.MobilePosApi
-import com.ryanjames.swabergersmobilepos.network.retrofit.TokenAuthenticator
+import com.ryanjames.swabergersmobilepos.network.retrofit.authenticator.TokenAuthenticator
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.AuthTokenInterceptor
 import dagger.Module
 import dagger.Provides

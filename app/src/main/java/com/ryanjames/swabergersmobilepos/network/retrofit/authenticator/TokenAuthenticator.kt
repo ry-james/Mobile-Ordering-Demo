@@ -1,8 +1,9 @@
-package com.ryanjames.swabergersmobilepos.network.retrofit
+package com.ryanjames.swabergersmobilepos.network.retrofit.authenticator
 
 import android.content.SharedPreferences
 import android.util.Log
 import com.ryanjames.swabergersmobilepos.helper.SharedPrefsKeys
+import com.ryanjames.swabergersmobilepos.network.retrofit.MobilePosApi
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.RefreshAuthTokenInterceptor
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
