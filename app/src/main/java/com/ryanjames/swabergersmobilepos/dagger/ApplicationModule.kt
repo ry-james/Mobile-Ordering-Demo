@@ -7,7 +7,7 @@ import android.content.res.Resources
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
-import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
+import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import dagger.Module
@@ -25,14 +25,14 @@ open class ApplicationModule {
 
     @Singleton
     @Provides
-    open fun provideOrderRepository(swabergersService: SwabergersService, orderRealmDao: OrderRealmDao, globalRealmDao: GlobalRealmDao): OrderRepository {
-        return OrderRepository(swabergersService, orderRealmDao, globalRealmDao)
+    open fun provideOrderRepository(apiService: ApiService, orderRealmDao: OrderRealmDao, globalRealmDao: GlobalRealmDao): OrderRepository {
+        return OrderRepository(apiService, orderRealmDao, globalRealmDao)
     }
 
     @Singleton
     @Provides
-    open fun provideMenuRepository(swabergersService: SwabergersService, menuRealmDao: MenuRealmDao): MenuRepository {
-        return MenuRepository(swabergersService, menuRealmDao)
+    open fun provideMenuRepository(apiService: ApiService, menuRealmDao: MenuRealmDao): MenuRepository {
+        return MenuRepository(apiService, menuRealmDao)
     }
 
     @Singleton

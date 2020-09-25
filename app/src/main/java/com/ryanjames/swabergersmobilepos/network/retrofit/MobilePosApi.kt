@@ -4,9 +4,10 @@ import com.ryanjames.swabergersmobilepos.network.responses.*
 import io.reactivex.Single
 import retrofit2.http.*
 
-interface SwabergersApi {
+interface MobilePosApi {
 
     @POST("/login")
+    @Headers("No-Authentication: true")
     fun login(@Body loginRequestBody: LoginRequestBody): Single<LoginResponse>
 
     @POST("/refresh")

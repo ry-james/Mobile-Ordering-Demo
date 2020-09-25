@@ -7,14 +7,14 @@ import com.ryanjames.swabergersmobilepos.mappers.BasicMenuMapper
 import com.ryanjames.swabergersmobilepos.mappers.ProductMapper
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
-import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
+import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import javax.inject.Inject
 
 class MenuRepository @Inject constructor(
-    val swabergersService: SwabergersService,
+    val apiService: ApiService,
     val menuRealmDao: MenuRealmDao
 ) {
 
@@ -22,7 +22,7 @@ class MenuRepository @Inject constructor(
     private val productMapper = ProductMapper()
 
     fun authenticate(username: String, password: String): Single<LoginResponse> {
-        return swabergersService.authenticate(username, password)
+        return apiService.authenticate(username, password)
     }
 
     private fun basicMenuDatabaseObservable(): Maybe<Menu> {
@@ -43,7 +43,7 @@ class MenuRepository @Inject constructor(
     }
 
     private fun basicMenuApiObservable(): Single<Menu> {
-        return swabergersService.getBasicMenu()
+        return apiService.getBasicMenu()
             .doOnSuccess { menuResponse ->
                 menuRealmDao.saveBasicMenu(basicMenuMapper.mapRemoteToLocalDb(menuResponse))
             }
@@ -62,7 +62,7 @@ class MenuRepository @Inject constructor(
             menuRealmDao.getProductDetailsById(productId).map {
                 productMapper.mapLocalDbToDomain(it)
             }.toObservable(),
-            swabergersService.getProductDetails(productId)
+            apiService.getProductDetails(productId)
                 .map { it.toDomain() }
                 .doOnSuccess {
                     val productRealm = productMapper.mapDomainToLocalDb(it)

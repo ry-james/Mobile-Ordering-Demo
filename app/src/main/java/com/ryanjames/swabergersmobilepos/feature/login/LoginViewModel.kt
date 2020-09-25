@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.helper.isBlankOrEmpty
-import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
+import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(val swabergersService: SwabergersService) : ViewModel() {
+class LoginViewModel @Inject constructor(val apiService: ApiService) : ViewModel() {
 
     val username = MutableLiveData<String>().apply { value = "" }
     val password = MutableLiveData<String>().apply { value = "" }
@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(val swabergersService: SwabergersServic
     fun login() {
         if (isValidated()) {
             compositeDisposable.add(
-                swabergersService.authenticate(username.value ?: "", password.value ?: "")
+                apiService.authenticate(username.value ?: "", password.value ?: "")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ _loginSuccess.value = true },

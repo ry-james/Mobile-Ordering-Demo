@@ -8,16 +8,16 @@ import okhttp3.Response
 class AuthTokenInterceptor(val sharedPreferences: SharedPreferences) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalRequest = chain.request()
+        var request = chain.request()
 
-        val authToken = sharedPreferences.getString(SharedPrefsKeys.KEY_AUTH_TOKEN, null)
-        val bearerAuthToken = "Bearer $authToken"
+        if (request.header("No-Authentication") == null) {
+            val authToken = sharedPreferences.getString(SharedPrefsKeys.KEY_AUTH_TOKEN, null)
+            val bearerAuthToken = "Bearer $authToken"
 
-        val newRequest = originalRequest.newBuilder()
-            .header("Authorization", bearerAuthToken)
-            .build()
-
-        return chain.proceed(newRequest)
-
+            request = request.newBuilder()
+                .header("Authorization", bearerAuthToken)
+                .build()
+        }
+        return chain.proceed(request)
     }
 }

@@ -14,12 +14,12 @@ import com.ryanjames.swabergersmobilepos.mappers.toDomain
 import com.ryanjames.swabergersmobilepos.mappers.toLineItemRequest
 import com.ryanjames.swabergersmobilepos.mappers.toLocal
 import com.ryanjames.swabergersmobilepos.network.responses.CreateUpdateOrderRequest
-import com.ryanjames.swabergersmobilepos.network.retrofit.SwabergersService
+import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import io.reactivex.Single
 import javax.inject.Inject
 
 class OrderRepository @Inject constructor(
-    val swabergersService: SwabergersService,
+    val apiService: ApiService,
     val orderRealmDao: OrderRealmDao,
     val globalRealmDao: GlobalRealmDao
 ) {
@@ -29,7 +29,7 @@ class OrderRepository @Inject constructor(
     }
 
     fun getOrderHistory(): Single<List<Order>> {
-        return swabergersService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
+        return apiService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
     }
 
     fun addOrUpdateLineItem(lineItem: LineItem): Single<BagSummary> {
@@ -54,7 +54,7 @@ class OrderRepository @Inject constructor(
                 val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
 
                 if (newOrder) {
-                    swabergersService.postOrder(request)
+                    apiService.postOrder(request)
                         .doOnSuccess { orderResponse ->
                             executeRealmTransaction { realm ->
                                 orderResponse.lineItems.find { newLineItem.lineItemId == it.lineItemId }?.let {
@@ -63,7 +63,7 @@ class OrderRepository @Inject constructor(
                             }
                         }
                 } else {
-                    swabergersService.putOrder(request)
+                    apiService.putOrder(request)
                         .doOnSuccess { orderResponse ->
                             executeRealmTransaction { realm ->
                                 orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
@@ -83,7 +83,7 @@ class OrderRepository @Inject constructor(
                 }
 
                 val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
-                swabergersService.putOrder(request)
+                apiService.putOrder(request)
                     .doOnSuccess { orderResponse ->
                         executeRealmTransaction { realm ->
                             orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
@@ -97,7 +97,7 @@ class OrderRepository @Inject constructor(
             val orderId = globalRealmDao.getLocalBagOrderId()
             val lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
             val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName)
-            swabergersService.putOrder(request)
+            apiService.putOrder(request)
                 .doOnSuccess {
                     executeRealmTransaction { realm ->
                         orderRealmDao.deleteAllLineItems(realm)
@@ -115,7 +115,7 @@ class OrderRepository @Inject constructor(
         if (orderId == GlobalRealmDao.NO_LOCAL_ORDER) {
             return Single.just(BagSummary.emptyBag)
         }
-        return swabergersService.getOrderById(orderId)
+        return apiService.getOrderById(orderId)
             .doOnSuccess { orderResponse ->
                 executeRealmTransaction { realm ->
                     orderRealmDao.updateLocalBag(realm, orderResponse.lineItems.map { it.toLocal() })
@@ -126,7 +126,7 @@ class OrderRepository @Inject constructor(
     }
 
     fun getOrderById(orderId: String): Single<BagSummary> {
-        return swabergersService.getOrderById(orderId).map {
+        return apiService.getOrderById(orderId).map {
             it.toBagSummary()
         }
     }

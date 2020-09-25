@@ -3,17 +3,17 @@ package com.ryanjames.swabergersmobilepos.network.retrofit
 import android.content.SharedPreferences
 import android.util.Log
 import com.ryanjames.swabergersmobilepos.helper.SharedPrefsKeys
-import com.ryanjames.swabergersmobilepos.network.ServiceGenerator
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.RefreshAuthTokenInterceptor
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 class TokenAuthenticator(
-    val sharedPreferences: SharedPreferences
+    val sharedPreferences: SharedPreferences,
+    val retrofit: Retrofit.Builder
 ) : Authenticator {
-
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.code() == 401) {
@@ -31,8 +31,8 @@ class TokenAuthenticator(
                     addInterceptor(loggingInterceptor)
                 }.build()
 
-            val retrofit = ServiceGenerator.builder.client(client).build()
-            val tokenApiClient = retrofit.create<SwabergersApi>()
+            val retrofit = retrofit.client(client).build()
+            val tokenApiClient = retrofit.create<MobilePosApi>()
 
             val refreshTokenResponse = tokenApiClient.refresh().blockingGet()
             val newAccessToken = refreshTokenResponse.accessToken
