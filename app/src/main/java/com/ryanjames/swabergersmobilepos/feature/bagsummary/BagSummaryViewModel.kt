@@ -61,10 +61,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val checkoutObservable: LiveData<Resource<BagSummary>>
         get() = _checkoutObservable
 
-    init {
-        updateBagVisibility()
-    }
-
     fun retrieveLocalBag() {
         compositeDisposable.add(
             orderRepository.getCurrentOrder()

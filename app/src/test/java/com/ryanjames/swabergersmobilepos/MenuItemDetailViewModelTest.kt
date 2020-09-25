@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos
 import android.view.View
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
+import com.ryanjames.swabergersmobilepos.core.RxImmediateSchedulerRule
 import com.ryanjames.swabergersmobilepos.data.LineItemTestData
 import com.ryanjames.swabergersmobilepos.data.LineItemTestData.basicProduct
 import com.ryanjames.swabergersmobilepos.data.toBagLineItem
@@ -204,6 +205,23 @@ class MenuItemDetailViewModelTest {
         assertTrue(viewModel.onRemoveItem.value is Resource.Error)
     }
 
+    @Test
+    fun test_no_bg_image() {
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
+        assertTrue(viewModel.bgImageVisibility.value == View.GONE)
+        viewModel.transitionId.observeForever { }
+        assertEquals(R.id.transitionNoImage, viewModel.transitionId.value)
+    }
+
+    @Test
+    fun test_with_bg_image() {
+        Mockito.`when`(menuRepository.getProductDetails(PRODUCT_CHEESE_BURGER.productId)).thenReturn(Single.just(PRODUCT_CHEESE_BURGER.copy(imageUrl = "imageUrl")))
+        viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
+        assertTrue(viewModel.bgImageVisibility.value == View.VISIBLE)
+        viewModel.transitionId.observeForever { }
+        assertEquals(R.id.transitionWithImage, viewModel.transitionId.value)
+    }
+
     private fun MenuItemDetailViewModel.setDrink(drink: Product) {
         this.setProductSelectionsForProductGroupByIds(PRODUCT_GROUP_DRINKS, listOf(drink.productId))
     }
@@ -250,17 +268,17 @@ class MenuItemDetailViewModelTest {
         private val LARGE_FRIES
             get() = ModifierInfo("M3001", "Large Fries", 0f, "LRF")
         private val PRODUCT_COKE
-            get() = Product("D4000", "Coke", "", 0f, "CKE", listOf(), listOf())
+            get() = Product("D4000", "Coke", "", 0f, "CKE", listOf(), listOf(), null)
         private val PRODUCT_PEPSI
-            get() = Product("D4001", "Pepsi", "", 0f, "PEP", listOf(), listOf())
+            get() = Product("D4001", "Pepsi", "", 0f, "PEP", listOf(), listOf(), null)
         private val PRODUCT_DR_PEPPER
-            get() = Product("D4002", "Dr. Pepper", "", 0f, "DRP", listOf(), listOf())
+            get() = Product("D4002", "Dr. Pepper", "", 0f, "DRP", listOf(), listOf(), null)
         private val MODIFIER_GROUP_FRIES
             get() = ModifierGroup("MG3000", "Size", ModifierGroupAction.Required, SMALL_FRIES, listOf(SMALL_FRIES, LARGE_FRIES), 1, 1)
         private val PRODUCT_FRIES
-            get() = Product("F1000", "Fries", "Description", 3f, "", listOf(), listOf(MODIFIER_GROUP_FRIES))
+            get() = Product("F1000", "Fries", "Description", 3f, "", listOf(), listOf(MODIFIER_GROUP_FRIES), null)
         private val PRODUCTS_TOTS
-            get() = Product("T1000", "Tots", "Description", 3f, "", listOf(), listOf())
+            get() = Product("T1000", "Tots", "Description", 3f, "", listOf(), listOf(), null)
         private val PRODUCT_GROUP_DRINKS
             get() = ProductGroup("PG1000", "Drinks", PRODUCT_COKE, listOf(PRODUCT_COKE, PRODUCT_PEPSI, PRODUCT_DR_PEPPER), 1, 1)
         private val PRODUCT_GROUP_SIDES
@@ -268,14 +286,14 @@ class MenuItemDetailViewModelTest {
         private val CHEESE_BURGER_MEAL
             get() = ProductBundle("B1000", "Cheese Burger Meal", 12f, "CBM", listOf(PRODUCT_GROUP_DRINKS, PRODUCT_GROUP_SIDES))
         private val PRODUCT_CHEESE_BURGER
-            get() = Product("C1000", "Cheese Burger", "Description", 6.5f, "CHB", listOf(CHEESE_BURGER_MEAL), listOf(MODIFIER_GROUP_CHEESE, MODIFIER_GROUP_TOPPING))
+            get() = Product("C1000", "Cheese Burger", "Description", 6.5f, "CHB", listOf(CHEESE_BURGER_MEAL), listOf(MODIFIER_GROUP_CHEESE, MODIFIER_GROUP_TOPPING), null)
 
 
         private val UNKNOWN_MODIFIER
             get() = ModifierInfo("UNKNOWN", "Unknown Modifier", 100f, "")
 
         private val PRODUCT_UNKNOWN_DRINK
-            get() = Product("D11000", "Unknown", "", 0f, "CKE", listOf(), listOf())
+            get() = Product("D11000", "Unknown", "", 0f, "CKE", listOf(), listOf(), null)
 
         private val KEY_CHEESE
             get() = ProductModifierGroupKey(PRODUCT_CHEESE_BURGER, MODIFIER_GROUP_CHEESE)

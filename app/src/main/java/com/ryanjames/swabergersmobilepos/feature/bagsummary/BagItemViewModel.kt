@@ -53,48 +53,6 @@ class BagItemViewModel(val lineItem: BagLineItem) : ViewModel() {
         } else {
             _modifiersVisibility.value = View.GONE
         }
-//
-//        if (lineItem.modifiers.size > 0 || lineItem.productsInBundle.size > 0) {
-//
-//            val modifierText = StringBuilder()
-//            // Product modifiers
-//            val productModifiers = getModifiers(lineItem.product)
-//            for ((index, modifier) in productModifiers.withIndex()) {
-//                modifierText.append(modifier.modifierName)
-//                if (productModifiers.size - 1 != index) {
-//                    modifierText.append(", ")
-//                }
-//            }
-//
-//            // Bundle product modifiers
-//            for ((key, products) in lineItem.productsInBundle) {
-//                for (product in products) {
-//                    modifierText.append("\n")
-//                    modifierText.append(product.productName)
-//
-//                    val modifiers = getModifiers(product)
-//
-//                    if (modifiers.isNotEmpty()) {
-//                        modifierText.append(" - ")
-//                    }
-//
-//                    for ((modifierIndex, modifier) in modifiers.withIndex()) {
-//                        modifierText.append(modifier.modifierName)
-//                        if (modifiers.size - 1 != modifierIndex) {
-//                            modifierText.append(", ")
-//                        }
-//                    }
-//
-//                }
-//            }
-//
-//            _modifiersVisibility.value = View.VISIBLE
-//            _modifiers.value = modifierText.toString().trim()
-//
-//        } else {
-//            _modifiersVisibility.value = View.GONE
-//        }
-
     }
 
 }

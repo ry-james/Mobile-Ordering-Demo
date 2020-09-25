@@ -6,7 +6,7 @@ import java.util.*
 object LineItemTestData {
 
     val basicProduct: Product
-        get() = Product("P1000", "Sample Product", "Sample description", 12.5f, "sample", listOf(), listOf())
+        get() = Product("P1000", "Sample Product", "Sample description", 12.5f, "sample", listOf(), listOf(), null)
 
     private val basicBundle: ProductBundle
         get() = ProductBundle("B1000", "Sample Bundle", 20f, "Sample", listOf())
