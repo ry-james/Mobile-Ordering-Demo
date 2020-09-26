@@ -9,7 +9,7 @@ import com.uphyca.stetho_realm.RealmInspectorModulesProvider
 import io.realm.Realm
 
 
-class SwabergersApplication : Application() {
+class MobilePosDemoApplication : Application() {
 
 
     override fun onCreate() {

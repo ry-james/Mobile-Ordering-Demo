@@ -264,7 +264,7 @@ class MenuItemDetailViewModel @Inject constructor(
     fun getLineItem(): LineItem? {
         val lineItem = lineItemObservable.value
         return if (lineItem is Resource.Success) {
-            lineItem.data.peekContent()
+            lineItem.data
         } else {
             null
         }
@@ -293,7 +293,7 @@ class MenuItemDetailViewModel @Inject constructor(
             _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
             _btnRemoveVisibility.value = View.GONE
         }
-        _lineItemObservable.value = Resource.Success(Event(lineItem))
+        _lineItemObservable.value = Resource.Success(lineItem)
     }
 
     fun addOrUpdateItem() {
@@ -313,7 +313,7 @@ class MenuItemDetailViewModel @Inject constructor(
                     _onAddItem.value = Resource.InProgress
                 }
                 .subscribe({ bagSummary ->
-                    _onAddItem.value = Resource.Success(Event(bagSummary))
+                    _onAddItem.value = Resource.Success(bagSummary)
                 }, { error ->
                     _onAddItem.value = Resource.Error(Event(Exception(error)))
                     error.printStackTrace()
@@ -330,7 +330,7 @@ class MenuItemDetailViewModel @Inject constructor(
                     _onUpdateItem.value = Resource.InProgress
                 }
                 .subscribe({ bagSummary ->
-                    _onUpdateItem.value = Resource.Success(Event(bagSummary))
+                    _onUpdateItem.value = Resource.Success(bagSummary)
                 }, { error ->
                     _onUpdateItem.value = Resource.Error(Event(Exception(error)))
                     error.printStackTrace()
@@ -347,7 +347,7 @@ class MenuItemDetailViewModel @Inject constructor(
                     _onRemoveItem.value = Resource.InProgress
                 }
                 .subscribe({ bagSummary ->
-                    _onRemoveItem.value = Resource.Success(Event(bagSummary))
+                    _onRemoveItem.value = Resource.Success(bagSummary)
                 }, { error ->
                     _onRemoveItem.value = Resource.Error(Event(Exception(error)))
                     error.printStackTrace()

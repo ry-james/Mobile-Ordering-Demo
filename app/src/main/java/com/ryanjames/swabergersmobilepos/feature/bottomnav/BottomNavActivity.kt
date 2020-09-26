@@ -17,7 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
@@ -41,7 +41,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_bottom_nav)
         binding.lifecycleOwner = this
 

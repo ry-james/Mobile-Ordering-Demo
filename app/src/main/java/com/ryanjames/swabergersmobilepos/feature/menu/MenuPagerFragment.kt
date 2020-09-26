@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
@@ -41,7 +41,7 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
         categoryId = arguments?.getString(EXTRA_CATEGORY_ID) ?: ""

@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.network.responses.LoginResponse
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -35,7 +35,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         mainActivityViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
     }

@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.MarginItemDecoration
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderHistoryBinding
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryAdapter.OrderHistoryListener
 import javax.inject.Inject
@@ -33,7 +34,7 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(OrderHistoryViewModel::class.java)
         binding.viewModel = viewModel
@@ -56,13 +57,15 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
     }
 
     private fun subscribe() {
-        viewModel.onRetrieveOrderHistory.observe(viewLifecycleOwner, Observer {
-            orderHistoryAdapter.updateOrderHistory(it)
-        })
-    }
+        viewModel.onRetrieveOrderHistory.observe(viewLifecycleOwner, Observer { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val orderList = result.data
+                    orderHistoryAdapter.updateOrderHistory(orderList)
+                }
+            }
 
-    companion object {
-        private val outStateBundle = Bundle()
+        })
     }
 
 }

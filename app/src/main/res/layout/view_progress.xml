@@ -2,6 +2,7 @@
 <layout>
 
     <data>
+
         <variable
             name="binding"
             type="com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding" />
@@ -30,7 +31,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:text="@{binding.loadingText}"
-            android:textColor="@{context.getColor(binding.textColor)}"
+            android:textColor="@{binding.textColor}"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/progressBar"

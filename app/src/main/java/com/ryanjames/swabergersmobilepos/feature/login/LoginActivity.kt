@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityLoginBinding
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
@@ -25,7 +25,7 @@ class LoginActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginViewModel::class.java)

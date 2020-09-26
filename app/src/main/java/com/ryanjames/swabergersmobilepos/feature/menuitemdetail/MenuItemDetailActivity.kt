@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityMenuItemDetailBinding
 import com.ryanjames.swabergersmobilepos.domain.*
@@ -43,7 +43,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuItemDetailViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
@@ -105,8 +105,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 }
                 is Resource.Success -> {
                     hideLoadingDialog()
-                    lineItem = result.data.peekContent()
-                    adapter.update(result.data.peekContent())
+                    lineItem = result.data
+                    adapter.update(result.data)
                 }
                 is Resource.Error -> {
                     hideLoadingDialog()
@@ -123,7 +123,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 is Resource.Success -> {
                     hideLoadingDialog()
                     val intent = Intent().apply {
-                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                        putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
                     setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
                     finish()
@@ -143,7 +143,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 is Resource.Success -> {
                     hideLoadingDialog()
                     val intent = Intent().apply {
-                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                        putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
                     setResult(RESULT_ADD_OR_UPDATE_ITEM, intent)
                     finish()
@@ -163,7 +163,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                 is Resource.Success -> {
                     hideLoadingDialog()
                     val intent = Intent().apply {
-                        putExtra(EXTRA_BAG_SUMMARY, result.data.peekContent())
+                        putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
                     setResult(RESULT_REMOVE_ITEM, intent)
                     finish()

@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
-import com.ryanjames.swabergersmobilepos.core.SwabergersApplication
+import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
@@ -39,7 +39,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        SwabergersApplication.appComponent.inject(this)
+        MobilePosDemoApplication.appComponent.inject(this)
 
         viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(BagSummaryViewModel::class.java)
         binding.viewModel = viewModel
@@ -59,7 +59,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
         viewModel.getLocalBag.observe(viewLifecycleOwner, Observer { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    resource.data.handleEvent { bagSummary ->
+                    resource.event.handleEvent { bagSummary ->
                         adapter.updateBag(bagSummary)
                     }
                 }
@@ -74,7 +74,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
         viewModel.checkoutObservable.observe(viewLifecycleOwner, Observer { resource ->
             when (resource) {
                 is Resource.Success -> {
-                    resource.data.handleEvent {
+                    resource.event.handleEvent {
                         (activity as BaseActivity).hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)

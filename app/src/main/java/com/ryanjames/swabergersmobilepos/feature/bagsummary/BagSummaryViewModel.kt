@@ -73,6 +73,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                     setLoadingViewVisibility(View.VISIBLE)
                 }
                 .subscribe({ bagSummary ->
+                    setLoadingViewVisibility(View.GONE)
                     if (bagSummary == BagSummary.emptyBag) {
                         updateBagVisibility()
                     } else {
@@ -94,13 +95,13 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private fun localBag(): BagSummary? {
         val resource = getLocalBag.value
         if (resource is Resource.Success) {
-            return resource.data.peekContent()
+            return resource.data
         }
         return null
     }
 
     private fun setLocalBag(bagSummary: BagSummary) {
-        _localBag.value = Resource.Success(Event(bagSummary))
+        _localBag.value = Resource.Success(bagSummary)
     }
 
     private fun setLoadingViewVisibility(visibility: Int) {
@@ -112,7 +113,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     private fun updateBagVisibility() {
-        setLoadingViewVisibility(View.GONE)
         if (localBag()?.lineItems?.isNotEmpty() == true) {
             _emptyBagVisibility.value = View.GONE
             _nonEmptyBagVisibility.value = View.VISIBLE
@@ -148,7 +148,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 _checkoutObservable.value = Resource.InProgress
             }
             .subscribe({ bagSummary ->
-                _checkoutObservable.value = Resource.Success(Event(bagSummary))
+                _checkoutObservable.value = Resource.Success(bagSummary)
             }, { error ->
                 _checkoutObservable.value = Resource.Error(Event(Exception(error)))
             })
