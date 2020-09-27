@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -17,6 +18,11 @@ fun loadImage(imageView: ImageView, url: String?) {
             .centerCrop()
             .into(imageView)
     }
+}
+
+@BindingAdapter("app:srcCompat")
+fun setSrcCompat(imageView: ImageView, @DrawableRes drawableId: Int) {
+    imageView.setImageResource(drawableId)
 }
 
 @BindingAdapter("app:transition")

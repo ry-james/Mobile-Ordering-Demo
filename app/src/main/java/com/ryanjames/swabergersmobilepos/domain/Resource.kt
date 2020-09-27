@@ -7,6 +7,13 @@ sealed class Resource<out T : Any> {
         val event = Event(data)
     }
 
-    data class Error(val exception: Event<Exception>) : Resource<Nothing>()
+    data class Error(val exception: Exception) : Resource<Nothing>() {
+
+        constructor(throwable: Throwable) : this(exception = Exception(throwable))
+
+        val event = Event(exception)
+
+    }
+
     object InProgress : Resource<Nothing>()
 }

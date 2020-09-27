@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.feature.menu
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +16,7 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import javax.inject.Inject
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
@@ -42,28 +42,18 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
     }
 
     private fun addSubscriptions() {
-        viewModel.menuObservable.observe(viewLifecycleOwner, Observer { menu ->
-            if (menu.categories.isEmpty()) {
-                showMenuErrorLoading()
-                return@Observer
-            }
-            setupViewPager(menu.categories)
-        })
-
-        viewModel.errorLoadingMenuObservable.observe(viewLifecycleOwner, Observer { event ->
-            event.handleEvent {
-                showMenuErrorLoading()
+        viewModel.menuObservable.observe(viewLifecycleOwner, Observer { menuResource ->
+            when (menuResource) {
+                is Resource.Success -> {
+                    if (menuResource.data.categories.isEmpty()) {
+                        return@Observer
+                    }
+                    setupViewPager(menuResource.data.categories)
+                }
             }
         })
     }
 
-    private fun showMenuErrorLoading() {
-        AlertDialog.Builder(context)
-            .setMessage("We can't load the menu at the moment. Please try again later.")
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }.show()
-    }
 
     private fun setupViewPager(categories: List<Category>) {
         activity?.let {

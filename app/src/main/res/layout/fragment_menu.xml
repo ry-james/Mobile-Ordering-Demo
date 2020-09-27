@@ -16,11 +16,34 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary">
 
+        <include
+            android:id="@+id/loading_view"
+            layout="@layout/view_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:binding="@{viewModel.loadingViewBinding}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/error_view"
+            layout="@layout/view_error"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:binding="@{viewModel.errorViewBinding}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/colorPrimary"
+            android:visibility="@{viewModel.menuVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

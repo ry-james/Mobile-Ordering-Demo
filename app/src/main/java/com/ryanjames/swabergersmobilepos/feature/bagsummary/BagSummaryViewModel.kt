@@ -5,11 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.domain.BagSummary
-import com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding
-import com.ryanjames.swabergersmobilepos.domain.OrderStatus
-import com.ryanjames.swabergersmobilepos.domain.Resource
-import com.ryanjames.swabergersmobilepos.helper.Event
+import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,14 +17,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val _emptyBagVisibility = MutableLiveData<Int>()
-    val emptyBagVisibility: LiveData<Int>
-        get() = _emptyBagVisibility
-
-    private val _serverIssueVisibility = MutableLiveData<Int>()
-    val serverIssueVisibility: LiveData<Int>
-        get() = _serverIssueVisibility
-
     private val _loadingViewBinding = MutableLiveData<LoadingDialogBinding>()
     val loadingViewBinding: LiveData<LoadingDialogBinding>
         get() = _loadingViewBinding
@@ -36,6 +24,10 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private val _nonEmptyBagVisibility = MutableLiveData<Int>()
     val nonEmptyBagVisibility: LiveData<Int>
         get() = _nonEmptyBagVisibility
+
+    private val _errorViewBinding = MutableLiveData<ErrorViewBinding>()
+    val errorViewBinding: LiveData<ErrorViewBinding>
+        get() = _errorViewBinding
 
     private val _tax = MutableLiveData<String>()
     val tax: LiveData<String>
@@ -67,13 +59,15 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
-                    _emptyBagVisibility.value = View.GONE
                     _nonEmptyBagVisibility.value = View.GONE
-                    _serverIssueVisibility.value = View.GONE
+                    setErrorViewVisibility(View.GONE)
+                    setEmptyBagViewVisibility(View.GONE)
                     setLoadingViewVisibility(View.VISIBLE)
                 }
-                .subscribe({ bagSummary ->
+                .doFinally {
                     setLoadingViewVisibility(View.GONE)
+                }
+                .subscribe({ bagSummary ->
                     if (bagSummary == BagSummary.emptyBag) {
                         updateBagVisibility()
                     } else {
@@ -84,10 +78,9 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 },
                     { error ->
                         error.printStackTrace()
-                        _emptyBagVisibility.value = View.GONE
+                        setEmptyBagViewVisibility(View.GONE)
                         _nonEmptyBagVisibility.value = View.GONE
-                        _serverIssueVisibility.value = View.VISIBLE
-                        setLoadingViewVisibility(View.GONE)
+                        setErrorViewVisibility(View.VISIBLE)
                     })
         )
     }
@@ -112,12 +105,30 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
+    private fun setEmptyBagViewVisibility(visibility: Int) {
+        _errorViewBinding.value = ErrorViewBinding(
+            visibility = visibility,
+            image = R.drawable.ic_empty_bag,
+            title = "Your bag is empty.",
+            message = "Looks like you haven’t made your choice yet."
+        )
+    }
+
+    private fun setErrorViewVisibility(visibility: Int) {
+        _errorViewBinding.value = ErrorViewBinding(
+            visibility = visibility,
+            image = R.drawable.ic_error,
+            title = "It's not you, it' us.",
+            message = "We have issues fetching your bag.\nPlease try again."
+        )
+    }
+
     private fun updateBagVisibility() {
         if (localBag()?.lineItems?.isNotEmpty() == true) {
-            _emptyBagVisibility.value = View.GONE
+            setEmptyBagViewVisibility(View.GONE)
             _nonEmptyBagVisibility.value = View.VISIBLE
         } else {
-            _emptyBagVisibility.value = View.VISIBLE
+            setEmptyBagViewVisibility(View.VISIBLE)
             _nonEmptyBagVisibility.value = View.GONE
         }
     }
@@ -150,7 +161,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
             .subscribe({ bagSummary ->
                 _checkoutObservable.value = Resource.Success(bagSummary)
             }, { error ->
-                _checkoutObservable.value = Resource.Error(Event(Exception(error)))
+                _checkoutObservable.value = Resource.Error(error)
             })
         )
     }

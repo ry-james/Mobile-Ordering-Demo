@@ -86,7 +86,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                     }
                 }
                 is Resource.Error -> {
-                    resource.exception.handleEvent {
+                    resource.event.handleEvent {
                         (activity as BaseActivity).hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)

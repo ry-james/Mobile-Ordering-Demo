@@ -17,7 +17,8 @@ class TokenAuthenticator(
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (response.code() == 401) {
+
+        if (response.code() == 401 && response.request().header("No-Authentication") == null) {
 
             Log.d("401", response.body().toString())
 

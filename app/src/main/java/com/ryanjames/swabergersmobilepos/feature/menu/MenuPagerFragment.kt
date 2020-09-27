@@ -18,6 +18,7 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuListBinding
 import com.ryanjames.swabergersmobilepos.databinding.RowMenuItemBinding
 import com.ryanjames.swabergersmobilepos.domain.Product
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
@@ -53,8 +54,13 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
 
     private fun addSubscriptions() {
         viewModel.menuObservable.observe(this, Observer { menu ->
-            val products = menu.categories.find { it.categoryId == categoryId }?.products ?: listOf()
-            menuListAdapter.setProducts(products)
+            when (menu) {
+                is Resource.Success -> {
+                    val products = menu.data.categories.find { it.categoryId == categoryId }?.products ?: listOf()
+                    menuListAdapter.setProducts(products)
+                }
+            }
+
         })
     }
 

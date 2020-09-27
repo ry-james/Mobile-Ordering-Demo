@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.StringResourceWithArgs
 import com.ryanjames.swabergersmobilepos.domain.*
-import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.deepEquals
 import com.ryanjames.swabergersmobilepos.helper.disposedBy
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
@@ -72,7 +71,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
             }, { error ->
                 error.printStackTrace()
-                _lineItemObservable.value = Resource.Error(Event(Exception(error)))
+                _lineItemObservable.value = Resource.Error(error)
             })
             .disposedBy(compositeDisposable)
     }
@@ -315,7 +314,7 @@ class MenuItemDetailViewModel @Inject constructor(
                 .subscribe({ bagSummary ->
                     _onAddItem.value = Resource.Success(bagSummary)
                 }, { error ->
-                    _onAddItem.value = Resource.Error(Event(Exception(error)))
+                    _onAddItem.value = Resource.Error(error)
                     error.printStackTrace()
                 })
         )
@@ -332,7 +331,7 @@ class MenuItemDetailViewModel @Inject constructor(
                 .subscribe({ bagSummary ->
                     _onUpdateItem.value = Resource.Success(bagSummary)
                 }, { error ->
-                    _onUpdateItem.value = Resource.Error(Event(Exception(error)))
+                    _onUpdateItem.value = Resource.Error(error)
                     error.printStackTrace()
                 })
         )
@@ -349,7 +348,7 @@ class MenuItemDetailViewModel @Inject constructor(
                 .subscribe({ bagSummary ->
                     _onRemoveItem.value = Resource.Success(bagSummary)
                 }, { error ->
-                    _onRemoveItem.value = Resource.Error(Event(Exception(error)))
+                    _onRemoveItem.value = Resource.Error(error)
                     error.printStackTrace()
                 })
         )
