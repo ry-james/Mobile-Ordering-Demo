@@ -100,7 +100,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private fun setLoadingViewVisibility(visibility: Int) {
         _loadingViewBinding.value = LoadingDialogBinding(
             visibility = visibility,
-            loadingText = "Fetching bag...",
+            loadingText = R.string.fetching_bag,
             textColor = R.color.colorWhite
         )
     }
@@ -109,8 +109,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         _errorViewBinding.value = ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_empty_bag,
-            title = "Your bag is empty.",
-            message = "Looks like you haven’t made your choice yet."
+            title = R.string.empty_bag_title,
+            message = R.string.empty_bag_subtitle
         )
     }
 
@@ -118,8 +118,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         _errorViewBinding.value = ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_error,
-            title = "It's not you, it' us.",
-            message = "We have issues fetching your bag.\nPlease try again."
+            title = R.string.us_not_you,
+            message = R.string.error_fetching_bag
         )
     }
 

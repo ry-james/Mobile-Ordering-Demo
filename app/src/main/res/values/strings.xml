@@ -69,4 +69,14 @@
     <string name="checkout_successful">You\'re order was checked out successfully.</string>
     <string name="checkout_failure">We\'re having trouble checking out your order. Please try again later.</string>
     <string name="order_details">Order Details</string>
+    <string name="error_loading_order_history_message">We can\'t load your order history. Please try again later.</string>
+    <string name="error_loading_order_history_title">Oh, snap!</string>
+    <string name="retrieving_order_history">Retrieving order history...</string>
+    <string name="fetching_bag">Fetching bag...</string>
+    <string name="us_not_you">It\'s not you, it\' us.</string>
+    <string name="error_fetching_bag">We have issues fetching your bag.\nPlease try again.</string>
+    <string name="error_loading_menu_title">Oh, snap!</string>
+    <string name="error_loading_menu_message">We can\'t load the menu at the moment. Please try again later.</string>
+    <string name="fetching_menu">Fetching menu...</string>
+    <string name="fetching_order">Fetching order...</string>
 </resources>

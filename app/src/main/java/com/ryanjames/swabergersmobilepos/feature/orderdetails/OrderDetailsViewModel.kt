@@ -68,7 +68,7 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
     private fun setLoadingViewVisibility(visibility: Int) {
         _loadingViewBinding.value = LoadingDialogBinding(
             visibility = visibility,
-            loadingText = "Fetching order...",
+            loadingText = R.string.fetching_order,
             textColor = R.color.colorWhite
         )
     }

@@ -11,7 +11,6 @@ import com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding
 import com.ryanjames.swabergersmobilepos.domain.Menu
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
-import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 
 class MenuFragmentViewModel @Inject constructor(
-    var menuRepository: MenuRepository,
-    var orderRepository: OrderRepository
+    var menuRepository: MenuRepository
 ) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -82,15 +80,15 @@ class MenuFragmentViewModel @Inject constructor(
         _errorViewBinding.value = ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_menu,
-            title = "Oh, snap!",
-            message = "We can't load the menu at the moment. Please try again later."
+            title = R.string.error_loading_menu_title,
+            message = R.string.error_loading_menu_message
         )
     }
 
     private fun setLoadingViewVisibility(visibility: Int) {
         _loadingViewBinding.value = LoadingDialogBinding(
             visibility = visibility,
-            loadingText = "Fetching menu...",
+            loadingText = R.string.fetching_menu,
             textColor = R.color.colorWhite
         )
     }

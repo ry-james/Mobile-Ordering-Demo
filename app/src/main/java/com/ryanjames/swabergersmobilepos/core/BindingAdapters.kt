@@ -32,6 +32,13 @@ fun setTransition(motionLayout: MotionLayout, transitionId: Int) {
     }
 }
 
+@BindingAdapter("app:textWithArgs")
+fun setTextWithArgs(textView: TextView, stringResourceWithArgs: StringResourceWithArgs?) {
+    if(stringResourceWithArgs != null) {
+        textView.text = stringResourceWithArgs.resolve(textView.context)
+    }
+}
+
 @BindingAdapter("android:textColor")
 fun setTextColor(textView: TextView, colorId: Int) {
     try {

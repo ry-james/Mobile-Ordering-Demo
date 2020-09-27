@@ -60,15 +60,15 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
         _errorViewBinding.value = ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_menu,
-            title = "Oh, snap!",
-            message = "We can't load your order history. Please try again later."
+            title = R.string.error_loading_order_history_title,
+            message = R.string.error_loading_order_history_message
         )
     }
 
     private fun setLoadingViewVisibility(visibility: Int) {
         _loadingBinding.value = LoadingDialogBinding(
             visibility = visibility,
-            loadingText = "Retrieving order history...",
+            loadingText = R.string.retrieving_order_history,
             textColor = R.color.colorWhite
         )
     }
