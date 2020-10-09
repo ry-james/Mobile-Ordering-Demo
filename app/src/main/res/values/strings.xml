@@ -17,7 +17,6 @@
     <string name="total">TOTAL:</string>
     <string name="tax">Tax:</string>
     <string name="subtotal">Subtotal:</string>
-    <string name="checkout">CHECKOUT</string>
     <string name="empty_bag_title">Your bag is empty.</string>
     <string name="empty_bag_subtitle">Looks like you haven’t made your choice yet.</string>
     <string name="bag_summary_toolbar_title">Bag</string>
@@ -79,4 +78,7 @@
     <string name="error_loading_menu_message">We can\'t load the menu at the moment. Please try again later.</string>
     <string name="fetching_menu">Fetching menu...</string>
     <string name="fetching_order">Fetching order...</string>
+    <string name="checkout">CHECKOUT</string>
+    <string name="enter_customer_name">Enter customer name</string>
+    <string name="name">Name</string>
 </resources>

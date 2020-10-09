@@ -30,9 +30,9 @@
                 android:text="@{viewModel.title}"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                tools:text="SELECT"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="SELECT" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvOptions"
@@ -74,13 +74,13 @@
                 android:id="@+id/tvSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.subtitle}"
                 android:fontFamily="@font/texgyreheros_regular"
-                android:visibility="@{viewModel.subtitleVisibility}"
+                android:text="@{viewModel.subtitle}"
                 android:textColor="@color/colorGray"
-                tools:text="Subtitle"
+                android:visibility="@{viewModel.subtitleVisibility}"
                 app:layout_constraintStart_toStartOf="@+id/tvTitle"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                tools:text="Subtitle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

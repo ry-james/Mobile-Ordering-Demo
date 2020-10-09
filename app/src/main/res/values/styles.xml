@@ -53,4 +53,10 @@
         <item name="colorControlHighlight">@android:color/white</item>
     </style>
 
+    <style name="TextInputLayout">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+    </style>
+
 </resources>

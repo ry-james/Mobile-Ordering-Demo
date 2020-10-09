@@ -5,16 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.core.FullyExpandedBottomSheetFragment
 import com.ryanjames.swabergersmobilepos.databinding.BottomSheetItemSelectorBinding
 import com.ryanjames.swabergersmobilepos.helper.viewModelFactory
 
@@ -29,7 +26,7 @@ private const val EXTRA_MAX_SELECTION = "extra.max.selection"
 private const val DEFAULT_MIN_SELECTION = 1
 private const val DEFAULT_MAX_SELECTION = 1
 
-class BottomPickerFragment : BottomSheetDialogFragment() {
+class BottomPickerFragment : FullyExpandedBottomSheetFragment() {
 
     private lateinit var binding: BottomSheetItemSelectorBinding
     private lateinit var options: List<BottomPickerAdapter.BottomPickerItem>
@@ -50,7 +47,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
             .get(BottomPickerFragmentViewModel::class.java)
 
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -60,20 +57,7 @@ class BottomPickerFragment : BottomSheetDialogFragment() {
         arguments?.getString(EXTRA_SUBTITLE)?.let { viewModel.setSubtitle(it) }
         options = arguments?.getParcelableArrayList(EXTRA_OPTIONS) ?: listOf()
         setupRecyclerView()
-        fullyExpandBottomSheet()
         addSubscriptions()
-    }
-
-    private fun fullyExpandBottomSheet() {
-        dialog?.setOnShowListener { dialog ->
-            val bottomSheet = dialog as BottomSheetDialog
-            bottomSheet.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.also { frameLayout ->
-                val bottomSheetBehavior = BottomSheetBehavior.from(frameLayout)
-                frameLayout.height.let { bottomSheetBehavior.peekHeight = it }
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-
-        }
     }
 
     private fun addSubscriptions() {

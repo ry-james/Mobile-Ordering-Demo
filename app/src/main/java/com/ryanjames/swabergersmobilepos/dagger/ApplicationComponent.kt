@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.dagger
 import android.app.Application
 import com.ryanjames.swabergersmobilepos.activity.MainActivity
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
+import com.ryanjames.swabergersmobilepos.feature.bagsummary.CheckoutFragment
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
@@ -44,4 +45,6 @@ interface ApplicationComponent {
     fun inject(orderHistoryFragment: OrderHistoryFragment)
 
     fun inject(orderDetailsDialogFragment: OrderDetailsDialogFragment)
+
+    fun inject(checkoutFragment: CheckoutFragment)
 }

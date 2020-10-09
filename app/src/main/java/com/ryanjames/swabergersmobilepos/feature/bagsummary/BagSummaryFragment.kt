@@ -4,12 +4,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +22,6 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailAc
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE_ITEM
-import com.ryanjames.swabergersmobilepos.helper.trimAllWhitespace
 import javax.inject.Inject
 
 class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.fragment_bag_summary) {
@@ -104,7 +100,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
     private fun setupListeners() {
         binding.btnCheckout.setOnClickListener {
-            showCustomerNameInputDialog()
+            CheckoutFragment().show(childFragmentManager, CheckoutFragment::class.simpleName)
         }
     }
 
@@ -116,40 +112,6 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
             throw ClassCastException("Host activity should implement ${BagSummaryFragmentCallback::class.java.simpleName}")
         }
     }
-
-    private fun showCustomerNameInputDialog() {
-        val etCustomerName = EditText(activity).apply {
-            setSingleLine(true)
-            maxLines = 1
-        }
-
-        val dialog = AlertDialog.Builder(activity)
-            .setMessage(getString(R.string.enter_customer_name_message))
-            .setPositiveButton(getString(R.string.cta_set)) { dialogInterface, _ ->
-                val inputText = etCustomerName.text.toString()
-                if (!inputText.isBlank()) {
-                    viewModel.checkout(etCustomerName.text.toString().trimAllWhitespace())
-                }
-                dialogInterface.dismiss()
-
-            }
-            .setView(etCustomerName)
-            .show()
-
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !etCustomerName.text.isNullOrBlank()
-
-        etCustomerName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !etCustomerName.text.isNullOrBlank()
-            }
-        })
-
-    }
-
 
     private fun setupRecyclerView() {
         adapter = BagItemAdapter(listOf(), object : BagItemAdapter.BagItemAdapterListener {
