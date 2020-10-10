@@ -23,8 +23,7 @@ import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
-import com.ryanjames.swabergersmobilepos.helper.observeBroadcasts
-import io.reactivex.disposables.Disposable
+import com.ryanjames.swabergersmobilepos.helper.subscribeToBroadcastsOnLifecycle
 import javax.inject.Inject
 
 class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener, MenuFragment.MenuFragmentCallback, BagSummaryFragment.BagSummaryFragmentCallback {
@@ -33,7 +32,6 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityBottomNavBinding
-    private var internetConnectivitySubscription: Disposable? = null
     private var noInternetSnackbar: Snackbar? = null
     private var currentSelectItemId = R.id.navigation_menu
 
@@ -62,8 +60,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         binding.bottomNav.selectedItemId = currentSelectItemId
 
         // Subscribe to Internet connectivity broadcast
-        internetConnectivitySubscription = observeBroadcasts(ConnectivityManager.CONNECTIVITY_ACTION)
-            .subscribe(this::onConnectivityChange)
+        subscribeToBroadcastsOnLifecycle(ConnectivityManager.CONNECTIVITY_ACTION, this::onConnectivityChange)
     }
 
     private fun onConnectivityChange(intent: Intent) {
@@ -83,11 +80,6 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun hideNoInternetSnackbar() {
         noInternetSnackbar?.dismiss()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        internetConnectivitySubscription?.dispose()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
