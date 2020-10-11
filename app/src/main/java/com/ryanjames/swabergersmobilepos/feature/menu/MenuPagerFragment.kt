@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ryanjames.swabergersmobilepos.R
@@ -33,18 +33,18 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
 
     private lateinit var fragmentCallback: MenuFragment.MenuFragmentCallback
 
+    private val viewModel: MenuFragmentViewModel by activityViewModels { viewModelFactory }
+
     private val menuListAdapter: MenuListAdapter = MenuListAdapter { product ->
         startActivityForResult(MenuItemDetailActivity.createIntent(context, product.productId), REQUEST_LINEITEM)
     }
 
-    private lateinit var viewModel: MenuFragmentViewModel
     private var categoryId = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         MobilePosDemoApplication.appComponent.inject(this)
 
-        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(MenuFragmentViewModel::class.java)
         categoryId = arguments?.getString(EXTRA_CATEGORY_ID) ?: ""
 
         addSubscriptions()
@@ -53,7 +53,7 @@ class MenuPagerFragment : BaseFragment<FragmentMenuListBinding>(R.layout.fragmen
     }
 
     private fun addSubscriptions() {
-        viewModel.menuObservable.observe(this, Observer { menu ->
+        viewModel.menuObservable.observe(viewLifecycleOwner, Observer { menu ->
             when (menu) {
                 is Resource.Success -> {
                     val products = menu.data.categories.find { it.categoryId == categoryId }?.products ?: listOf()

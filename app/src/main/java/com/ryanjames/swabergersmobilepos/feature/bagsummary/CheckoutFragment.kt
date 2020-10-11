@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import com.ryanjames.swabergersmobilepos.core.FullyExpandedBottomSheetFragment
 import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
@@ -19,12 +19,11 @@ class CheckoutFragment : FullyExpandedBottomSheetFragment() {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentCheckoutBinding
-    private lateinit var viewModel: BagSummaryViewModel
+    private val viewModel: BagSummaryViewModel by viewModels { viewModelFactory }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         MobilePosDemoApplication.appComponent.inject(this)
         binding = FragmentCheckoutBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProviders.of(activity!!, viewModelFactory).get(BagSummaryViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root

@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.ryanjames.swabergersmobilepos.R
@@ -35,17 +35,17 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: ActivityMenuItemDetailBinding
-    private lateinit var viewModel: MenuItemDetailViewModel
     private lateinit var adapter: MenuItemDetailAdapter
     private var lineItem: LineItem? = null
     private var selectedProductGroup: ProductGroup? = null
     private var selectedProductGroupModifierGroup: Pair<Product, ModifierGroup>? = null
 
+    private val viewModel: MenuItemDetailViewModel by viewModels { viewModelFactory }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MobilePosDemoApplication.appComponent.inject(this)
 
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MenuItemDetailViewModel::class.java)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
