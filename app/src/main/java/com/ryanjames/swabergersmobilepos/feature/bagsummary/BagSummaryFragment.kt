@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
@@ -29,7 +29,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: BagSummaryViewModel by viewModels { viewModelFactory }
+    private val viewModel: BagSummaryViewModel by activityViewModels { viewModelFactory }
     private lateinit var fragmentCallback: BagSummaryFragmentCallback
     private lateinit var adapter: BagItemAdapter
 
@@ -69,6 +69,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
             when (resource) {
                 is Resource.Success -> {
                     resource.event.handleEvent {
+
                         (activity as BaseActivity).hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)

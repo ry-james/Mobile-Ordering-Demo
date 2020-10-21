@@ -243,7 +243,7 @@ class MenuItemDetailViewModelTest {
     }
 
     private fun LiveData<Resource<LineItem>>.value(): LineItem {
-        return (this.value as Resource.Success).data.peekContent()
+        return (this.value as Resource.Success).data
     }
 
 

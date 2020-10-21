@@ -40,7 +40,9 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     setErrorViewVisibility(View.GONE)
-                    setLoadingViewVisibility(View.VISIBLE)
+                    if (orderList.isNullOrEmpty()) {
+                        setLoadingViewVisibility(View.VISIBLE)
+                    }
                 }
                 .subscribe({ orderList ->
                     this.orderList = orderList

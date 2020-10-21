@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
@@ -24,7 +24,7 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private val viewModel: OrderHistoryViewModel by viewModels { viewModelFactory }
+    private val viewModel: OrderHistoryViewModel by activityViewModels { viewModelFactory }
 
     private val orderHistoryAdapter = OrderHistoryAdapter(listOf(), object : OrderHistoryListener {
         override fun onClickViewOrder(orderId: String) {
