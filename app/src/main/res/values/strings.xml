@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobile POS</string>
+    <string name="app_name">Mobile Ordering Demo</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -37,7 +37,7 @@
     <string name="try_again_cta">Try again</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="title">Mobile POS DEMO</string>
+    <string name="title">Mobile Ordering Demo</string>
     <string name="submit">Submit</string>
     <string name="log_in_failed">Log in failed.</string>
     <string name="password_empty">Your password cannot be empty.</string>
