@@ -1,5 +1,7 @@
 # Mobile Ordering Demo App
 
+Play Store Link: https://play.google.com/store/apps/details?id=com.ryanjames.swabergersmobilepos
+
 Features of the Demo App:
 
 1. Display menu
