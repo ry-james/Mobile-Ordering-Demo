@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayoutMediator
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
@@ -46,43 +46,35 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
                     if (menuResource.data.categories.isEmpty()) {
                         return@Observer
                     }
-                    setupViewPager(menuResource.data.categories)
+                    setupViewPager2(menuResource.data.categories)
                 }
             }
         })
     }
 
+    private fun setupViewPager2(categories: List<Category>) {
+        binding.viewPager2.adapter = MenuPagerAdapter(this, categories)
+        TabLayoutMediator(binding.tabLayout2, binding.viewPager2) { tab, position ->
+            tab.text = categories[position].categoryName
+        }.attach()
 
-    private fun setupViewPager(categories: List<Category>) {
-        activity?.let {
-            binding.tabLayout.setupWithViewPager(binding.viewPager)
-            binding.viewPager.adapter = ProgramDetailPagerAdapter(childFragmentManager, categories)
-            binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageScrollStateChanged(state: Int) {}
-
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-
-                override fun onPageSelected(position: Int) {
-                    viewModel.selectedCategoryPosition = position
-                }
-            })
-            binding.viewPager.currentItem = viewModel.selectedCategoryPosition
-        }
+        binding.viewPager2.setCurrentItem(viewModel.selectedCategoryPosition, false)
+        binding.viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                viewModel.selectedCategoryPosition = position
+            }
+        })
     }
 
-    private class ProgramDetailPagerAdapter(fm: FragmentManager, private val tabs: List<Category>) :
-        FragmentStatePagerAdapter(fm) {
+    private class MenuPagerAdapter(fragment: Fragment, private val categories: List<Category>) : FragmentStateAdapter(fragment) {
 
-        override fun getItem(position: Int): Fragment {
-            return MenuPagerFragment.newInstance(tabs[position].categoryId)
+        override fun getItemCount(): Int {
+            return categories.size
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
-            return tabs[position].categoryName
+        override fun createFragment(position: Int): Fragment {
+            return MenuPagerFragment.newInstance(categories[position].categoryId)
         }
-
-        override fun getCount(): Int = tabs.size
-
     }
 
     interface MenuFragmentCallback {

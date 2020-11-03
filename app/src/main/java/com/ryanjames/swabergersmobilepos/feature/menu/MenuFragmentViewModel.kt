@@ -39,6 +39,10 @@ class MenuFragmentViewModel @Inject constructor(
         get() = _errorViewBinding
 
     var selectedCategoryPosition = 0
+        set(value) {
+            field = value
+        }
+
     private var isFetchingMenu = false
 
     fun retrieveMenu() {
