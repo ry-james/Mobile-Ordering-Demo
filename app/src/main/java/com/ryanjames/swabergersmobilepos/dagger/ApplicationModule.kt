@@ -7,6 +7,7 @@ import android.content.res.Resources
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
+import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -21,6 +22,12 @@ open class ApplicationModule {
     @Provides
     open fun provideSharedPreferences(application: Application): SharedPreferences {
         return application.getSharedPreferences("Preference File", Context.MODE_PRIVATE)
+    }
+
+    @Singleton
+    @Provides
+    open fun provideLoginManager(sharedPreferences: SharedPreferences): LoginManager {
+        return LoginManager(sharedPreferences)
     }
 
     @Singleton

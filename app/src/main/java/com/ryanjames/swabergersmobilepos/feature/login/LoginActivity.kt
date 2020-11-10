@@ -1,5 +1,7 @@
 package com.ryanjames.swabergersmobilepos.feature.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -33,6 +35,14 @@ class LoginActivity : BaseActivity() {
         binding.lifecycleOwner = this
 
         subscribe()
+        finishIfLoggedIn()
+    }
+
+    private fun finishIfLoggedIn() {
+        if (viewModel.isLoggedIn()) {
+            startActivity(BottomNavActivity.createIntent(this))
+            finish()
+        }
     }
 
     private fun subscribe() {
@@ -64,6 +74,12 @@ class LoginActivity : BaseActivity() {
         binding.button.setOnSingleClickListener(this) {
             showLoadingDialog(getString(R.string.signing_in))
             viewModel.login()
+        }
+    }
+
+    companion object {
+        fun createIntent(context: Context): Intent {
+            return Intent(context, LoginActivity::class.java)
         }
     }
 }

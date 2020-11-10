@@ -15,16 +15,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".feature.bottomnav.BottomNavActivity"
-            android:label="@string/title_activity_bottom_nav" />
-        <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".feature.login.LoginActivity">
+            android:name=".feature.splash.SplashScreenActivity"
+            android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="product"
+                    android:scheme="mobilepos" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".feature.bottomnav.BottomNavActivity"
+            android:label="@string/title_activity_bottom_nav" />
+        <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".feature.login.LoginActivity" />
+
         <activity android:name=".core.BaseActivity" />
     </application>
 

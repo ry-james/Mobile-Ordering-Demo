@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.feature.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.helper.isBlankOrEmpty
 import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -10,7 +11,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(val apiService: ApiService) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    val apiService: ApiService,
+    val loginManager: LoginManager
+) : ViewModel() {
 
     val username = MutableLiveData<String>().apply { value = "" }
     val password = MutableLiveData<String>().apply { value = "" }
@@ -37,6 +41,10 @@ class LoginViewModel @Inject constructor(val apiService: ApiService) : ViewModel
                         })
             )
         }
+    }
+
+    fun isLoggedIn(): Boolean {
+        return loginManager.isLoggedIn()
     }
 
     private fun isValidated(): Boolean {
