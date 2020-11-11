@@ -81,4 +81,5 @@
     <string name="checkout">CHECKOUT</string>
     <string name="enter_customer_name">Enter customer name</string>
     <string name="name">Name</string>
+    <string name="cancel_order">CANCEL ORDER</string>
 </resources>

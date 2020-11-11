@@ -65,6 +65,15 @@ open class BaseActivity : AppCompatActivity() {
             }.show()
     }
 
+    fun showDismissableDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setMessage(message)
+            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                dialog.dismiss()
+            }.show()
+    }
+
     fun hideLoadingDialog() {
         loadingDialog?.dismiss()
     }

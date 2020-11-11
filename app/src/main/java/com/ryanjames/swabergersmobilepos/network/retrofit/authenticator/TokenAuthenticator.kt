@@ -2,6 +2,8 @@ package com.ryanjames.swabergersmobilepos.network.retrofit.authenticator
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
+import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.helper.SharedPrefsKeys
 import com.ryanjames.swabergersmobilepos.network.retrofit.MobilePosApi
 import com.ryanjames.swabergersmobilepos.network.retrofit.interceptors.RefreshAuthTokenInterceptor
@@ -13,7 +15,8 @@ import java.util.concurrent.TimeUnit
 
 class TokenAuthenticator(
     val sharedPreferences: SharedPreferences,
-    val retrofit: Retrofit.Builder
+    val retrofit: Retrofit.Builder,
+    val loginManager: LoginManager
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -36,7 +39,13 @@ class TokenAuthenticator(
             val retrofit = retrofit.client(client).build()
             val tokenApiClient = retrofit.create<MobilePosApi>()
 
-            val refreshTokenResponse = tokenApiClient.refresh().blockingGet()
+            val refreshTokenResponse = tokenApiClient.refresh().doOnError { e ->
+                if (e is HttpException && e.code() == 401) {
+                    loginManager.logOut()
+                }
+                e.printStackTrace()
+            }.blockingGet()
+
             val newAccessToken = refreshTokenResponse.accessToken
 
             if (refreshTokenResponse != null) {

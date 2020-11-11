@@ -16,6 +16,7 @@ import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.helper.setOnSingleClickListener
 import javax.inject.Inject
 
+private const val EXTRA_FORCE_LOG_OUT = "extra.force.log.out"
 
 class LoginActivity : BaseActivity() {
 
@@ -35,7 +36,13 @@ class LoginActivity : BaseActivity() {
         binding.lifecycleOwner = this
 
         subscribe()
-        finishIfLoggedIn()
+
+        if (intent.getBooleanExtra(EXTRA_FORCE_LOG_OUT, false)) {
+            showDismissableDialog("You're automatically logged out. Please re-enter your credentials")
+        } else {
+            finishIfLoggedIn()
+        }
+
     }
 
     private fun finishIfLoggedIn() {
@@ -80,6 +87,12 @@ class LoginActivity : BaseActivity() {
     companion object {
         fun createIntent(context: Context): Intent {
             return Intent(context, LoginActivity::class.java)
+        }
+
+        fun createIntentForceLogout(context: Context): Intent {
+            val intent = Intent(context, LoginActivity::class.java)
+            intent.putExtra(EXTRA_FORCE_LOG_OUT, true)
+            return intent
         }
     }
 }

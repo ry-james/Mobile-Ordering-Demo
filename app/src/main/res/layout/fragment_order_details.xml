@@ -126,6 +126,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/tvTax"
                     tools:text="0.00" />
 
+                <Button
+                    android:id="@+id/btnCancel"
+                    style="@style/AccentButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/cancel_order"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvTotal" />
+
                 <TextView
                     android:id="@+id/tvTax"
                     android:layout_width="wrap_content"

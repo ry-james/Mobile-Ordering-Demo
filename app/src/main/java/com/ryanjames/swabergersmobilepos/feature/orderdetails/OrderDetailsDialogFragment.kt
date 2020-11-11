@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.orderdetails
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,6 +52,16 @@ class OrderDetailsDialogFragment : DialogFragment() {
         subscribe()
         arguments?.getString(EXTRA_ORDER_ID)?.let { orderId ->
             viewModel.retrieveOrder(orderId)
+        }
+
+        binding.btnCancel.setOnClickListener {
+            AlertDialog.Builder(activity)
+                .setMessage("Are you sure you want to cancel this order?")
+                .setPositiveButton(R.string.cta_yes) { _, _ ->
+
+                }.setNegativeButton(R.string.cta_no) { dialog, _ ->
+                    dialog.dismiss()
+                }.setCancelable(false).show()
         }
     }
 

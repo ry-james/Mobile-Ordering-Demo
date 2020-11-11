@@ -21,9 +21,14 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
+import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
+import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.helper.subscribeToBroadcastsOnLifecycle
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener, MenuFragment.MenuFragmentCallback, BagSummaryFragment.BagSummaryFragmentCallback {
@@ -31,11 +36,15 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var loginManager: LoginManager
+
     private lateinit var binding: ActivityBottomNavBinding
     private var noInternetSnackbar: Snackbar? = null
     private var currentSelectItemId = R.id.navigation_menu
 
     private var savedStateSparseArray = SparseArray<Fragment.SavedState>()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +70,21 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
 
         // Subscribe to Internet connectivity broadcast
         subscribeToBroadcastsOnLifecycle(ConnectivityManager.CONNECTIVITY_ACTION, this::onConnectivityChange)
+
+        compositeDisposable.add(
+            loginManager.forceLogout.observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe { logOutEvent ->
+                    logOutEvent.handleEvent {
+                        finish()
+                        startActivity(LoginActivity.createIntentForceLogout(this))
+                    }
+                })
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 
     private fun onConnectivityChange(intent: Intent) {

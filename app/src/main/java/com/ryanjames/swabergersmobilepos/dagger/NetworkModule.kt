@@ -2,6 +2,7 @@ package com.ryanjames.swabergersmobilepos.dagger
 
 import android.content.SharedPreferences
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import com.ryanjames.swabergersmobilepos.network.retrofit.MobilePosApi
 import com.ryanjames.swabergersmobilepos.network.retrofit.authenticator.TokenAuthenticator
@@ -36,8 +37,8 @@ open class NetworkModule {
 
     @Singleton
     @Provides
-    open fun provideTokenAuthenticator(sharedPreferences: SharedPreferences, retrofit: Retrofit.Builder): TokenAuthenticator {
-        return TokenAuthenticator(sharedPreferences, retrofit)
+    open fun provideTokenAuthenticator(sharedPreferences: SharedPreferences, retrofit: Retrofit.Builder, loginManager: LoginManager): TokenAuthenticator {
+        return TokenAuthenticator(sharedPreferences, retrofit, loginManager)
     }
 
     @Singleton
