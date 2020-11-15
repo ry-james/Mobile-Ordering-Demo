@@ -9,11 +9,14 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.ryanjames.swabergersmobilepos.helper.DialogManager
 
 abstract class BaseFragment<B : ViewDataBinding>(@LayoutRes private val layoutResourceId: Int) : Fragment() {
 
     private var realBinding: B? = null
     protected val binding: B get() = realBinding ?: throw IllegalStateException("Trying to access the binding outside of the view lifecycle.")
+
+    protected val dialogManager by lazy { DialogManager(viewLifecycleOwner.lifecycle, activity) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         DataBindingUtil.inflate<B>(inflater, layoutResourceId, container, false).also {

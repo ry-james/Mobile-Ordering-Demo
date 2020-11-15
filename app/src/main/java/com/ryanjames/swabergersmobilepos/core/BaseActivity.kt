@@ -1,26 +1,25 @@
 package com.ryanjames.swabergersmobilepos.core
 
-import android.app.AlertDialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ryanjames.swabergersmobilepos.R
+import com.ryanjames.swabergersmobilepos.helper.DialogManager
 import com.ryanjames.swabergersmobilepos.helper.getLoggerTag
 
 open class BaseActivity : AppCompatActivity() {
+
+    protected val dialogManager = DialogManager(lifecycle, this)
 
     protected inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
         }
-
-    private var loadingDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,40 +41,6 @@ open class BaseActivity : AppCompatActivity() {
             return
         }
         tvToolbar.text = title
-    }
-
-    fun showLoadingDialog(message: String = getString(R.string.loading)) {
-        val loadingView = LayoutInflater.from(this).inflate(R.layout.view_progress, null)
-        val tvLoadingMessage = loadingView.findViewById(R.id.tvLoadingMessage) as TextView
-        tvLoadingMessage.text = message
-
-        loadingDialog = AlertDialog.Builder(this)
-            .setView(loadingView)
-            .setCancelable(false)
-            .show()
-    }
-
-    fun showActivityFinishingDialog(message: String) {
-        AlertDialog.Builder(this)
-            .setCancelable(false)
-            .setMessage(message)
-            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }.show()
-    }
-
-    fun showDismissableDialog(message: String) {
-        AlertDialog.Builder(this)
-            .setCancelable(false)
-            .setMessage(message)
-            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                dialog.dismiss()
-            }.show()
-    }
-
-    fun hideLoadingDialog() {
-        loadingDialog?.dismiss()
     }
 
     protected open fun onUpPressed() {

@@ -38,7 +38,7 @@ class LoginActivity : BaseActivity() {
         subscribe()
 
         if (intent.getBooleanExtra(EXTRA_FORCE_LOG_OUT, false)) {
-            showDismissableDialog("You're automatically logged out. Please re-enter your credentials")
+            dialogManager.showDismissableDialog("You're automatically logged out. Please re-enter your credentials")
         } else {
             finishIfLoggedIn()
         }
@@ -54,14 +54,14 @@ class LoginActivity : BaseActivity() {
 
     private fun subscribe() {
         viewModel.loginSuccess.observe(this, Observer {
-            hideLoadingDialog()
+            dialogManager.hideLoadingDialog()
             startActivity(BottomNavActivity.createIntent(this))
             finish()
         })
 
         viewModel.loginFailure.observe(this, Observer { error ->
 
-            hideLoadingDialog()
+            dialogManager.hideLoadingDialog()
 
             val errorMessage = when (error) {
                 LoginViewModel.LoginError.LOGIN_ERROR -> getString(R.string.log_in_failed)
@@ -79,7 +79,7 @@ class LoginActivity : BaseActivity() {
         })
 
         binding.button.setOnSingleClickListener(this) {
-            showLoadingDialog(getString(R.string.signing_in))
+            dialogManager.showLoadingDialog(getString(R.string.signing_in))
             viewModel.login()
         }
     }

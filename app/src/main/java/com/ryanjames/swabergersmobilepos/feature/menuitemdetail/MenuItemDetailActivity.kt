@@ -101,16 +101,16 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         viewModel.lineItemObservable.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
-                    showLoadingDialog()
+                    dialogManager.showLoadingDialog()
                 }
                 is Resource.Success -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     lineItem = result.data
                     adapter.update(result.data)
                 }
                 is Resource.Error -> {
-                    hideLoadingDialog()
-                    showActivityFinishingDialog("Sorry, we're having trouble loading the product. Try again later.")
+                    dialogManager.hideLoadingDialog()
+                    dialogManager.showActivityFinishingDialog("Sorry, we're having trouble loading the product. Try again later.")
                 }
             }
         })
@@ -118,10 +118,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         viewModel.onAddItem.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
-                    showLoadingDialog("Adding to bag...")
+                    dialogManager.showLoadingDialog("Adding to bag...")
                 }
                 is Resource.Success -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     val intent = Intent().apply {
                         putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
@@ -129,7 +129,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                     finish()
                 }
                 is Resource.Error -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     showErrorDialog(getString(R.string.error_add_item))
                 }
             }
@@ -138,10 +138,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         viewModel.onUpdateItem.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
-                    showLoadingDialog("Updating item...")
+                    dialogManager.showLoadingDialog("Updating item...")
                 }
                 is Resource.Success -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     val intent = Intent().apply {
                         putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
@@ -149,7 +149,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                     finish()
                 }
                 is Resource.Error -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     showErrorDialog(getString(R.string.error_modify_item))
                 }
             }
@@ -158,10 +158,10 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         viewModel.onRemoveItem.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
-                    showLoadingDialog("Removing from bag...")
+                    dialogManager.showLoadingDialog("Removing from bag...")
                 }
                 is Resource.Success -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     val intent = Intent().apply {
                         putExtra(EXTRA_BAG_SUMMARY, result.data)
                     }
@@ -169,7 +169,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
                     finish()
                 }
                 is Resource.Error -> {
-                    hideLoadingDialog()
+                    dialogManager.hideLoadingDialog()
                     showErrorDialog(getString(R.string.error_remove_item))
                 }
             }

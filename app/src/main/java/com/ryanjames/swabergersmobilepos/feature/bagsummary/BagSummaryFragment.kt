@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.BaseFragment
 import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
@@ -70,7 +69,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                 is Resource.Success -> {
                     resource.event.handleEvent {
 
-                        (activity as BaseActivity).hideLoadingDialog()
+                        dialogManager.hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)
                             .setMessage(getString(R.string.checkout_successful))
@@ -82,7 +81,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                 }
                 is Resource.Error -> {
                     resource.event.handleEvent {
-                        (activity as BaseActivity).hideLoadingDialog()
+                        dialogManager.hideLoadingDialog()
                         AlertDialog.Builder(activity)
                             .setCancelable(false)
                             .setMessage(getString(R.string.checkout_failure))
@@ -91,7 +90,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                             }.show()
                     }
                 }
-                Resource.InProgress -> (activity as BaseActivity).showLoadingDialog("Checking out")
+                Resource.InProgress -> dialogManager.showLoadingDialog("Checking out")
             }
 
         })
