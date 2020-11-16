@@ -33,4 +33,7 @@ interface MobilePosApi {
 
     @GET("/basicMenu")
     fun getBasicMenu(): Single<BasicMenuResponse>
+
+    @DELETE("/cancelorder/{order_id}")
+    fun cancelOrder(@Path(value = "order_id", encoded = true) orderId: String): Single<Any>
 }

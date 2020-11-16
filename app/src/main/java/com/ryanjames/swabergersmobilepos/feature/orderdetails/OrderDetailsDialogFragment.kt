@@ -16,7 +16,9 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderDetailsBinding
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagItemAdapter
+import com.ryanjames.swabergersmobilepos.helper.DialogManager
 import kotlinx.android.synthetic.main.fragment_order_details.*
 import javax.inject.Inject
 
@@ -28,6 +30,8 @@ class OrderDetailsDialogFragment : DialogFragment() {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var binding: FragmentOrderDetailsBinding
+
+    private val dialogManager by lazy { DialogManager(viewLifecycleOwner.lifecycle, activity) }
 
     private val viewModel: OrderDetailsViewModel by viewModels { viewModelFactory }
 
@@ -56,9 +60,9 @@ class OrderDetailsDialogFragment : DialogFragment() {
 
         binding.btnCancel.setOnClickListener {
             AlertDialog.Builder(activity)
-                .setMessage("Are you sure you want to cancel this order?")
+                .setMessage(getString(R.string.confirm_cancel))
                 .setPositiveButton(R.string.cta_yes) { _, _ ->
-
+                    viewModel.cancelOrder()
                 }.setNegativeButton(R.string.cta_no) { dialog, _ ->
                     dialog.dismiss()
                 }.setCancelable(false).show()
@@ -68,6 +72,25 @@ class OrderDetailsDialogFragment : DialogFragment() {
     private fun subscribe() {
         viewModel.getOrderSummary.observe(viewLifecycleOwner, Observer { bagSummary ->
             setupRecyclerView(bagSummary.lineItems)
+        })
+
+        viewModel.onOrderCancelled.observe(viewLifecycleOwner, Observer { result ->
+            when (result) {
+                is Resource.InProgress -> dialogManager.showLoadingDialog(getString(R.string.cancelling_order))
+                is Resource.Error -> {
+                    dialogManager.hideLoadingDialog()
+                    dialogManager.showDismissableDialog(getString(R.string.error_cancelling_order))
+                }
+                is Resource.Success -> {
+                    dialogManager.hideLoadingDialog()
+                    AlertDialog.Builder(activity)
+                        .setMessage(getString(R.string.order_cancelled))
+                        .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                            dialog.dismiss()
+                            dismiss()
+                        }.setCancelable(false).show()
+                }
+            }
         })
     }
 
@@ -85,7 +108,7 @@ class OrderDetailsDialogFragment : DialogFragment() {
 
     companion object {
 
-        private const val FULL_SCREEN_DIALOG_TAG = "Full Screen Dialog"
+        private const val FULL_SCREEN_DIALOG_TAG = "Order Details Dialog"
 
         fun display(supportFragmentManager: FragmentManager, orderId: String): OrderDetailsDialogFragment {
 
@@ -100,7 +123,10 @@ class OrderDetailsDialogFragment : DialogFragment() {
             fullScreenDialog.arguments = Bundle().apply {
                 putString(EXTRA_ORDER_ID, orderId)
             }
-            fullScreenDialog.show(supportFragmentManager, FULL_SCREEN_DIALOG_TAG)
+
+            if (supportFragmentManager.findFragmentByTag(FULL_SCREEN_DIALOG_TAG)?.isVisible != true) {
+                fullScreenDialog.show(supportFragmentManager, FULL_SCREEN_DIALOG_TAG)
+            }
             return fullScreenDialog
         }
 

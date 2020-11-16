@@ -106,7 +106,8 @@ fun GetOrderResponse.toBagSummary(): BagSummary {
     return BagSummary(
         lineItems = lineItems.map { it.toBagLineItem() },
         price = price,
-        status = status.toOrderStatus()
+        status = status.toOrderStatus(),
+        orderId = orderId
     )
 }
 

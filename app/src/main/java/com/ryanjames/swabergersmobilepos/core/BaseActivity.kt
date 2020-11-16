@@ -14,7 +14,7 @@ import com.ryanjames.swabergersmobilepos.helper.getLoggerTag
 
 open class BaseActivity : AppCompatActivity() {
 
-    protected val dialogManager = DialogManager(lifecycle, this)
+    protected val dialogManager by lazy { DialogManager(lifecycle, this) }
 
     protected inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
         object : ViewModelProvider.Factory {

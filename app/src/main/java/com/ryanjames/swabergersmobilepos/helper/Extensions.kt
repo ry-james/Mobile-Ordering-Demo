@@ -1,7 +1,7 @@
 package com.ryanjames.swabergersmobilepos.helper
 
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.jakewharton.rxbinding.view.RxView
 import io.reactivex.disposables.CompositeDisposable
@@ -78,7 +78,7 @@ fun String.trimAllWhitespace(): String {
     return this.trim().replace("\\s+".toRegex(), " ")
 }
 
-fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -> Unit, throttle: Long) {
+fun View.setOnSingleClickListener(activity: FragmentActivity?, onClick: (View) -> Unit, throttle: Long) {
 
     val lifecycleObserver: LifecycleObserver = object : LifecycleObserver {
         val subscription = RxView.clicks(this@setOnSingleClickListener).throttleFirst(throttle, TimeUnit.MILLISECONDS).subscribe {
@@ -91,11 +91,11 @@ fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -
         }
 
     }
-    activity.lifecycle.addObserver(lifecycleObserver)
+    activity?.lifecycle?.addObserver(lifecycleObserver)
 }
 
-fun View.setOnSingleClickListener(activity: AppCompatActivity, onClick: (View) -> Unit) {
-    setOnSingleClickListener(activity, onClick, 1000)
+fun View.setOnSingleClickListener(activity: FragmentActivity?, onClick: (View) -> Unit) {
+    setOnSingleClickListener(activity, onClick, 2000)
 }
 
 fun Disposable.disposedBy(bag: CompositeDisposable) {

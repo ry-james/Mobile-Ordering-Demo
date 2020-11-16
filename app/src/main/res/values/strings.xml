@@ -82,4 +82,9 @@
     <string name="enter_customer_name">Enter customer name</string>
     <string name="name">Name</string>
     <string name="cancel_order">CANCEL ORDER</string>
+    <string name="confirm_cancel">Are you sure you want to cancel this order?</string>
+    <string name="cancelling_order">Cancelling your order...</string>
+    <string name="error_cancelling_order">There\'s an error cancelling your order. Please try again.</string>
+    <string name="order_cancelled">Your order is cancelled.</string>
+    <string name="you_have_cancelled_this_order">You have cancelled this order.</string>
 </resources>

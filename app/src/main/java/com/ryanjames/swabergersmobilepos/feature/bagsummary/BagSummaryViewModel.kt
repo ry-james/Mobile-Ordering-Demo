@@ -146,7 +146,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun clearBag() {
-        setLocalBag(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN))
+        setLocalBag(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, ""))
         updatePrices()
         updateBagVisibility()
     }

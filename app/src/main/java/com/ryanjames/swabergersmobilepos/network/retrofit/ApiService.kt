@@ -58,4 +58,8 @@ class ApiService(
         val getOrderRequest = GetOrderRequest(orderId)
         return mobilePosApi.getOrder(getOrderRequest)
     }
+
+    fun cancelOrder(orderId: String): Single<Any> {
+        return mobilePosApi.cancelOrder(orderId)
+    }
 }

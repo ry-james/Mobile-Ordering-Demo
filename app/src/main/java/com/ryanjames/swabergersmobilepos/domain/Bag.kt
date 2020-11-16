@@ -8,7 +8,8 @@ import kotlinx.android.parcel.Parcelize
 data class BagSummary(
     val lineItems: List<BagLineItem>,
     val price: Float,
-    val status: OrderStatus
+    val status: OrderStatus,
+    val orderId: String
 ) : Parcelable {
 
     // TODO: Replace with API value
@@ -23,7 +24,7 @@ data class BagSummary(
 
     companion object {
         val emptyBag: BagSummary
-            get() = BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN)
+            get() = BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, "")
     }
 
 }

@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding
+import com.ryanjames.swabergersmobilepos.domain.OrderStatus
+import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,6 +44,18 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
     val orderDetailsVisibility: LiveData<Int>
         get() = _orderDetailsVisibility
 
+    private val _btnCancelOrderVisibility = MutableLiveData<Int>(View.GONE)
+    val btnCancelOrderVisibility: LiveData<Int>
+        get() = _btnCancelOrderVisibility
+
+    private val _cancelledOrderBannerVisibility = MutableLiveData<Int>(View.GONE)
+    val cancelledOrderBannerVisibility: LiveData<Int>
+        get() = _cancelledOrderBannerVisibility
+
+    private val _onCancelOrder = MutableLiveData<Resource<Boolean>>()
+    val onOrderCancelled: LiveData<Resource<Boolean>>
+        get() = _onCancelOrder
+
     fun retrieveOrder(orderId: String) {
         compositeDisposable.add(
             orderRepository.getOrderById(orderId)
@@ -57,12 +71,34 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
                         setLoadingViewVisibility(View.GONE)
                         _orderDetailsVisibility.value = View.VISIBLE
                         updatePrices()
+
+                        _btnCancelOrderVisibility.value = if (bagSummary.status == OrderStatus.CHECKOUT) View.VISIBLE else View.GONE
+                        _cancelledOrderBannerVisibility.value = if (bagSummary.status == OrderStatus.CANCELLED) View.VISIBLE else View.GONE
+
                     }, { error ->
                         setLoadingViewVisibility(View.GONE)
                         error.printStackTrace()
                     }
                 )
         )
+    }
+
+    fun cancelOrder() {
+        _orderSummary.value?.let {
+            compositeDisposable.add(
+                orderRepository.cancelOrder(it.orderId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe {
+                        _onCancelOrder.value = Resource.InProgress
+                    }
+                    .subscribe({
+                        _onCancelOrder.value = Resource.Success(true)
+                    }, { error ->
+                        _onCancelOrder.value = Resource.Error(error)
+                    })
+            )
+        }
     }
 
     private fun setLoadingViewVisibility(visibility: Int) {

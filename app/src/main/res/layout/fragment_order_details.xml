@@ -135,6 +135,7 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/cancel_order"
+                    android:visibility="@{viewModel.btnCancelOrderVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvTotal" />
@@ -169,6 +170,24 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/rv_items"
                     tools:text="0.00" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_banner"
+                    android:padding="8dp"
+                    android:paddingStart="16dp"
+                    android:fontFamily="@font/texgyreheros_bold"
+                    android:paddingEnd="16dp"
+                    android:visibility="@{viewModel.cancelledOrderBannerVisibility}"
+                    android:text="@string/you_have_cancelled_this_order"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTotalLabel" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

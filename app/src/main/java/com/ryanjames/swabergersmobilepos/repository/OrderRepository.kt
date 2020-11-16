@@ -131,6 +131,10 @@ class OrderRepository @Inject constructor(
         }
     }
 
+    fun cancelOrder(orderId: String): Single<Any> {
+        return apiService.cancelOrder(orderId)
+    }
+
     fun clearLocalBag() {
         executeRealmTransaction { realm ->
             orderRealmDao.deleteAllLineItems(realm)
