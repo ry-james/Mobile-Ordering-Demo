@@ -48,17 +48,27 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
     val btnCancelOrderVisibility: LiveData<Int>
         get() = _btnCancelOrderVisibility
 
-    private val _cancelledOrderBannerVisibility = MutableLiveData<Int>(View.GONE)
-    val cancelledOrderBannerVisibility: LiveData<Int>
-        get() = _cancelledOrderBannerVisibility
+    private val _orderBannerVisibility = MutableLiveData<Int>(View.GONE)
+    val orderBannerVisibility: LiveData<Int>
+        get() = _orderBannerVisibility
 
     private val _onCancelOrder = MutableLiveData<Resource<Boolean>>()
     val onOrderCancelled: LiveData<Resource<Boolean>>
         get() = _onCancelOrder
 
+    private val _bannerMessage = MutableLiveData<Int>(R.string.current_order_message)
+    val bannerMessage: LiveData<Int>
+        get() = _bannerMessage
+
     fun retrieveOrder(orderId: String) {
+
+        var currentOrderId = ""
         compositeDisposable.add(
-            orderRepository.getOrderById(orderId)
+            orderRepository.getCurrentOrder()
+                .flatMap {
+                    currentOrderId = it.orderId
+                    orderRepository.getOrderById(orderId)
+                }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
@@ -73,7 +83,16 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
                         updatePrices()
 
                         _btnCancelOrderVisibility.value = if (bagSummary.status == OrderStatus.CHECKOUT) View.VISIBLE else View.GONE
-                        _cancelledOrderBannerVisibility.value = if (bagSummary.status == OrderStatus.CANCELLED) View.VISIBLE else View.GONE
+
+                        if (bagSummary.status == OrderStatus.CREATED && bagSummary.orderId == currentOrderId) {
+                            _orderBannerVisibility.value = View.VISIBLE
+                            _bannerMessage.value = R.string.current_order_message
+                        } else if (bagSummary.status == OrderStatus.CANCELLED) {
+                            _orderBannerVisibility.value = View.VISIBLE
+                            _bannerMessage.value = R.string.you_have_cancelled_this_order
+                        } else {
+                            _orderBannerVisibility.value = View.GONE
+                        }
 
                     }, { error ->
                         setLoadingViewVisibility(View.GONE)

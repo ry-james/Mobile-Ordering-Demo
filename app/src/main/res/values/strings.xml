@@ -87,4 +87,5 @@
     <string name="error_cancelling_order">There\'s an error cancelling your order. Please try again.</string>
     <string name="order_cancelled">Your order is cancelled.</string>
     <string name="you_have_cancelled_this_order">You have cancelled this order.</string>
+    <string name="current_order_message">This order is currently in your bag.</string>
 </resources>
