@@ -5,9 +5,12 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.textfield.TextInputLayout
 
 
 @BindingAdapter("app:imageUrl")
@@ -34,7 +37,7 @@ fun setTransition(motionLayout: MotionLayout, transitionId: Int) {
 
 @BindingAdapter("app:textWithArgs")
 fun setTextWithArgs(textView: TextView, stringResourceWithArgs: StringResourceWithArgs?) {
-    if(stringResourceWithArgs != null) {
+    if (stringResourceWithArgs != null) {
         textView.text = stringResourceWithArgs.resolve(textView.context)
     }
 }
@@ -48,4 +51,15 @@ fun setTextColor(textView: TextView, colorId: Int) {
         Log.e("android:textColor", "Can't find color")
     }
 
+}
+
+@BindingAdapter("layoutBackground")
+fun loadImage(layout: ConstraintLayout, @DrawableRes resource: Int) {
+    layout.background = layout.context.getDrawable(resource)
+}
+
+@BindingAdapter("error")
+fun setError(textInputLayout: TextInputLayout, @StringRes resource: Int?) {
+    textInputLayout.isErrorEnabled = resource != null
+    textInputLayout.error = resource?.let { textInputLayout.context.getString(resource) }
 }

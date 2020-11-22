@@ -8,6 +8,7 @@ import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.domain.LineItem
 import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.domain.OrderStatus
+import com.ryanjames.swabergersmobilepos.feature.checkout.ServiceOption
 import com.ryanjames.swabergersmobilepos.helper.replace
 import com.ryanjames.swabergersmobilepos.mappers.toBagSummary
 import com.ryanjames.swabergersmobilepos.mappers.toDomain
@@ -92,11 +93,19 @@ class OrderRepository @Inject constructor(
             }.map { it.toBagSummary() }
     }
 
-    fun checkout(customerName: String): Single<BagSummary> {
+    fun checkout(customerName: String, serviceOption: ServiceOption): Single<BagSummary> {
         return getLocalLineItems().flatMap { lineItemsEntities ->
             val orderId = globalRealmDao.getLocalBagOrderId()
             val lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
-            val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName)
+            var request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName)
+
+            // Set pick up or delivery
+            if (serviceOption is ServiceOption.Delivery) {
+                request = request.copy(deliveryAddress = serviceOption.deliveryAddress, pickup = null)
+            } else if (serviceOption is ServiceOption.Pickup) {
+                request = request.copy(pickup = true, deliveryAddress = null)
+            }
+
             apiService.putOrder(request)
                 .doOnSuccess {
                     executeRealmTransaction { realm ->

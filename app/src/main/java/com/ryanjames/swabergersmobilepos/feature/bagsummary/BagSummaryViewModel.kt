@@ -49,10 +49,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
 
-    private val _checkoutObservable = MutableLiveData<Resource<BagSummary>>()
-    val checkoutObservable: LiveData<Resource<BagSummary>>
-        get() = _checkoutObservable
-
     fun retrieveLocalBag() {
         compositeDisposable.add(
             orderRepository.getCurrentOrder()
@@ -151,19 +147,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         updateBagVisibility()
     }
 
-    fun checkout(customerName: String) {
-        compositeDisposable.add(orderRepository.checkout(customerName)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                _checkoutObservable.value = Resource.InProgress
-            }
-            .subscribe({ bagSummary ->
-                _checkoutObservable.value = Resource.Success(bagSummary)
-            }, { error ->
-                _checkoutObservable.value = Resource.Error(error)
-            })
-        )
+    fun notifyCheckoutSuccess() {
+        clearBag()
     }
 
     override fun onCleared() {

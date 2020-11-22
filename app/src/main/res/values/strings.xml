@@ -88,4 +88,12 @@
     <string name="order_cancelled">Your order is cancelled.</string>
     <string name="you_have_cancelled_this_order">You have cancelled this order.</string>
     <string name="current_order_message">This order is currently in your bag.</string>
+    <string name="cancellable_order">Your order is not yet confirmed and is eligible for cancellation.</string>
+    <string name="delivery">DELIVERY</string>
+    <string name="pickup">PICKUP</string>
+    <string name="name_hint_text">Name</string>
+    <string name="delivery_address_hint_text">Delivery address</string>
+    <string name="delivery_address_error">Delivery address is required.</string>
+    <string name="customer_name_error">Customer name is required.</string>
+    <string name="place_order">PLACE ORDER</string>
 </resources>

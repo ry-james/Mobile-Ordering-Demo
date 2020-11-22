@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="binding"
+            type="com.ryanjames.swabergersmobilepos.feature.checkout.ServiceOptionBindingModel" />
+
+        <variable
+            name="isSelected"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> binding.click()}"
+        android:paddingEnd="40dp"
+        app:layoutBackground="@{binding.background}">
+
+
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@{binding.icon}"
+            tools:srcCompat="@drawable/ic_store" />
+
+        <TextView
+            android:id="@+id/tv_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/texgyreheros_bold"
+            android:paddingBottom="8dp"
+            android:text="@{binding.label}"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintStart_toStartOf="@+id/iv_icon"
+            app:layout_constraintTop_toBottomOf="@+id/iv_icon"
+            tools:text="PICKUP" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

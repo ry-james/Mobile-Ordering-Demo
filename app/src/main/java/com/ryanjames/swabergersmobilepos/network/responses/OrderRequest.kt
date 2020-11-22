@@ -4,7 +4,9 @@ data class CreateUpdateOrderRequest(
     val orderId: String,
     val lineItems: List<LineItemRequestBody>,
     val status: String?,
-    val customerName: String?
+    val customerName: String?,
+    val pickup: Boolean? = null,
+    val deliveryAddress: String? = null
 )
 
 data class LineItemRequestBody(

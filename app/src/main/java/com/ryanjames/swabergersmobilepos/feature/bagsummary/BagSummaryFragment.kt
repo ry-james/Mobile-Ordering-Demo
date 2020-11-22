@@ -1,6 +1,5 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +16,7 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentBagSummaryBinding
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.domain.Resource
+import com.ryanjames.swabergersmobilepos.feature.checkout.CheckoutFragment
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
@@ -62,37 +62,6 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
         viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
             adapter.clear()
-        })
-
-        viewModel.checkoutObservable.observe(viewLifecycleOwner, Observer { resource ->
-            when (resource) {
-                is Resource.Success -> {
-                    resource.event.handleEvent {
-
-                        dialogManager.hideLoadingDialog()
-                        AlertDialog.Builder(activity)
-                            .setCancelable(false)
-                            .setMessage(getString(R.string.checkout_successful))
-                            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                                viewModel.clearBag()
-                                dialog.dismiss()
-                            }.show()
-                    }
-                }
-                is Resource.Error -> {
-                    resource.event.handleEvent {
-                        dialogManager.hideLoadingDialog()
-                        AlertDialog.Builder(activity)
-                            .setCancelable(false)
-                            .setMessage(getString(R.string.checkout_failure))
-                            .setPositiveButton(R.string.ok_cta) { dialog, _ ->
-                                dialog.dismiss()
-                            }.show()
-                    }
-                }
-                Resource.InProgress -> dialogManager.showLoadingDialog("Checking out")
-            }
-
         })
     }
 
@@ -143,10 +112,6 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     interface BagSummaryFragmentCallback {
         fun onUpdateLineItem()
         fun onRemoveLineItem()
-    }
-
-    companion object {
-        private val outStateBundle = Bundle()
     }
 
 }

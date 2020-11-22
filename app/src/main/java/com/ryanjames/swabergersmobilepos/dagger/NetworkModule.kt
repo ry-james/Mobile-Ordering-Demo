@@ -29,7 +29,8 @@ open class NetworkModule {
     @Provides
     open fun provideRetrofitBuilder(): Retrofit.Builder {
 //        val apiBaseUrl = "https://test-swabergers.herokuapp.com/"
-        val apiBaseUrl = "http://192.168.1.234:5000/"
+        //val apiBaseUrl = "http://192.168.1.234:5000/"
+        val apiBaseUrl = "http://10.0.2.2:5000/"
         return Retrofit.Builder()
             .baseUrl(apiBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())

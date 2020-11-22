@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel" />
+            name="checkoutViewModel"
+            type="com.ryanjames.swabergersmobilepos.feature.checkout.CheckoutViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/texgyreheros_bold"
-            android:text="@string/enter_customer_name"
+            android:text="@string/checkout"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@+id/btnCheckout"
@@ -32,21 +32,70 @@
             android:id="@+id/layout_customer_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorGray"
+            android:layout_marginTop="8dp"
+            android:hint="@string/name_hint_text"
+            android:textColorHint="@color/colorWhite"
             android:theme="@style/MyEditText"
+            app:error="@{checkoutViewModel.customerNameError}"
             app:layout_constraintEnd_toEndOf="@+id/btnCheckout"
             app:layout_constraintStart_toStartOf="@+id/btnCheckout"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/etCustomerName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name"
                 android:singleLine="true"
-                android:textColor="@color/colorWhite"
-                android:textColorHint="@color/colorLightGray" />
+                android:onTextChanged="@{checkoutViewModel.onCustomerNameTextChanged}"
+                android:text="@={checkoutViewModel.customerName}"
+                android:textColor="@color/colorWhite" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <include
+            android:id="@+id/layout_pickup"
+            layout="@layout/view_service_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:binding="@{checkoutViewModel.pickupServiceOption}"
+            app:layout_constraintStart_toStartOf="@id/layout_customer_name"
+            app:layout_constraintTop_toBottomOf="@id/layout_customer_name" />
+
+        <include
+            android:id="@+id/layout_delivery"
+            layout="@layout/view_service_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:binding="@{checkoutViewModel.deliveryServiceOption}"
+            app:layout_constraintStart_toEndOf="@id/layout_pickup"
+            app:layout_constraintTop_toBottomOf="@id/layout_customer_name" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_delivery_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="@string/delivery_address_hint_text"
+            android:textColorHint="@color/colorWhite"
+            android:theme="@style/MyEditText"
+            android:visibility="@{checkoutViewModel.deliveryAddressVisibility}"
+            app:error="@{checkoutViewModel.deliveryAddressError}"
+            app:layout_constraintEnd_toEndOf="@+id/btnCheckout"
+            app:layout_constraintStart_toStartOf="@+id/btnCheckout"
+            app:layout_constraintTop_toBottomOf="@id/layout_delivery">
+
+            <EditText
+                android:id="@+id/etDeliveryAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:onTextChanged="@{checkoutViewModel.onDeliveryAddressTextChanged}"
+                android:singleLine="true"
+                android:text="@={checkoutViewModel.deliveryAddress}"
+                android:textColor="@color/colorWhite" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -61,13 +110,14 @@
             android:background="@drawable/button_color"
             android:fontFamily="@font/texgyreheros_bold"
             android:foreground="?android:attr/selectableItemBackground"
-            android:text="@string/checkout"
+            android:onClick="@{() -> checkoutViewModel.onClickCheckout()}"
+            android:text="@string/place_order"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_customer_name" />
+            app:layout_constraintTop_toBottomOf="@id/layout_delivery_address" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

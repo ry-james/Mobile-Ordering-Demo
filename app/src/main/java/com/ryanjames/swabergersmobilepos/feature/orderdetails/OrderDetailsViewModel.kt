@@ -90,6 +90,9 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
                         } else if (bagSummary.status == OrderStatus.CANCELLED) {
                             _orderBannerVisibility.value = View.VISIBLE
                             _bannerMessage.value = R.string.you_have_cancelled_this_order
+                        } else if (bagSummary.status == OrderStatus.CHECKOUT) {
+                            _orderBannerVisibility.value = View.VISIBLE
+                            _bannerMessage.value = R.string.cancellable_order
                         } else {
                             _orderBannerVisibility.value = View.GONE
                         }
