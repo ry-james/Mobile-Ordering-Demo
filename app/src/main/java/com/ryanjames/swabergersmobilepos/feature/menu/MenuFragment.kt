@@ -19,7 +19,6 @@ import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
-import com.ryanjames.swabergersmobilepos.helper.TestNotification
 import javax.inject.Inject
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
@@ -42,10 +41,6 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
         viewModel.retrieveMenu()
 
         handleNotification()
-
-        binding.button2.setOnClickListener {
-            TestNotification.testNotification(this.requireContext())
-        }
     }
 
     private fun handleNotification() {

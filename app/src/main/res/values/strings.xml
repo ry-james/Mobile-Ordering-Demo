@@ -89,6 +89,11 @@
     <string name="you_have_cancelled_this_order">You have cancelled this order.</string>
     <string name="current_order_message">This order is currently in your bag.</string>
     <string name="cancellable_order">Your order is not yet confirmed and is eligible for cancellation.</string>
+    <string name="preparing_order">The restaurant is preparing your order.</string>
+    <string name="delivering_order">Our driver is on the way to deliver your order.</string>
+    <string name="delivered">This order has been delivered.</string>
+    <string name="ready_for_pickup">Your order is ready for pickup. Skip the line and go directly to our pickup counter.</string>
+    <string name="picked_up">This order has been picked up.</string>
     <string name="delivery">DELIVERY</string>
     <string name="pickup">PICKUP</string>
     <string name="name_hint_text">Name</string>

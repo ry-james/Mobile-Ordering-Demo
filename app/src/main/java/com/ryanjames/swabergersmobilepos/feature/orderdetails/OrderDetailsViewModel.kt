@@ -1,6 +1,7 @@
 package com.ryanjames.swabergersmobilepos.feature.orderdetails
 
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -85,24 +86,35 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
                         _btnCancelOrderVisibility.value = if (bagSummary.status == OrderStatus.CHECKOUT) View.VISIBLE else View.GONE
 
                         if (bagSummary.status == OrderStatus.CREATED && bagSummary.orderId == currentOrderId) {
-                            _orderBannerVisibility.value = View.VISIBLE
-                            _bannerMessage.value = R.string.current_order_message
+                            setBannerMessage(R.string.current_order_message)
                         } else if (bagSummary.status == OrderStatus.CANCELLED) {
-                            _orderBannerVisibility.value = View.VISIBLE
-                            _bannerMessage.value = R.string.you_have_cancelled_this_order
+                            setBannerMessage(R.string.you_have_cancelled_this_order)
                         } else if (bagSummary.status == OrderStatus.CHECKOUT) {
-                            _orderBannerVisibility.value = View.VISIBLE
-                            _bannerMessage.value = R.string.cancellable_order
+                            setBannerMessage(R.string.cancellable_order)
+                        } else if (bagSummary.status == OrderStatus.PREPARING) {
+                            setBannerMessage(R.string.preparing_order)
+                        } else if (bagSummary.status == OrderStatus.PICKED_UP) {
+                            setBannerMessage(R.string.picked_up)
+                        } else if (bagSummary.status == OrderStatus.READY_FOR_PICKUP) {
+                            setBannerMessage(R.string.ready_for_pickup)
+                        } else if (bagSummary.status == OrderStatus.DELIVERED) {
+                            setBannerMessage(R.string.delivered)
+                        } else if (bagSummary.status == OrderStatus.DELIVERING) {
+                            setBannerMessage(R.string.delivering_order)
                         } else {
                             _orderBannerVisibility.value = View.GONE
                         }
-
                     }, { error ->
                         setLoadingViewVisibility(View.GONE)
                         error.printStackTrace()
                     }
                 )
         )
+    }
+
+    private fun setBannerMessage(@StringRes stringId: Int) {
+        _orderBannerVisibility.value = View.VISIBLE
+        _bannerMessage.value = stringId
     }
 
     fun cancelOrder() {

@@ -244,6 +244,11 @@ private fun String.toOrderStatus(): OrderStatus {
         "CREATED" -> OrderStatus.CREATED
         "CANCELLED" -> OrderStatus.CANCELLED
         "CHECKOUT" -> OrderStatus.CHECKOUT
+        "PREPARING" -> OrderStatus.PREPARING
+        "DELIVERING" -> OrderStatus.DELIVERING
+        "DELIVERED" -> OrderStatus.DELIVERED
+        "READY_FOR_PICK_UP" -> OrderStatus.READY_FOR_PICKUP
+        "PICKED_UP" -> OrderStatus.PICKED_UP
         else -> OrderStatus.UNKNOWN
     }
 }
