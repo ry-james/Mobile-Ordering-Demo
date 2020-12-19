@@ -1,9 +1,12 @@
 package com.ryanjames.swabergersmobilepos.feature.splash
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
+import com.ryanjames.swabergersmobilepos.core.NotificationService
+import com.ryanjames.swabergersmobilepos.core.NotificationService.Companion.EXTRA_NOTIFICATION_TYPE
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.helper.LoginManager
@@ -20,12 +23,22 @@ class SplashScreenActivity : AppCompatActivity() {
         MobilePosDemoApplication.appComponent.inject(this)
         setContentView(R.layout.activity_splash_screen)
 
-        if (loginManager.isLoggedIn()) {
-            startActivity(BottomNavActivity.createIntent(this))
-        } else {
-            startActivity(LoginActivity.createIntent(this))
-        }
+        Log.d("SPLASH", "SplashActivity")
 
+        val notification = NotificationService.getNotificationFromIntent(intent)
+        if (notification != null) {
+            startActivity(BottomNavActivity.createIntent(this).apply {
+                putExtra(EXTRA_NOTIFICATION_TYPE, notification)
+            })
+        } else {
+            if (loginManager.isLoggedIn()) {
+                startActivity(BottomNavActivity.createIntent(this))
+            } else {
+                startActivity(LoginActivity.createIntent(this))
+            }
+        }
         finish()
+
+
     }
 }

@@ -14,6 +14,7 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath "io.realm:realm-gradle-plugin:6.0.2"
+        classpath 'com.google.gms:google-services:4.3.4'
 
         // Safe Args
         def nav_version = "2.3.0"

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "852812357688",
+    "firebase_url": "https://mobileorderingdemo-43b8b.firebaseio.com",
+    "project_id": "mobileorderingdemo-43b8b",
+    "storage_bucket": "mobileorderingdemo-43b8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852812357688:android:e462b94e223a84142086cd",
+        "android_client_info": {
+          "package_name": "com.ryanjames.swabergersmobilepos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "852812357688-fr5v1kal5ss066jhdki743rc2nlcij35.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanjames.swabergersmobilepos",
+            "certificate_hash": "ad0353a38c28178d448f3077b5c4550340d5fad0"
+          }
+        },
+        {
+          "client_id": "852812357688-t04a8hi006ak8aurtriec2updnl9eu83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5YYv7Ls-o6OrbcFADYTFd5y1XcL7GMY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852812357688-t04a8hi006ak8aurtriec2updnl9eu83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
