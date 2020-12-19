@@ -52,6 +52,12 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
             adapter = orderHistoryAdapter
             addItemDecoration(MarginItemDecoration(resources.getDimension(R.dimen.default_rv_item_margin).toInt()))
         }
+
+        binding.swipeRefreshLayout.apply {
+            setColorSchemeResources(R.color.colorAccent)
+        }.setOnRefreshListener {
+            viewModel.swipeToRefreshOrderHistory()
+        }
     }
 
     private fun subscribe() {
@@ -63,11 +69,10 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
                 }
             }
         })
-    }
 
-    companion object {
-
-
+        viewModel.isRefreshing.observe(viewLifecycleOwner, Observer { isRefreshing ->
+            binding.swipeRefreshLayout.isRefreshing = isRefreshing
+        })
     }
 
 }

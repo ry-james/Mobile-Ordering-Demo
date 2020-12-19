@@ -13,3 +13,4 @@
 .externalNativeBuild
 /app/src/main/java/com/ryanjames/swabergersmobilepos/helper/FcmHelper.kt
 /app/src/main/java/com/ryanjames/swabergersmobilepos/helper/TestNotification.kt
+/app/google-services.json

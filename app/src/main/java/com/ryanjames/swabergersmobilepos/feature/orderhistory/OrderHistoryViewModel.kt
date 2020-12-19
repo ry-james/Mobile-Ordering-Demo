@@ -33,7 +33,18 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
     val loadingBinding: LiveData<LoadingDialogBinding>
         get() = _loadingBinding
 
+    private val _isRefreshing = MutableLiveData<Boolean>(false)
+    val isRefreshing: LiveData<Boolean>
+        get() = _isRefreshing
+
+    fun swipeToRefreshOrderHistory() {
+        retrieveOrderHistory()
+        _isRefreshing.value = true
+    }
+
     fun retrieveOrderHistory() {
+        if (isRefreshing.value == true) return
+
         compositeDisposable.add(
             orderRepository.getOrderHistory()
                 .subscribeOn(Schedulers.io())
@@ -43,6 +54,9 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
                     if (orderList.isNullOrEmpty()) {
                         setLoadingViewVisibility(View.VISIBLE)
                     }
+                }
+                .doFinally {
+                    _isRefreshing.value = false
                 }
                 .subscribe({ orderList ->
                     this.orderList = orderList
