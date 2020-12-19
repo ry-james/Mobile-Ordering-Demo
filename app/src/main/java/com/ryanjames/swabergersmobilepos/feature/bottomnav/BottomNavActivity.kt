@@ -15,15 +15,19 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.core.BaseActivity
 import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
+import com.ryanjames.swabergersmobilepos.core.NotificationService
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
+import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
+import com.ryanjames.swabergersmobilepos.helper.FcmHelper
 import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import com.ryanjames.swabergersmobilepos.helper.subscribeToBroadcastsOnLifecycle
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -80,6 +84,19 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
                     }
                 })
 
+        FirebaseMessaging.getInstance().subscribeToTopic(FcmHelper.TOPIC)
+
+        handleNotification()
+    }
+
+    private fun handleNotification() {
+        val notification = NotificationService.getNotificationFromIntent(intent)
+        if (notification is NotificationService.NotificationType.ProductDetailNotification) {
+            navigateToMenuTab(MenuFragment.getNotificationBundle(notification.productId))
+        } else if (notification is NotificationService.NotificationType.OrderDetailNotification) {
+            navigateToOrderTab()
+            OrderDetailsDialogFragment.display(supportFragmentManager, notification.orderId)
+        }
     }
 
     override fun onDestroy() {
@@ -130,8 +147,14 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-    private fun navigateToMenuTab() {
+    private fun navigateToMenuTab(bundle: Bundle? = null) {
+        swapFragments(R.id.navigation_menu, "NAVIGATION_MENU", bundle)
         binding.bottomNav.selectedItemId = R.id.navigation_menu
+    }
+
+    private fun navigateToOrderTab(bundle: Bundle? = null) {
+        swapFragments(R.id.navigation_order, "NAVIGATION_BAG", bundle)
+        binding.bottomNav.selectedItemId = R.id.navigation_order
     }
 
     private fun showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT): Snackbar {
@@ -153,11 +176,11 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         showSnackbar(getString(R.string.item_removed_snackbar))
     }
 
-    private fun swapFragments(@IdRes actionId: Int, key: String) {
+    private fun swapFragments(@IdRes actionId: Int, key: String, bundle: Bundle? = null) {
         // Check if the tab clicked is not the current tab
         if (supportFragmentManager.findFragmentByTag(key) == null) {
             savedFragmentState(actionId)
-            createFragment(key, actionId)
+            createFragment(key, actionId, bundle)
         }
     }
 
@@ -172,7 +195,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
         currentSelectItemId = actionId
     }
 
-    private fun createFragment(key: String, actionId: Int) {
+    private fun createFragment(key: String, actionId: Int, bundle: Bundle? = null) {
 
         val fragment = when (actionId) {
             R.id.navigation_menu -> MenuFragment()
@@ -180,6 +203,8 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
             R.id.navigation_order -> OrderHistoryFragment()
             else -> null
         }
+
+        bundle?.let { fragment?.arguments = it }
 
         fragment?.let {
             it.setInitialSavedState(savedStateSparseArray[actionId])

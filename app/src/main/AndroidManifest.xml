@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".core.MobilePosDemoApplication"
@@ -14,8 +15,19 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <service android:name=".core.NotificationService"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+
+        </service>
+
         <activity
             android:name=".feature.splash.SplashScreenActivity"
+            android:launchMode="singleTop"
             android:theme="@style/SplashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,6 +46,7 @@
         </activity>
         <activity
             android:name=".feature.bottomnav.BottomNavActivity"
+            android:launchMode="singleTop"
             android:label="@string/title_activity_bottom_nav" />
         <activity android:name=".feature.menuitemdetail.MenuItemDetailActivity" />
         <activity android:name=".activity.MainActivity" />

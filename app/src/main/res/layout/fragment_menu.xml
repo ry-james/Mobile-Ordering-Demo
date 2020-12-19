@@ -16,6 +16,14 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary">
 
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <include
             android:id="@+id/loading_view"
             layout="@layout/view_progress"
@@ -65,7 +73,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabLayout2" />
+            app:layout_constraintTop_toBottomOf="@id/tabLayout2" >
+
+        </androidx.viewpager2.widget.ViewPager2>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

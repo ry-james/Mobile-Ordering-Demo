@@ -62,8 +62,12 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
                     orderHistoryAdapter.updateOrderHistory(orderList)
                 }
             }
-
         })
+    }
+
+    companion object {
+
+
     }
 
 }

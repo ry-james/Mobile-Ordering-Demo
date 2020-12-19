@@ -17,6 +17,9 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentMenuBinding
 import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.domain.Resource
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
+import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
+import com.ryanjames.swabergersmobilepos.helper.TestNotification
 import javax.inject.Inject
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
@@ -37,6 +40,19 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
         super.onViewCreated(view, savedInstanceState)
         addSubscriptions()
         viewModel.retrieveMenu()
+
+        handleNotification()
+
+        binding.button2.setOnClickListener {
+            TestNotification.testNotification(this.requireContext())
+        }
+    }
+
+    private fun handleNotification() {
+        val productIdFromNotification = arguments?.getString(EXTRA_NOTIFICATION_PRODUCT_ID)
+        if (productIdFromNotification != null) {
+            startActivityForResult(MenuItemDetailActivity.createIntent(context, productIdFromNotification), REQUEST_LINEITEM)
+        }
     }
 
     private fun addSubscriptions() {
@@ -79,6 +95,16 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
 
     interface MenuFragmentCallback {
         fun onAddLineItem()
+    }
+
+    companion object {
+        private const val EXTRA_NOTIFICATION_PRODUCT_ID = "extra.product.id"
+
+        fun getNotificationBundle(productId: String): Bundle {
+            return Bundle().apply {
+                putString(EXTRA_NOTIFICATION_PRODUCT_ID, productId)
+            }
+        }
     }
 
 }

@@ -45,6 +45,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
+                android:paddingBottom="16dp"
                 android:layout_height="wrap_content">
 
                 <include
@@ -128,15 +129,15 @@
 
                 <Button
                     android:id="@+id/btnCancel"
-                    android:background="@android:color/transparent"
-                    android:textColor="@color/colorWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/texgyreheros_bold"
                     android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/texgyreheros_bold"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/cancel_order"
+                    android:textColor="@color/colorWhite"
                     android:visibility="@{viewModel.btnCancelOrderVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
