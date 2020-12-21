@@ -1,11 +1,11 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
 import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.*
+import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,18 +29,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val errorViewBinding: LiveData<ErrorViewBinding>
         get() = _errorViewBinding
 
-    private val _tax = MutableLiveData<String>()
-    val tax: LiveData<String>
-        get() = _tax
-
-    private val _subtotal = MutableLiveData<String>()
-    val subtotal: LiveData<String>
-        get() = _subtotal
-
-    private val _total = MutableLiveData<String>()
-    val total: LiveData<String>
-        get() = _total
-
     private val _localBag = MutableLiveData<Resource<BagSummary>>()
     val getLocalBag: LiveData<Resource<BagSummary>>
         get() = _localBag
@@ -48,6 +36,57 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     private val _onClearBag = MutableLiveData<Boolean>()
     val onClearBag: LiveData<Boolean>
         get() = _onClearBag
+
+    val tax: LiveData<String> = Transformations.map(_localBag) {
+        localBag()?.tax()?.toTwoDigitString() ?: "0.00"
+    }
+
+    val subtotal: LiveData<String> = Transformations.map(_localBag) {
+        localBag()?.subtotal()?.toTwoDigitString() ?: "0.00"
+    }
+
+    val total: LiveData<String> = Transformations.map(_localBag) {
+        localBag()?.price?.toTwoDigitString() ?: "0.00"
+    }
+
+    private val _onOrderNotFound = MutableLiveData<Event<Boolean>>()
+    val onOrderNotFound: LiveData<Event<Boolean>>
+        get() = _onOrderNotFound
+
+    private val _removeModeToggle = MutableLiveData<Boolean>(false)
+    val removeModeToggle: LiveData<Boolean>
+        get() = _removeModeToggle
+
+    private val itemsForRemovalList = mutableListOf<BagLineItem>()
+    val itemsForRemoval
+        get() = itemsForRemovalList.toList()
+
+    private val _onRemovingItems = MutableLiveData<Resource<Boolean>>()
+    val onRemovingItems: LiveData<Resource<Boolean>>
+        get() = _onRemovingItems
+
+    private fun removeModeVisibility(): Int = if (removeModeToggle.value == true && !isBagEmpty()) View.VISIBLE else View.GONE
+
+    val removeModeVisibility: LiveData<Int> = MediatorLiveData<Int>().apply {
+        addSource(_removeModeToggle) { isRemoving ->
+            this.value = removeModeVisibility()
+
+            if (!isRemoving) {
+                itemsForRemovalList.clear()
+            }
+        }
+        addSource(_localBag) {
+            this.value = removeModeVisibility()
+        }
+    }
+
+    val viewModeVisibility: LiveData<Int> = Transformations.map(removeModeVisibility) { removeModeVisibility ->
+        if (removeModeVisibility == View.VISIBLE) View.GONE else View.VISIBLE
+    }
+
+    private val _removeSelectedBtnEnabled = MutableLiveData<Boolean>()
+    val removeSelectedBtnEnabled: LiveData<Boolean>
+        get() = _removeSelectedBtnEnabled
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
@@ -64,21 +103,29 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                     setLoadingViewVisibility(View.GONE)
                 }
                 .subscribe({ bagSummary ->
-                    if (bagSummary == BagSummary.emptyBag) {
-                        updateBagVisibility()
-                    } else {
+                    if (bagSummary != BagSummary.emptyBag) {
                         setLocalBag(bagSummary)
-                        updateBagVisibility()
-                        updatePrices()
                     }
+                    updateUI()
                 },
                     { error ->
                         error.printStackTrace()
-                        setEmptyBagViewVisibility(View.GONE)
-                        _nonEmptyBagVisibility.value = View.GONE
-                        setErrorViewVisibility(View.VISIBLE)
+                        handleError(error)
                     })
         )
+    }
+
+    private fun handleError(error: Throwable) {
+        if (error is HttpException) {
+            if (error.code() == 404) {
+                clearBag()
+                _onOrderNotFound.value = Event(true)
+            } else {
+                setEmptyBagViewVisibility(View.GONE)
+                _nonEmptyBagVisibility.value = View.GONE
+                setErrorViewVisibility(View.VISIBLE)
+            }
+        }
     }
 
     private fun localBag(): BagSummary? {
@@ -91,6 +138,9 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private fun setLocalBag(bagSummary: BagSummary) {
         _localBag.value = Resource.Success(bagSummary)
+        if (bagSummary.lineItems.isEmpty()) {
+            _removeModeToggle.value = false
+        }
     }
 
     private fun setLoadingViewVisibility(visibility: Int) {
@@ -119,32 +169,84 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
-    private fun updateBagVisibility() {
-        if (localBag()?.lineItems?.isNotEmpty() == true) {
-            setEmptyBagViewVisibility(View.GONE)
-            _nonEmptyBagVisibility.value = View.VISIBLE
-        } else {
-            setEmptyBagViewVisibility(View.VISIBLE)
-            _nonEmptyBagVisibility.value = View.GONE
-        }
+    private fun updateUI() {
+        updateBagVisibility()
+        updateRemoveModeVisibility()
     }
 
-    private fun updatePrices() {
-        _tax.value = localBag()?.tax()?.toTwoDigitString() ?: "0.00"
-        _subtotal.value = localBag()?.subtotal()?.toTwoDigitString() ?: "0.00"
-        _total.value = localBag()?.price?.toTwoDigitString() ?: "0.00"
+    private fun isBagEmpty(): Boolean {
+        return localBag()?.lineItems?.isEmpty() ?: true
+    }
+
+    private fun updateRemoveModeVisibility() {
+        _removeSelectedBtnEnabled.value = itemsForRemovalList.size > 0
+    }
+
+    private fun updateBagVisibility() {
+        if (isBagEmpty()) {
+            setEmptyBagViewVisibility(View.VISIBLE)
+            _nonEmptyBagVisibility.value = View.GONE
+        } else {
+            setEmptyBagViewVisibility(View.GONE)
+            _nonEmptyBagVisibility.value = View.VISIBLE
+        }
     }
 
     fun setBagSummary(bagSummary: BagSummary) {
         setLocalBag(bagSummary)
-        updatePrices()
-        updateBagVisibility()
+        updateUI()
     }
 
     fun clearBag() {
+        orderRepository.clearLocalBag()
         setLocalBag(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, ""))
-        updatePrices()
-        updateBagVisibility()
+        updateUI()
+    }
+
+    fun onClickRemove() {
+        _removeModeToggle.value = true
+        updateUI()
+    }
+
+    fun onClickRemoveSelected() {
+        compositeDisposable.add(
+            orderRepository.removeBagLineItems(itemsForRemoval)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    _onRemovingItems.value = Resource.InProgress
+                }
+                .subscribe({ bagSummary ->
+                    _onRemovingItems.value = Resource.Success(true)
+                    _removeModeToggle.value = false
+                    setLocalBag(bagSummary)
+                    updateUI()
+                }, { error ->
+                    _onRemovingItems.value = Resource.Error(error)
+                    error.printStackTrace()
+                })
+        )
+    }
+
+    fun onClickCancelRemove() {
+        _removeModeToggle.value = false
+        updateRemoveModeVisibility()
+    }
+
+    fun addItemForRemoval(bagLineItem: BagLineItem) {
+        val item = itemsForRemovalList.find { it.lineItemId == bagLineItem.lineItemId }
+        if (item == null) {
+            itemsForRemovalList.add(bagLineItem)
+        }
+        updateRemoveModeVisibility()
+    }
+
+    fun removeItemForRemoval(bagLineItem: BagLineItem) {
+        val item = itemsForRemovalList.find { it.lineItemId == bagLineItem.lineItemId }
+        if (item != null) {
+            itemsForRemovalList.remove(item)
+        }
+        updateRemoveModeVisibility()
     }
 
     fun notifyCheckoutSuccess() {

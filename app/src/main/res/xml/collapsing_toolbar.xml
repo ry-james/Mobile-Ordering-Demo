@@ -5,11 +5,13 @@
     <Transition
         android:id="@+id/transitionWithImage"
         app:constraintSetEnd="@id/collapsed"
-        app:constraintSetStart="@id/expanded">
+        app:constraintSetStart="@id/expanded"
+        app:duration="100">
 
         <OnSwipe
             app:dragDirection="dragUp"
-            app:onTouchUp="stop"
+            app:maxAcceleration="40"
+            app:maxVelocity="40"
             app:touchAnchorId="@id/rvMenuItem"
             app:touchAnchorSide="top" />
 
@@ -18,11 +20,13 @@
     <Transition
         android:id="@+id/transitionNoImage"
         app:constraintSetEnd="@id/collapsed"
-        app:constraintSetStart="@id/expandedNoImage">
+        app:constraintSetStart="@id/expandedNoImage"
+        app:duration="100">
 
         <OnSwipe
             app:dragDirection="dragUp"
-            app:onTouchUp="stop"
+            app:maxAcceleration="40"
+            app:maxVelocity="40"
             app:touchAnchorId="@id/rvMenuItem"
             app:touchAnchorSide="top" />
 

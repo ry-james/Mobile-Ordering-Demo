@@ -63,6 +63,37 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
         viewModel.onClearBag.observe(viewLifecycleOwner, Observer {
             adapter.clear()
         })
+
+        viewModel.onOrderNotFound.observe(viewLifecycleOwner, Observer { event ->
+            event.handleEvent {
+                dialogManager.showDismissableDialog(getString(R.string.error_not_found))
+            }
+        })
+
+        viewModel.removeModeToggle.observe(viewLifecycleOwner, Observer { isRemoving ->
+            adapter.setRemovingMode(isRemoving)
+        })
+
+        viewModel.onRemovingItems.observe(viewLifecycleOwner, Observer { resource ->
+
+            when (resource) {
+                is Resource.InProgress -> {
+                    dialogManager.showLoadingDialog("Removing items from bag...")
+                }
+                is Resource.Success -> {
+                    resource.event.handleEvent {
+                        dialogManager.hideLoadingDialog()
+                        dialogManager.showDismissableDialog("We removed your item successfully!")
+                    }
+                }
+                is Resource.Error -> {
+                    resource.event.handleEvent {
+                        dialogManager.hideLoadingDialog()
+                        dialogManager.showDismissableDialog("Oops! We can't seem to remove these items. Please try again later.")
+                    }
+                }
+            }
+        })
     }
 
     private fun setupListeners() {
@@ -81,9 +112,17 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     }
 
     private fun setupRecyclerView() {
-        adapter = BagItemAdapter(listOf(), object : BagItemAdapter.BagItemAdapterListener {
+        adapter = BagItemAdapter(listOf(), viewModel.itemsForRemoval, object : BagItemAdapter.BagItemAdapterListener {
             override fun onClickLineItem(lineItem: BagLineItem) {
                 startActivityForResult(MenuItemDetailActivity.createIntent(activity, lineItem), REQUEST_LINEITEM)
+            }
+
+            override fun onRemoveCbCheckedChanged(bagLineItem: BagLineItem, checked: Boolean) {
+                if (checked) {
+                    viewModel.addItemForRemoval(bagLineItem)
+                } else {
+                    viewModel.removeItemForRemoval(bagLineItem)
+                }
             }
         })
         binding.rvItems.also {

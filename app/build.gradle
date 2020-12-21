@@ -116,7 +116,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.android.support:design:$supportVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
     implementation 'android.arch.persistence.room:rxjava2:1.1.1'
     implementation 'org.threeten:threetenbp:1.4.4'

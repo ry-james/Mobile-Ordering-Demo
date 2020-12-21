@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        tools:background="@color/colorPrimary">
 
         <TextView
             android:id="@+id/tvItemQty"
@@ -28,7 +29,8 @@
             android:textColor="@android:color/white"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1" />
 
         <TextView
             android:id="@+id/tvItemName"
@@ -66,6 +68,20 @@
             android:textAlignment="viewEnd"
             android:textColor="@android:color/white"
             android:textSize="16sp"
+            android:visibility="@{viewModel.priceVisibility}"
+            app:layout_constraintBottom_toBottomOf="@+id/tvItemName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvItemName"
+            tools:text="10.00" />
+
+        <CheckBox
+            android:id="@+id/cbRemove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:buttonTint="@color/colorAccent"
+            android:checked="@{viewModel.removeCbChecked}"
+            android:visibility="@{viewModel.removeCbVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/tvItemName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvItemName" />

@@ -9,10 +9,12 @@ import com.ryanjames.swabergersmobilepos.domain.BagSummary
 
 class BagItemAdapter(
     lineItems: List<BagLineItem>,
+    private val itemsForRemoval: List<BagLineItem>,
     private val listener: BagItemAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var viewModels = lineItems.map { BagItemViewModel(it) }
+    private var isRemoving = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = RowBagItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,8 +25,15 @@ class BagItemAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is BagItemViewHolder) {
-            holder.bind(viewModels[holder.adapterPosition], isLastItem = viewModels.size - 1 == holder.adapterPosition)
+            val viewModel = viewModels[holder.adapterPosition]
+            val checked = itemsForRemoval.any { viewModel.lineItem.lineItemId == it.lineItemId }
+            holder.bind(viewModel, isLastItem = viewModels.size - 1 == holder.adapterPosition, isRemoving = isRemoving, checked = checked)
         }
+    }
+
+    fun setRemovingMode(enabled: Boolean) {
+        isRemoving = enabled
+        notifyDataSetChanged()
     }
 
     fun updateBag(bagSummary: BagSummary) {
@@ -42,20 +51,24 @@ class BagItemAdapter(
         private val listener: BagItemAdapterListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(viewModel: BagItemViewModel, isLastItem: Boolean) {
+        fun bind(viewModel: BagItemViewModel, isLastItem: Boolean, isRemoving: Boolean, checked: Boolean) {
             binding.viewModel = viewModel
-            viewModel.setup(isLastItem)
+            viewModel.setup(isLastItem, isRemoving, checked)
             binding.executePendingBindings()
 
             binding.root.setOnClickListener {
                 listener.onClickLineItem(viewModel.lineItem)
             }
 
+            binding.cbRemove.setOnClickListener {
+                listener.onRemoveCbCheckedChanged(bagLineItem = viewModel.lineItem, checked = binding.cbRemove.isChecked)
+            }
         }
 
     }
 
     interface BagItemAdapterListener {
         fun onClickLineItem(lineItem: BagLineItem)
+        fun onRemoveCbCheckedChanged(bagLineItem: BagLineItem, checked: Boolean)
     }
 }

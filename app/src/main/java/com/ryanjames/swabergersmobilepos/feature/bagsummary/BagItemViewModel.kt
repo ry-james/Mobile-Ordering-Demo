@@ -33,8 +33,20 @@ class BagItemViewModel(val lineItem: BagLineItem) : ViewModel() {
     val lineVisibility: LiveData<Int>
         get() = _lineVisibility
 
+    private val _removeCbVisibility = MutableLiveData<Int>()
+    val removeCbVisibility: LiveData<Int>
+        get() = _removeCbVisibility
 
-    fun setup(isLastItem: Boolean) {
+    private val _priceVisibility = MutableLiveData<Int>()
+    val priceVisibility: LiveData<Int>
+        get() = _priceVisibility
+
+    private val _removeCbChecked = MutableLiveData<Boolean>()
+    val removeCbChecked: LiveData<Boolean>
+        get() = _removeCbChecked
+
+
+    fun setup(isLastItem: Boolean, isRemoving: Boolean, checked: Boolean) {
         _quantity.value = lineItem.quantity.toString()
 
         _productName.value = lineItem.lineItemName
@@ -52,6 +64,15 @@ class BagItemViewModel(val lineItem: BagLineItem) : ViewModel() {
             _modifiers.value = lineItem.modifiersDisplay
         } else {
             _modifiersVisibility.value = View.GONE
+        }
+
+        if (isRemoving) {
+            _removeCbVisibility.value = View.VISIBLE
+            _priceVisibility.value = View.GONE
+            _removeCbChecked.value = checked
+        } else {
+            _removeCbVisibility.value = View.GONE
+            _priceVisibility.value = View.VISIBLE
         }
     }
 

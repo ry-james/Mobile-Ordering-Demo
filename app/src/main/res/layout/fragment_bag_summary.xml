@@ -125,7 +125,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/rvItems"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/topBtnsBottomBarrier" />
 
                 <TextView
                     android:id="@+id/textView2"
@@ -149,7 +149,8 @@
                     android:nestedScrollingEnabled="false"
                     app:layout_constraintEnd_toEndOf="@id/bgCard"
                     app:layout_constraintStart_toStartOf="@id/bgCard"
-                    app:layout_constraintTop_toBottomOf="@id/textView2" />
+                    app:layout_constraintTop_toBottomOf="@id/textView2"
+                    tools:listitem="@layout/row_bag_item" />
 
                 <Button
                     android:id="@+id/btnCheckout"
@@ -169,6 +170,66 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/tvTotal"
                     app:layout_constraintTop_toBottomOf="@id/tvTotalLabel" />
+
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/topBtnsBottomBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="btnRemoveItems,btnRemoveSelected" />
+
+                <Button
+                    android:id="@+id/btnRemoveItems"
+                    style="@style/BagSummaryTopBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:onClick="@{() -> viewModel.onClickRemove()}"
+                    android:text="@string/remove_sentence_case"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnRemoveSelected"
+                    style="@style/BagSummaryTopBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:enabled="@{viewModel.removeSelectedBtnEnabled}"
+                    android:onClick="@{() -> viewModel.onClickRemoveSelected()}"
+                    android:text="@string/remove_selected"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnCancelRemove"
+                    style="@style/BagSummaryTopBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:onClick="@{() -> viewModel.onClickCancelRemove()}"
+                    android:text="@string/cancel"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/removeModeVisibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.removeModeVisibility}"
+                    app:constraint_referenced_ids="btnRemoveSelected, btnCancelRemove" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/viewModeVisibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.viewModeVisibility}"
+                    app:constraint_referenced_ids="btnRemoveItems" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

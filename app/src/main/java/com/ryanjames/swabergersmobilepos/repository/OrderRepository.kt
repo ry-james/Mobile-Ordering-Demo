@@ -4,10 +4,7 @@ import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.LineItemRealmEntity
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.executeRealmTransaction
-import com.ryanjames.swabergersmobilepos.domain.BagSummary
-import com.ryanjames.swabergersmobilepos.domain.LineItem
-import com.ryanjames.swabergersmobilepos.domain.Order
-import com.ryanjames.swabergersmobilepos.domain.OrderStatus
+import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.feature.checkout.ServiceOption
 import com.ryanjames.swabergersmobilepos.helper.replace
 import com.ryanjames.swabergersmobilepos.mappers.toBagSummary
@@ -74,13 +71,24 @@ class OrderRepository @Inject constructor(
             }.map { it.toBagSummary() }
     }
 
+    fun removeBagLineItems(lineItems: List<BagLineItem>): Single<BagSummary> {
+        return removeLineItems(lineItems.map { it.lineItemId })
+    }
+
     fun removeLineItem(lineItem: LineItem): Single<BagSummary> {
+        return removeLineItems(listOf(lineItem.lineItemId))
+    }
+
+    private fun removeLineItems(lineItemIds: List<String>): Single<BagSummary> {
         return getLocalLineItems()
             .flatMap { lineItemsEntities ->
                 val orderId = globalRealmDao.getLocalBagOrderId()
                 var lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
-                lineItemListRequest.find { it.lineItemId == lineItem.lineItemId }?.let {
-                    lineItemListRequest = lineItemListRequest.minus(it)
+
+                for (lineItemId in lineItemIds) {
+                    lineItemListRequest.find { it.lineItemId == lineItemId }?.let {
+                        lineItemListRequest = lineItemListRequest.minus(it)
+                    }
                 }
 
                 val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)

@@ -95,8 +95,12 @@ class OrderDetailsDialogFragment : DialogFragment() {
     }
 
     private fun setupRecyclerView(orderItems: List<BagLineItem>) {
-        val adapter = BagItemAdapter(orderItems, object : BagItemAdapter.BagItemAdapterListener {
+        val adapter = BagItemAdapter(orderItems, listOf(), object : BagItemAdapter.BagItemAdapterListener {
             override fun onClickLineItem(lineItem: BagLineItem) {
+
+            }
+
+            override fun onRemoveCbCheckedChanged(bagLineItem: BagLineItem, checked: Boolean) {
 
             }
         })

@@ -59,6 +59,7 @@
     <string name="cta_set">SET</string>
     <string name="enter_customer_name_message">Please enter the customer name.</string>
     <string name="remove">REMOVE</string>
+    <string name="remove_sentence_case">Remove</string>
     <string name="item_updated_snackbar">Item is updated successfully.</string>
     <string name="item_added_snackbar">Item is added successfully.</string>
     <string name="item_removed_snackbar">Item is removed successfully.</string>
@@ -101,4 +102,7 @@
     <string name="delivery_address_error">Delivery address is required.</string>
     <string name="customer_name_error">Customer name is required.</string>
     <string name="place_order">PLACE ORDER</string>
+    <string name="error_not_found">Items in your bag are invalidated. We cleared your bag for you.</string>
+    <string name="remove_selected">Remove selected</string>
+    <string name="cancel">Cancel</string>
 </resources>
