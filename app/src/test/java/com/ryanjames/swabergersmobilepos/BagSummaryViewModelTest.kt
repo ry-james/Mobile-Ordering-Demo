@@ -2,6 +2,7 @@ package com.ryanjames.swabergersmobilepos
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.ryanjames.swabergersmobilepos.core.RxImmediateSchedulerRule
+import com.ryanjames.swabergersmobilepos.core.getOrAwaitValue
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
@@ -65,9 +66,9 @@ class BagSummaryViewModelTest {
     @Test
     fun test_price() {
         viewModel.retrieveLocalBag()
-        assertEquals("20.00", viewModel.total.value)
-        assertEquals("17.86", viewModel.subtotal.value)
-        assertEquals("2.14", viewModel.tax.value)
+        assertEquals("20.00", viewModel.total.getOrAwaitValue())
+        assertEquals("17.86", viewModel.subtotal.getOrAwaitValue())
+        assertEquals("2.14", viewModel.tax.getOrAwaitValue())
     }
 
 

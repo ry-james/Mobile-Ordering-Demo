@@ -17,21 +17,36 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val _loadingViewBinding = MutableLiveData<LoadingDialogBinding>()
-    val loadingViewBinding: LiveData<LoadingDialogBinding>
-        get() = _loadingViewBinding
-
-    private val _nonEmptyBagVisibility = MutableLiveData<Int>()
-    val nonEmptyBagVisibility: LiveData<Int>
-        get() = _nonEmptyBagVisibility
-
-    private val _errorViewBinding = MutableLiveData<ErrorViewBinding>()
-    val errorViewBinding: LiveData<ErrorViewBinding>
-        get() = _errorViewBinding
-
     private val _localBag = MutableLiveData<Resource<BagSummary>>()
     val getLocalBag: LiveData<Resource<BagSummary>>
         get() = _localBag
+
+    val loadingViewBinding: LiveData<LoadingDialogBinding> = Transformations.map(getLocalBag) { resource ->
+        if (resource is Resource.InProgress) {
+            loadingView(View.VISIBLE)
+        } else {
+            loadingView(View.GONE)
+        }
+    }
+
+    val nonEmptyBagVisibility: LiveData<Int> = Transformations.map(getLocalBag) { resource ->
+        if (resource is Resource.Success && resource.data.lineItems.isNotEmpty()) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    val messagingViewBinding: LiveData<ErrorViewBinding> = Transformations.map(getLocalBag) { resource ->
+        if (resource is Resource.Success && resource.data.lineItems.isEmpty()) {
+            emptyBagView(View.VISIBLE)
+        } else if (resource is Resource.Error) {
+            errorView(View.VISIBLE)
+        } else {
+            emptyBagView(View.GONE)
+            errorView(View.GONE)
+        }
+    }
 
     private val _onClearBag = MutableLiveData<Boolean>()
     val onClearBag: LiveData<Boolean>
@@ -94,22 +109,14 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
-                    _nonEmptyBagVisibility.value = View.GONE
-                    setErrorViewVisibility(View.GONE)
-                    setEmptyBagViewVisibility(View.GONE)
-                    setLoadingViewVisibility(View.VISIBLE)
-                }
-                .doFinally {
-                    setLoadingViewVisibility(View.GONE)
+                    _localBag.value = Resource.InProgress
                 }
                 .subscribe({ bagSummary ->
-                    if (bagSummary != BagSummary.emptyBag) {
-                        setLocalBag(bagSummary)
-                    }
-                    updateUI()
+                    _localBag.value = Resource.Success(bagSummary)
                 },
                     { error ->
                         error.printStackTrace()
+                        _localBag.value = Resource.Error(error)
                         handleError(error)
                     })
         )
@@ -120,10 +127,6 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
             if (error.code() == 404) {
                 clearBag()
                 _onOrderNotFound.value = Event(true)
-            } else {
-                setEmptyBagViewVisibility(View.GONE)
-                _nonEmptyBagVisibility.value = View.GONE
-                setErrorViewVisibility(View.VISIBLE)
             }
         }
     }
@@ -136,23 +139,16 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         return null
     }
 
-    private fun setLocalBag(bagSummary: BagSummary) {
-        _localBag.value = Resource.Success(bagSummary)
-        if (bagSummary.lineItems.isEmpty()) {
-            _removeModeToggle.value = false
-        }
-    }
-
-    private fun setLoadingViewVisibility(visibility: Int) {
-        _loadingViewBinding.value = LoadingDialogBinding(
+    private fun loadingView(visibility: Int): LoadingDialogBinding {
+        return LoadingDialogBinding(
             visibility = visibility,
             loadingText = R.string.fetching_bag,
             textColor = R.color.colorWhite
         )
     }
 
-    private fun setEmptyBagViewVisibility(visibility: Int) {
-        _errorViewBinding.value = ErrorViewBinding(
+    private fun emptyBagView(visibility: Int): ErrorViewBinding {
+        return ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_empty_bag,
             title = R.string.empty_bag_title,
@@ -160,8 +156,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
-    private fun setErrorViewVisibility(visibility: Int) {
-        _errorViewBinding.value = ErrorViewBinding(
+    private fun errorView(visibility: Int): ErrorViewBinding {
+        return ErrorViewBinding(
             visibility = visibility,
             image = R.drawable.ic_error,
             title = R.string.us_not_you,
@@ -169,38 +165,22 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
-    private fun updateUI() {
-        updateBagVisibility()
-    }
-
     private fun isBagEmpty(): Boolean {
         return localBag()?.lineItems?.isEmpty() ?: true
     }
 
-    private fun updateBagVisibility() {
-        if (isBagEmpty()) {
-            setEmptyBagViewVisibility(View.VISIBLE)
-            _nonEmptyBagVisibility.value = View.GONE
-        } else {
-            setEmptyBagViewVisibility(View.GONE)
-            _nonEmptyBagVisibility.value = View.VISIBLE
-        }
-    }
-
     fun setBagSummary(bagSummary: BagSummary) {
-        setLocalBag(bagSummary)
-        updateUI()
+        _localBag.value = Resource.Success(bagSummary)
+        _removeModeToggle.value = false
     }
 
-    fun clearBag() {
+    private fun clearBag() {
         orderRepository.clearLocalBag()
-        setLocalBag(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, ""))
-        updateUI()
+        _localBag.value = Resource.Success(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, ""))
     }
 
     fun onClickRemove() {
         _removeModeToggle.value = true
-        updateUI()
     }
 
     fun onClickRemoveSelected() {
@@ -214,8 +194,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                 .subscribe({ bagSummary ->
                     _onRemovingItems.value = Resource.Success(true)
                     _removeModeToggle.value = false
-                    setLocalBag(bagSummary)
-                    updateUI()
+                    _localBag.value = Resource.Success(bagSummary)
                 }, { error ->
                     _onRemovingItems.value = Resource.Error(error)
                     error.printStackTrace()
