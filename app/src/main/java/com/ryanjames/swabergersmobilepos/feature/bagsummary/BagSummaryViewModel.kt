@@ -57,9 +57,9 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     val removeModeToggle: LiveData<Boolean>
         get() = _removeModeToggle
 
-    private val itemsForRemovalList = mutableListOf<BagLineItem>()
-    val itemsForRemoval
-        get() = itemsForRemovalList.toList()
+    private val _itemsForRemovalList = MutableLiveData<List<BagLineItem>>()
+    val itemsForRemovalList
+        get() = _itemsForRemovalList.value?.toList() ?: listOf()
 
     private val _onRemovingItems = MutableLiveData<Resource<Boolean>>()
     val onRemovingItems: LiveData<Resource<Boolean>>
@@ -72,7 +72,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
             this.value = removeModeVisibility()
 
             if (!isRemoving) {
-                itemsForRemovalList.clear()
+                _itemsForRemovalList.value = listOf()
             }
         }
         addSource(_localBag) {
@@ -84,9 +84,9 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         if (removeModeVisibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
-    private val _removeSelectedBtnEnabled = MutableLiveData<Boolean>()
-    val removeSelectedBtnEnabled: LiveData<Boolean>
-        get() = _removeSelectedBtnEnabled
+    val removeSelectedBtnEnabled: LiveData<Boolean> = Transformations.map(_itemsForRemovalList) { itemsForRemoval ->
+        itemsForRemoval.isNotEmpty()
+    }
 
     fun retrieveLocalBag() {
         compositeDisposable.add(
@@ -171,15 +171,10 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     private fun updateUI() {
         updateBagVisibility()
-        updateRemoveModeVisibility()
     }
 
     private fun isBagEmpty(): Boolean {
         return localBag()?.lineItems?.isEmpty() ?: true
-    }
-
-    private fun updateRemoveModeVisibility() {
-        _removeSelectedBtnEnabled.value = itemsForRemovalList.size > 0
     }
 
     private fun updateBagVisibility() {
@@ -210,7 +205,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun onClickRemoveSelected() {
         compositeDisposable.add(
-            orderRepository.removeBagLineItems(itemsForRemoval)
+            orderRepository.removeBagLineItems(itemsForRemovalList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
@@ -230,23 +225,25 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun onClickCancelRemove() {
         _removeModeToggle.value = false
-        updateRemoveModeVisibility()
+        _itemsForRemovalList.value = listOf()
     }
 
     fun addItemForRemoval(bagLineItem: BagLineItem) {
-        val item = itemsForRemovalList.find { it.lineItemId == bagLineItem.lineItemId }
+        val itemsForRemoval = _itemsForRemovalList.value?.toMutableList() ?: mutableListOf()
+        val item = itemsForRemoval.find { it.lineItemId == bagLineItem.lineItemId }
         if (item == null) {
-            itemsForRemovalList.add(bagLineItem)
+            itemsForRemoval.add(bagLineItem)
         }
-        updateRemoveModeVisibility()
+        _itemsForRemovalList.value = itemsForRemoval
     }
 
     fun removeItemForRemoval(bagLineItem: BagLineItem) {
-        val item = itemsForRemovalList.find { it.lineItemId == bagLineItem.lineItemId }
+        val itemsForRemoval = _itemsForRemovalList.value?.toMutableList() ?: mutableListOf()
+        val item = itemsForRemoval.find { it.lineItemId == bagLineItem.lineItemId }
         if (item != null) {
-            itemsForRemovalList.remove(item)
+            itemsForRemoval.remove(item)
         }
-        updateRemoveModeVisibility()
+        _itemsForRemovalList.value = itemsForRemoval
     }
 
     fun notifyCheckoutSuccess() {

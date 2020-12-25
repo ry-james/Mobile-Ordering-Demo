@@ -112,7 +112,7 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
     }
 
     private fun setupRecyclerView() {
-        adapter = BagItemAdapter(listOf(), viewModel.itemsForRemoval, object : BagItemAdapter.BagItemAdapterListener {
+        adapter = BagItemAdapter(listOf(), viewModel.itemsForRemovalList, object : BagItemAdapter.BagItemAdapterListener {
             override fun onClickLineItem(lineItem: BagLineItem) {
                 startActivityForResult(MenuItemDetailActivity.createIntent(activity, lineItem), REQUEST_LINEITEM)
             }
