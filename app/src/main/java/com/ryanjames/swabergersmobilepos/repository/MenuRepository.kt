@@ -11,7 +11,12 @@ import com.ryanjames.swabergersmobilepos.network.retrofit.ApiService
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.abs
+
+private const val MENU_CACHE_LIFE_IN_SECONDS = 3600
 
 class MenuRepository @Inject constructor(
     val apiService: ApiService,
@@ -29,14 +34,14 @@ class MenuRepository @Inject constructor(
         return menuRealmDao.getBasicMenu().map { basicMenuRealm ->
             // Disabling cache for now
             val dateCreated = basicMenuRealm.createdAt
-//            val diffInMillies = Math.abs(Date(System.currentTimeMillis()).time - dateCreated.time)
-//            val cacheLifeInSeconds = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS)
-//            if (cacheLifeInSeconds >= 60 || cacheLifeInSeconds < 0) {
-//                menuRealmDao.deleteMenu()
-//                Menu.EMPTY
-//            } else {
-            basicMenuMapper.mapLocalDbToDomain(basicMenuRealm)
-//            }
+            val diffInMillies = abs(Date(System.currentTimeMillis()).time - dateCreated.time)
+            val cacheLifeInSeconds = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS)
+            if (cacheLifeInSeconds >= MENU_CACHE_LIFE_IN_SECONDS || cacheLifeInSeconds < 0) {
+                menuRealmDao.deleteMenu()
+                Menu.EMPTY
+            } else {
+                basicMenuMapper.mapLocalDbToDomain(basicMenuRealm)
+            }
         }.filter { menu ->
             menu.categories.isNotEmpty()
         }

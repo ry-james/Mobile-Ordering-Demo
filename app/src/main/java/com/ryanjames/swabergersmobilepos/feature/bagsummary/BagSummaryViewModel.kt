@@ -212,8 +212,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         val item = itemsForRemoval.find { it.lineItemId == bagLineItem.lineItemId }
         if (item == null) {
             itemsForRemoval.add(bagLineItem)
+            _itemsForRemovalList.value = itemsForRemoval
         }
-        _itemsForRemovalList.value = itemsForRemoval
     }
 
     fun removeItemForRemoval(bagLineItem: BagLineItem) {
@@ -221,8 +221,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         val item = itemsForRemoval.find { it.lineItemId == bagLineItem.lineItemId }
         if (item != null) {
             itemsForRemoval.remove(item)
+            _itemsForRemovalList.value = itemsForRemoval
         }
-        _itemsForRemovalList.value = itemsForRemoval
     }
 
     fun notifyCheckoutSuccess() {

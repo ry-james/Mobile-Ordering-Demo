@@ -19,6 +19,14 @@ class MenuRealmDao {
         }
     }
 
+    fun deleteMenu() {
+        executeRealmTransaction { realm ->
+            realm.delete(BasicMenuRealmEntity::class.java)
+            realm.delete(BasicProductRealmEntity::class.java)
+            realm.delete(BasicCategoryRealmEntity::class.java)
+        }
+    }
+
     fun getProductDetailsById(id: String): Maybe<ProductRealmEntity> {
         return Maybe.create { emitter ->
             val realm = Realm.getDefaultInstance()
