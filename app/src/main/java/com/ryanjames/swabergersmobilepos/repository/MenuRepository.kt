@@ -30,9 +30,8 @@ class MenuRepository @Inject constructor(
         return apiService.authenticate(username, password)
     }
 
-    private fun basicMenuDatabaseObservable(): Maybe<Menu> {
-        return menuRealmDao.getBasicMenu().map { basicMenuRealm ->
-            // Disabling cache for now
+    private fun basicMenuDatabaseObservable(storeId: String): Maybe<Menu> {
+        return menuRealmDao.getBasicMenuById(storeId).map { basicMenuRealm ->
             val dateCreated = basicMenuRealm.createdAt
             val diffInMillies = abs(Date(System.currentTimeMillis()).time - dateCreated.time)
             val cacheLifeInSeconds = TimeUnit.SECONDS.convert(diffInMillies, TimeUnit.MILLISECONDS)
@@ -47,18 +46,18 @@ class MenuRepository @Inject constructor(
         }
     }
 
-    private fun basicMenuApiObservable(): Single<Menu> {
-        return apiService.getBasicMenu()
+    private fun basicMenuApiObservable(storeId: String): Single<Menu> {
+        return apiService.getBasicMenuByStoreId(storeId)
             .doOnSuccess { menuResponse ->
-                menuRealmDao.saveBasicMenu(basicMenuMapper.mapRemoteToLocalDb(menuResponse))
+                menuRealmDao.saveBasicMenu(basicMenuMapper.mapRemoteToLocalDbWithStoreId(menuResponse, storeId))
             }
             .map { menuResponse ->
                 basicMenuMapper.mapLocalDbToDomain(basicMenuMapper.mapRemoteToLocalDb(menuResponse))
             }
     }
 
-    fun getBasicMenu(): Observable<Menu> {
-        return Observable.concat(basicMenuDatabaseObservable().toObservable(), basicMenuApiObservable().toObservable())
+    fun getBasicMenu(storeId: String): Observable<Menu> {
+        return Observable.concat(basicMenuDatabaseObservable(storeId).toObservable(), basicMenuApiObservable(storeId).toObservable())
             .firstElement().toObservable()
     }
 

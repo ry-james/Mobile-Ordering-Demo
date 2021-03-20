@@ -3,6 +3,7 @@ package com.ryanjames.swabergersmobilepos.dagger
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.MenuRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
+import com.ryanjames.swabergersmobilepos.database.realm.VenueRealmDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -26,5 +27,11 @@ open class RealmModule {
     @Provides
     open fun provideMenuRealmDao(): MenuRealmDao {
         return MenuRealmDao()
+    }
+
+    @Singleton
+    @Provides
+    open fun provideVenueRealmDao(): VenueRealmDao {
+        return VenueRealmDao()
     }
 }

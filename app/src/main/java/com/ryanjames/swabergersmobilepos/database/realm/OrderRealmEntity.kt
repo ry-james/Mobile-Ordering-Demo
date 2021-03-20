@@ -12,9 +12,10 @@ open class OrderRealmEntity(
 }
 
 open class LocalBagRealmEntity(
-    var lineItems: RealmList<LineItemRealmEntity>
+    var lineItems: RealmList<LineItemRealmEntity>,
+    var venueId: String
 ) : RealmObject() {
-    constructor() : this(RealmList())
+    constructor() : this(RealmList(), "")
 }
 
 open class LineItemRealmEntity(

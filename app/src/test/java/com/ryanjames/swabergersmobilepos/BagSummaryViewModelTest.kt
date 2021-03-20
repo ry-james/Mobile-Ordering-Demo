@@ -7,6 +7,7 @@ import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.Single
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -36,6 +37,9 @@ class BagSummaryViewModelTest {
 
     @Mock
     lateinit var orderRepository: OrderRepository
+
+    @Mock
+    lateinit var venueRepository: VenueRepository
 
     @InjectMocks
     lateinit var viewModel: BagSummaryViewModel

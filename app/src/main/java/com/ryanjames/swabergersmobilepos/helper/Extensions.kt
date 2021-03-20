@@ -1,8 +1,14 @@
 package com.ryanjames.swabergersmobilepos.helper
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.jakewharton.rxbinding.view.RxView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -105,5 +111,16 @@ fun Disposable.disposedBy(bag: CompositeDisposable) {
 fun <T> List<T>.replace(newValue: T, block: (T) -> Boolean): List<T> {
     return map {
         if (block(it)) newValue else it
+    }
+}
+
+fun Context.bitmapDescriptorFromVector(vectorResId: Int, width: Int = -1, height: Int = -1): BitmapDescriptor? {
+    return ContextCompat.getDrawable(this, vectorResId)?.run {
+        val w = if (width > 0) width else intrinsicWidth
+        val h = if (height > 0) height else intrinsicHeight
+        setBounds(0, 0, w, h)
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        draw(Canvas(bitmap))
+        BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 }

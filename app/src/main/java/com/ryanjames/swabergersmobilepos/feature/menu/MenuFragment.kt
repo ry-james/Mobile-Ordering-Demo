@@ -1,5 +1,7 @@
 package com.ryanjames.swabergersmobilepos.feature.menu
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +21,10 @@ import com.ryanjames.swabergersmobilepos.domain.Category
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailActivity
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
+import com.ryanjames.swabergersmobilepos.feature.venuefinder.VenueFinderActivity
 import javax.inject.Inject
+
+private const val REQUEST_VENUE = 0
 
 class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
 
@@ -38,15 +43,37 @@ class MenuFragment : BaseFragment<FragmentMenuBinding>(R.layout.fragment_menu) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addSubscriptions()
-        viewModel.retrieveMenu()
+        viewModel.refreshMenu()
 
         handleNotification()
+
+        binding.btnSelectRestaurant.setOnClickListener {
+            startVenueFinderActivity()
+        }
+
+        binding.layoutSelectedLocation.container.setOnClickListener {
+            startVenueFinderActivity()
+        }
+    }
+
+    private fun startVenueFinderActivity() {
+        startActivityForResult(VenueFinderActivity.createIntent(activity, viewModel.getSelectedVenue()), REQUEST_VENUE)
     }
 
     private fun handleNotification() {
         val productIdFromNotification = arguments?.getString(EXTRA_NOTIFICATION_PRODUCT_ID)
         if (productIdFromNotification != null) {
             startActivityForResult(MenuItemDetailActivity.createIntent(context, productIdFromNotification), REQUEST_LINEITEM)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_VENUE && resultCode == Activity.RESULT_OK) {
+            VenueFinderActivity.getSelectedVenueFromIntent(data)?.let { venue ->
+                viewModel.setSelectedVenue(venue)
+            }
+
         }
     }
 

@@ -12,6 +12,7 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailAc
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
 import com.ryanjames.swabergersmobilepos.feature.splash.SplashScreenActivity
+import com.ryanjames.swabergersmobilepos.feature.venuefinder.VenueFinderActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -50,4 +51,6 @@ interface ApplicationComponent {
     fun inject(checkoutFragment: CheckoutFragment)
 
     fun inject(splashScreenActivity: SplashScreenActivity)
+
+    fun inject(venueFinderActivity: VenueFinderActivity)
 }

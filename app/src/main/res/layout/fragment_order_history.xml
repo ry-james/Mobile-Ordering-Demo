@@ -46,10 +46,10 @@
 
         <include
             android:id="@+id/error_view"
-            layout="@layout/view_error"
+            layout="@layout/view_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:binding="@{viewModel.errorViewBinding}"
+            app:binding="@{viewModel.messsageViewBinding}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

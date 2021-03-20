@@ -13,6 +13,7 @@ import com.ryanjames.swabergersmobilepos.helper.disposedBy
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 class MenuItemDetailViewModel @Inject constructor(
     val orderRepository: OrderRepository,
-    val menuRepository: MenuRepository
+    val menuRepository: MenuRepository,
+    val venueRepository: VenueRepository
 ) : ViewModel() {
 
     private var lineItem: LineItem = LineItem.EMPTY
@@ -305,7 +307,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
     private fun addToBag() {
         compositeDisposable.add(
-            orderRepository.addOrUpdateLineItem(lineItem)
+            orderRepository.addOrUpdateLineItem(lineItem, venueRepository.getSelectedVenue()?.id ?: "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
@@ -322,7 +324,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
     private fun updateItem() {
         compositeDisposable.add(
-            orderRepository.addOrUpdateLineItem(lineItem)
+            orderRepository.addOrUpdateLineItem(lineItem, venueRepository.getSelectedVenue()?.id ?: "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
@@ -339,7 +341,7 @@ class MenuItemDetailViewModel @Inject constructor(
 
     fun removeFromBag() {
         compositeDisposable.add(
-            orderRepository.removeLineItem(lineItem)
+            orderRepository.removeLineItem(lineItem, venueRepository.getSelectedVenue()?.id ?: "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {

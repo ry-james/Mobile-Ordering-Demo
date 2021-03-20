@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.domain.ErrorViewBinding
 import com.ryanjames.swabergersmobilepos.domain.LoadingDialogBinding
+import com.ryanjames.swabergersmobilepos.domain.MesssageViewBinding
 import com.ryanjames.swabergersmobilepos.domain.Order
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -25,9 +25,9 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
     val onRetrieveOrderHistory: LiveData<Resource<List<Order>>>
         get() = _onRetrieveOrderHistory
 
-    private val _errorViewBinding = MutableLiveData<ErrorViewBinding>()
-    val errorViewBinding: LiveData<ErrorViewBinding>
-        get() = _errorViewBinding
+    private val _messageViewBinding = MutableLiveData<MesssageViewBinding>()
+    val messsageViewBinding: LiveData<MesssageViewBinding>
+        get() = _messageViewBinding
 
     private val _loadingBinding = MutableLiveData<LoadingDialogBinding>()
     val loadingBinding: LiveData<LoadingDialogBinding>
@@ -62,6 +62,11 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
                     this.orderList = orderList
                     _onRetrieveOrderHistory.value = Resource.Success(orderList)
                     setLoadingViewVisibility(View.GONE)
+
+                    if (orderList.isNullOrEmpty()) {
+                        setEmptyOrderViewVisibility(View.VISIBLE)
+                    }
+
                 }, { error ->
                     if (orderList == null) {
                         setErrorViewVisibility(View.VISIBLE)
@@ -73,11 +78,20 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
     }
 
     private fun setErrorViewVisibility(visibility: Int) {
-        _errorViewBinding.value = ErrorViewBinding(
+        _messageViewBinding.value = MesssageViewBinding(
             visibility = visibility,
             image = R.drawable.ic_menu,
             title = R.string.error_loading_order_history_title,
             message = R.string.error_loading_order_history_message
+        )
+    }
+
+    private fun setEmptyOrderViewVisibility(visibility: Int) {
+        _messageViewBinding.value = MesssageViewBinding(
+            visibility = visibility,
+            image = R.drawable.ic_menu,
+            title = R.string.order_history_empty,
+            message = R.string.order_history_empty_message
         )
     }
 

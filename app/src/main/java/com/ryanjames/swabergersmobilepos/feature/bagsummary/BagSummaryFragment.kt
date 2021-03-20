@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.feature.bagsummary
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,7 +22,10 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailAc
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.REQUEST_LINEITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_ADD_OR_UPDATE_ITEM
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.RESULT_REMOVE_ITEM
+import com.ryanjames.swabergersmobilepos.feature.venuefinder.VenueFinderActivity
 import javax.inject.Inject
+
+private const val REQUEST_VENUE = 0
 
 class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.fragment_bag_summary) {
 
@@ -45,6 +49,10 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
         setupListeners()
         subscribe()
         viewModel.retrieveLocalBag()
+
+        binding.layoutSelectedLocation.container.setOnClickListener {
+            startVenueFinderActivity()
+        }
     }
 
     private fun subscribe() {
@@ -78,23 +86,28 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
 
             when (resource) {
                 is Resource.InProgress -> {
-                    dialogManager.showLoadingDialog("Removing items from bag...")
+                    dialogManager.showLoadingDialog(getString(R.string.removing_loading))
                 }
                 is Resource.Success -> {
                     resource.event.handleEvent {
                         dialogManager.hideLoadingDialog()
-                        dialogManager.showDismissableDialog("We removed your item successfully!")
+                        dialogManager.showDismissableDialog(getString(R.string.removing_item_success))
                     }
                 }
                 is Resource.Error -> {
                     resource.event.handleEvent {
                         dialogManager.hideLoadingDialog()
-                        dialogManager.showDismissableDialog("Oops! We can't seem to remove these items. Please try again later.")
+                        dialogManager.showDismissableDialog(getString(R.string.removing_item_fail))
                     }
                 }
             }
         })
     }
+
+    private fun startVenueFinderActivity() {
+        startActivityForResult(VenueFinderActivity.createIntent(activity, viewModel.getSelectedVenue()), REQUEST_VENUE)
+    }
+
 
     private fun setupListeners() {
         binding.btnCheckout.setOnClickListener {
@@ -144,6 +157,11 @@ class BagSummaryFragment : BaseFragment<FragmentBagSummaryBinding>(R.layout.frag
                 val bagSummary = MenuItemDetailActivity.getBagSummaryExtra(data)
                 viewModel.setBagSummary(bagSummary)
                 fragmentCallback.onRemoveLineItem()
+            }
+        } else if (requestCode == REQUEST_VENUE && resultCode == Activity.RESULT_OK) {
+            VenueFinderActivity.getSelectedVenueFromIntent(data)?.let { venue ->
+                viewModel.setSelectedVenue(venue)
+                viewModel.retrieveLocalBag()
             }
         }
     }

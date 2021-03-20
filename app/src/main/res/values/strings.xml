@@ -105,4 +105,16 @@
     <string name="error_not_found">Items in your bag are invalidated. We cleared your bag for you.</string>
     <string name="remove_selected">Remove selected</string>
     <string name="cancel">Cancel</string>
+    <string name="removing_loading">Removing items from bag...</string>
+    <string name="removing_item_success">We removed your item successfully!</string>
+    <string name="removing_item_fail">Oops! We can\'t seem to remove these items. Please try again later.</string>
+    <string name="you_re_ordering_at">You\'re ordering at:</string>
+    <string name="select_restaurant">Select restaurant</string>
+    <string name="no_restaurant">No restaurant selected</string>
+    <string name="no_restaurant_message">Select a restaurant to view the menu.</string>
+    <string name="empty"></string>
+    <string name="order_history_empty">Order history is empty</string>
+    <string name="order_history_empty_message">As you create an order, it will be listed here.</string>
+    <string name="changing_venue_message">Changing the selected restaurant will clear your items in your bag. Are you sure you want to proceed?</string>
+    <string name="removing_from_bag">Removing from bag...</string>
 </resources>

@@ -17,7 +17,6 @@ class GlobalRealmDao {
         val id: String = UUID.randomUUID().toString()
         val globalRealm = getGlobalRealmEntity(realm)
         globalRealm.localBagOrderId = id
-        realm.insertOrUpdate(globalRealm)
         return id
     }
 
@@ -25,10 +24,32 @@ class GlobalRealmDao {
         getGlobalRealmEntity(realm).localBagOrderId = null
     }
 
+    fun getCurrentSelectedVenueId(realm: Realm): VenueRealmEntity? {
+        getGlobalRealmEntity(realm).currentVenue?.let { venueId ->
+            return realm.where(VenueRealmEntity::class.java).equalTo("venueId", venueId).findFirst()
+        }
+        return null
+    }
+
+    fun setSelectedVenue(venueRealmEntity: VenueRealmEntity) {
+        executeRealmTransaction { realm ->
+            realm.where(VenueRealmEntity::class.java).equalTo("venueId", venueRealmEntity.venueId).findFirst()?.also {
+                getGlobalRealmEntity(realm).currentVenue = it.venueId
+            }
+        }
+    }
+
+    fun clearSelectedVenue() {
+        executeRealmTransaction { realm ->
+            getGlobalRealmEntity(realm).currentVenue = null
+        }
+    }
+
     private fun getGlobalRealmEntity(realm: Realm): GlobalRealmEntity {
         var result = realm.where(GlobalRealmEntity::class.java).findFirst()
         if (result == null) {
             result = GlobalRealmEntity()
+            realm.insertOrUpdate(result)
         }
         return result
     }

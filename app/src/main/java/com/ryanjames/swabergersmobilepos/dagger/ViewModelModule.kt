@@ -10,6 +10,7 @@ import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsViewModel
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryViewModel
+import com.ryanjames.swabergersmobilepos.feature.venuefinder.VenueFinderViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
 import dagger.Binds
 import dagger.Module
@@ -60,6 +61,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CheckoutViewModel::class)
     internal abstract fun bindCheckoutViewModel(viewModel: CheckoutViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VenueFinderViewModel::class)
+    internal abstract fun bindVenueFinderViewModel(viewModel: VenueFinderViewModel): ViewModel
 
     //Add more ViewModels here
 }

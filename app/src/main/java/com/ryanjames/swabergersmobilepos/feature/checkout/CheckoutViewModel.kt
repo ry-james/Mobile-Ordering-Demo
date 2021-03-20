@@ -10,12 +10,16 @@ import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class CheckoutViewModel @Inject constructor(val orderRepository: OrderRepository) : ViewModel() {
+class CheckoutViewModel @Inject constructor(
+    val orderRepository: OrderRepository,
+    val venueRepository: VenueRepository
+) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -109,7 +113,7 @@ class CheckoutViewModel @Inject constructor(val orderRepository: OrderRepository
         // Set Delivery Address
         (selectedServiceOption as? ServiceOption.Delivery)?.copy(deliveryAddress = deliveryAddress.value ?: "")?.let { selectedServiceOption = it }
 
-        compositeDisposable.add(orderRepository.checkout(customerName.value ?: "", selectedServiceOption)
+        compositeDisposable.add(orderRepository.checkout(customerName.value ?: "", selectedServiceOption, venueRepository.getSelectedVenue()?.id ?: "")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe {

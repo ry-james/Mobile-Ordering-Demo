@@ -8,18 +8,26 @@ import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class BagSummaryViewModel @Inject constructor(var orderRepository: OrderRepository) : ViewModel() {
+class BagSummaryViewModel @Inject constructor(
+    val orderRepository: OrderRepository,
+    val venueRepository: VenueRepository
+) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
 
     private val _localBag = MutableLiveData<Resource<BagSummary>>()
     val getLocalBag: LiveData<Resource<BagSummary>>
         get() = _localBag
+
+    private val _selectedVenue = MutableLiveData<Venue>(venueRepository.getSelectedVenue())
+    val selectedVenue: LiveData<Venue>
+        get() = _selectedVenue
 
     val loadingViewBinding: LiveData<LoadingDialogBinding> = Transformations.map(getLocalBag) { resource ->
         if (resource is Resource.InProgress) {
@@ -37,7 +45,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         }
     }
 
-    val messagingViewBinding: LiveData<ErrorViewBinding> = Transformations.map(getLocalBag) { resource ->
+    val messagingViewBinding: LiveData<MesssageViewBinding> = Transformations.map(getLocalBag) { resource ->
         if (resource is Resource.Success && resource.data.lineItems.isEmpty()) {
             emptyBagView(View.VISIBLE)
         } else if (resource is Resource.Error) {
@@ -104,6 +112,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
     }
 
     fun retrieveLocalBag() {
+        _selectedVenue.value = venueRepository.getSelectedVenue()
         compositeDisposable.add(
             orderRepository.getCurrentOrder()
                 .subscribeOn(Schedulers.io())
@@ -120,6 +129,15 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
                         handleError(error)
                     })
         )
+    }
+
+    fun getSelectedVenue(): Venue? {
+        return venueRepository.getSelectedVenue()
+    }
+
+    fun setSelectedVenue(venue: Venue) {
+        venueRepository.setSelectedVenue(venue)
+        _selectedVenue.value = venue
     }
 
     private fun handleError(error: Throwable) {
@@ -147,8 +165,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
-    private fun emptyBagView(visibility: Int): ErrorViewBinding {
-        return ErrorViewBinding(
+    private fun emptyBagView(visibility: Int): MesssageViewBinding {
+        return MesssageViewBinding(
             visibility = visibility,
             image = R.drawable.ic_empty_bag,
             title = R.string.empty_bag_title,
@@ -156,8 +174,8 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
         )
     }
 
-    private fun errorView(visibility: Int): ErrorViewBinding {
-        return ErrorViewBinding(
+    private fun errorView(visibility: Int): MesssageViewBinding {
+        return MesssageViewBinding(
             visibility = visibility,
             image = R.drawable.ic_error,
             title = R.string.us_not_you,
@@ -185,7 +203,7 @@ class BagSummaryViewModel @Inject constructor(var orderRepository: OrderReposito
 
     fun onClickRemoveSelected() {
         compositeDisposable.add(
-            orderRepository.removeBagLineItems(itemsForRemovalList)
+            orderRepository.removeBagLineItems(itemsForRemovalList, venueRepository.getSelectedVenue()?.id ?: "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {

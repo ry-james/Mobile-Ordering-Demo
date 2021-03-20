@@ -25,6 +25,10 @@ class OrderRealmDao {
         }
     }
 
+    fun hasItemsInBag(realm: Realm): Boolean {
+        return realm.where(LocalBagRealmEntity::class.java).findFirst()?.lineItems?.count() ?: 0 > 0
+    }
+
     fun updateLocalBag(realm: Realm, lineItemEntities: List<LineItemRealmEntity>) {
         realm.where(LocalBagRealmEntity::class.java).findFirst()?.apply {
             lineItems.map { it.deleteChildrenFromRealm() }

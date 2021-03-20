@@ -28,15 +28,59 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
-            android:id="@+id/error_view"
-            layout="@layout/view_error"
+            android:id="@+id/no_restaurant_view"
+            layout="@layout/view_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:binding="@{viewModel.errorViewBinding}"
+            app:binding="@{viewModel.noRestaurantViewBinding}"
+            app:layout_constraintBottom_toTopOf="@+id/btnSelectRestaurant"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <include
+            android:id="@+id/error_view"
+            layout="@layout/view_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:binding="@{viewModel.messsageViewBinding}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/layout_selected_location"
+            layout="@layout/view_selected_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:binding="@{viewModel.selectedVenue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:visibility="@{viewModel.locationBannerVisibility}" />
+
+        <Button
+            android:id="@+id/btnSelectRestaurant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_big_corner_button"
+            android:fontFamily="@font/texgyreheros_bold"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/select_restaurant"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:visibility="@{viewModel.selectRestaurantVisibility}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/no_restaurant_view" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout2"
@@ -45,7 +89,7 @@
             android:visibility="@{viewModel.menuVisibility}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_selected_location"
             app:tabGravity="fill"
             app:tabIndicator="@drawable/tab_indicator"
             app:tabIndicatorFullWidth="true"
@@ -64,11 +108,12 @@
             android:visibility="@{viewModel.menuVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabLayout2" >
+            app:layout_constraintTop_toBottomOf="@id/tabLayout2"
+            app:layout_constraintVertical_bias="0.0">
 
         </androidx.viewpager2.widget.ViewPager2>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

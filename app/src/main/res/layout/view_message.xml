@@ -2,10 +2,9 @@
 <layout>
 
     <data>
-
         <variable
             name="binding"
-            type="com.ryanjames.swabergersmobilepos.domain.ErrorViewBinding" />
+            type="com.ryanjames.swabergersmobilepos.domain.MesssageViewBinding" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -19,7 +18,7 @@
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:layout_marginTop="16dp"
-            android:tint="@color/colorLightGray"
+            app:tint="@color/colorLightGray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +31,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="@font/texgyreadventor_bold"
+            android:textAlignment="center"
+            android:fontFamily="@font/texgyreheros_bold"
             android:text="@{binding.title}"
             android:textColor="@android:color/white"
             android:textSize="24sp"
@@ -47,7 +47,7 @@
             android:layout_marginStart="48dp"
             android:layout_marginEnd="48dp"
             android:layout_marginBottom="16dp"
-            android:fontFamily="@font/texgyreadventor_bold"
+            android:fontFamily="@font/texgyreheros_regular"
             android:text="@{binding.message}"
             android:textAlignment="center"
             android:textColor="@color/colorLightGray"

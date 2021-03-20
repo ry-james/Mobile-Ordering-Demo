@@ -6,7 +6,8 @@ data class CreateUpdateOrderRequest(
     val status: String?,
     val customerName: String?,
     val pickup: Boolean? = null,
-    val deliveryAddress: String? = null
+    val deliveryAddress: String? = null,
+    val storeId: String
 )
 
 data class LineItemRequestBody(

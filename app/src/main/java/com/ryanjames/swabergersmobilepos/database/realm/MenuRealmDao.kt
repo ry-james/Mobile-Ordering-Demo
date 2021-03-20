@@ -6,10 +6,10 @@ import io.realm.Realm
 
 class MenuRealmDao {
 
-    fun getBasicMenu(): Single<BasicMenuRealmEntity> {
+    fun getBasicMenuById(storeId: String): Single<BasicMenuRealmEntity> {
         return Single.create { emitter ->
             val realm = Realm.getDefaultInstance()
-            val result = realm.where(BasicMenuRealmEntity::class.java).findFirst()
+            val result = realm.where(BasicMenuRealmEntity::class.java).equalTo("storeId", storeId).findFirst()
             if (result == null) {
                 emitter.onSuccess(BasicMenuRealmEntity())
             } else {

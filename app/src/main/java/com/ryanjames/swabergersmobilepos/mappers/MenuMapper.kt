@@ -25,7 +25,13 @@ class BasicMenuMapper : DataMapper<BasicMenuRealmEntity, BasicMenuResponse, Menu
             }
         }
 
-        return BasicMenuRealmEntity(categoryList, Date())
+        return BasicMenuRealmEntity(categoryList, Date(), "")
+    }
+
+    fun mapRemoteToLocalDbWithStoreId(input: BasicMenuResponse, storeId: String): BasicMenuRealmEntity  {
+        val basicMenuRealm = mapRemoteToLocalDb(input)
+        basicMenuRealm.storeId = storeId
+        return basicMenuRealm
     }
 
     override fun mapLocalDbToDomain(input: BasicMenuRealmEntity): Menu {

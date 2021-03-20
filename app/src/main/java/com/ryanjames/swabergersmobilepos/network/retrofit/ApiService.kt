@@ -62,4 +62,12 @@ class ApiService(
     fun cancelOrder(orderId: String): Single<Any> {
         return mobilePosApi.cancelOrder(orderId)
     }
+
+    fun getStores(): Single<VenueListResponse> {
+        return mobilePosApi.getStores()
+    }
+
+    fun getBasicMenuByStoreId(storeId: String): Single<BasicMenuResponse> {
+        return mobilePosApi.getBasicMenuByStore(storeId)
+    }
 }

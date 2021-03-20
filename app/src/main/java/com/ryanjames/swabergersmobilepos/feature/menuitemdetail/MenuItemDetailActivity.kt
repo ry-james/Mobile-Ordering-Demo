@@ -44,6 +44,8 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_in_right)
+
         MobilePosDemoApplication.appComponent.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_menu_item_detail)
@@ -158,7 +160,7 @@ class MenuItemDetailActivity : BaseActivity(), BottomPickerFragment.BottomPicker
         viewModel.onRemoveItem.observe(this, Observer { result ->
             when (result) {
                 is Resource.InProgress -> {
-                    dialogManager.showLoadingDialog("Removing from bag...")
+                    dialogManager.showLoadingDialog(getString(R.string.removing_from_bag))
                 }
                 is Resource.Success -> {
                     dialogManager.hideLoadingDialog()

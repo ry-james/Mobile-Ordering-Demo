@@ -30,7 +30,15 @@ class OrderRepository @Inject constructor(
         return apiService.getOrderHistory().map { orderHistory -> orderHistory.toDomain() }
     }
 
-    fun addOrUpdateLineItem(lineItem: LineItem): Single<BagSummary> {
+    fun hasItemsInBag(): Boolean {
+        var hasItems = false
+        executeRealmTransaction { realm ->
+            hasItems = orderRealmDao.hasItemsInBag(realm)
+        }
+        return hasItems
+    }
+
+    fun addOrUpdateLineItem(lineItem: LineItem, venueId: String): Single<BagSummary> {
         var orderId = globalRealmDao.getLocalBagOrderId()
         var newOrder = false
 
@@ -49,7 +57,7 @@ class OrderRepository @Inject constructor(
                 } else {
                     lineItemListRequest.plus(newLineItem)
                 }
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, status = null, customerName = null, storeId = venueId)
 
                 if (newOrder) {
                     apiService.postOrder(request)
@@ -71,15 +79,15 @@ class OrderRepository @Inject constructor(
             }.map { it.toBagSummary() }
     }
 
-    fun removeBagLineItems(lineItems: List<BagLineItem>): Single<BagSummary> {
-        return removeLineItems(lineItems.map { it.lineItemId })
+    fun removeBagLineItems(lineItems: List<BagLineItem>, venueId: String): Single<BagSummary> {
+        return removeLineItems(lineItems.map { it.lineItemId }, venueId)
     }
 
-    fun removeLineItem(lineItem: LineItem): Single<BagSummary> {
-        return removeLineItems(listOf(lineItem.lineItemId))
+    fun removeLineItem(lineItem: LineItem, venueId: String): Single<BagSummary> {
+        return removeLineItems(listOf(lineItem.lineItemId), venueId)
     }
 
-    private fun removeLineItems(lineItemIds: List<String>): Single<BagSummary> {
+    private fun removeLineItems(lineItemIds: List<String>, venueId: String): Single<BagSummary> {
         return getLocalLineItems()
             .flatMap { lineItemsEntities ->
                 val orderId = globalRealmDao.getLocalBagOrderId()
@@ -91,7 +99,7 @@ class OrderRepository @Inject constructor(
                     }
                 }
 
-                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null)
+                val request = CreateUpdateOrderRequest(orderId, lineItemListRequest, null, null, storeId = venueId)
                 apiService.putOrder(request)
                     .doOnSuccess { orderResponse ->
                         executeRealmTransaction { realm ->
@@ -101,11 +109,11 @@ class OrderRepository @Inject constructor(
             }.map { it.toBagSummary() }
     }
 
-    fun checkout(customerName: String, serviceOption: ServiceOption): Single<BagSummary> {
+    fun checkout(customerName: String, serviceOption: ServiceOption, venueId: String): Single<BagSummary> {
         return getLocalLineItems().flatMap { lineItemsEntities ->
             val orderId = globalRealmDao.getLocalBagOrderId()
             val lineItemListRequest = lineItemsEntities.map { it.toLineItemRequest() }
-            var request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName)
+            var request = CreateUpdateOrderRequest(orderId, lineItemListRequest, OrderStatus.CHECKOUT.toString(), customerName, storeId = venueId)
 
             // Set pick up or delivery
             if (serviceOption is ServiceOption.Delivery) {

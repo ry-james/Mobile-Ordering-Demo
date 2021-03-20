@@ -13,7 +13,7 @@ data class LoadingDialogBinding(
     val textColor: Int = R.color.colorBackgroundGray
 )
 
-data class ErrorViewBinding(
+data class MesssageViewBinding(
     @DrawableRes
     val image: Int,
     @StringRes

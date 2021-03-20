@@ -6,9 +6,10 @@ import java.util.*
 
 open class BasicMenuRealmEntity(
     var categories: RealmList<BasicCategoryRealmEntity>,
-    var createdAt: Date
+    var createdAt: Date,
+    var storeId: String
 ) : RealmObject() {
-    constructor() : this(RealmList(), Date())
+    constructor() : this(RealmList(), Date(), "")
 }
 
 open class BasicCategoryRealmEntity(
