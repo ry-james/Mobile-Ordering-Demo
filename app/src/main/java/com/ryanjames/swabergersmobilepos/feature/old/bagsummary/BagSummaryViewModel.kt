@@ -1,10 +1,12 @@
-package com.ryanjames.swabergersmobilepos.feature.bagsummary
+package com.ryanjames.swabergersmobilepos.feature.old.bagsummary
 
 import android.view.View
 import androidx.lifecycle.*
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.*
+import com.ryanjames.swabergersmobilepos.feature.checkout.ServiceOption
 import com.ryanjames.swabergersmobilepos.helper.Event
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
@@ -28,6 +30,60 @@ class BagSummaryViewModel @Inject constructor(
     private val _selectedVenue = MutableLiveData<Venue>(venueRepository.getSelectedVenue())
     val selectedVenue: LiveData<Venue>
         get() = _selectedVenue
+
+    private val _checkoutObservable = MutableLiveData<Resource<BagSummary>>()
+    val checkoutObservable: LiveData<Resource<BagSummary>>
+        get() = _checkoutObservable
+
+    private val serviceOption = MutableLiveData<ServiceOption>(ServiceOption.Pickup)
+
+    val checkedServiceOption = Transformations.map(serviceOption) { option ->
+        if (option is ServiceOption.Pickup) {
+            R.id.btn_pickup
+        } else {
+            R.id.btn_delivery
+        }
+    }
+
+    val deliveryCardVisibility = Transformations.map(serviceOption) { option ->
+        if (option is ServiceOption.Delivery) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    val pickupCardVisibility = Transformations.map(serviceOption) { option ->
+        if (option is ServiceOption.Pickup) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    val deliveryAddress: LiveData<String> = Transformations.map(orderRepository.getDeliveryAddressObservable()) { address ->
+        if (address.isNullOrEmpty()) {
+            ""
+        } else {
+            address
+        }
+    }
+
+    val deliveryAddressVisibility: LiveData<Int> = Transformations.map(orderRepository.getDeliveryAddressObservable()) { address ->
+        if (address.isNullOrEmpty()) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+    }
+
+    val changeAddressBtnText: LiveData<Int> = Transformations.map(orderRepository.getDeliveryAddressObservable()) { address ->
+        if (address.isNullOrEmpty()) {
+            R.string.set_delivery_address
+        } else {
+            R.string.change_address
+        }
+    }
 
     val loadingViewBinding: LiveData<LoadingDialogBinding> = Transformations.map(getLocalBag) { resource ->
         if (resource is Resource.InProgress) {
@@ -61,15 +117,15 @@ class BagSummaryViewModel @Inject constructor(
         get() = _onClearBag
 
     val tax: LiveData<String> = Transformations.map(_localBag) {
-        localBag()?.tax()?.toTwoDigitString() ?: "0.00"
+        "$".plus(localBagOrNull()?.tax()?.toTwoDigitString() ?: "0.00")
     }
 
     val subtotal: LiveData<String> = Transformations.map(_localBag) {
-        localBag()?.subtotal()?.toTwoDigitString() ?: "0.00"
+        "$".plus(localBagOrNull()?.subtotal()?.toTwoDigitString() ?: "0.00")
     }
 
     val total: LiveData<String> = Transformations.map(_localBag) {
-        localBag()?.price?.toTwoDigitString() ?: "0.00"
+        "$".plus(localBagOrNull()?.price?.toTwoDigitString() ?: "0.00")
     }
 
     private val _onOrderNotFound = MutableLiveData<Event<Boolean>>()
@@ -84,8 +140,8 @@ class BagSummaryViewModel @Inject constructor(
     val itemsForRemovalList
         get() = _itemsForRemovalList.value?.toList() ?: listOf()
 
-    private val _onRemovingItems = MutableLiveData<Resource<Boolean>>()
-    val onRemovingItems: LiveData<Resource<Boolean>>
+    private val _onRemovingItems = MutableLiveData<Resource<BagSummary>>()
+    val onRemovingItems: LiveData<Resource<BagSummary>>
         get() = _onRemovingItems
 
     private fun removeModeVisibility(): Int = if (removeModeToggle.value == true && !isBagEmpty()) View.VISIBLE else View.GONE
@@ -140,6 +196,18 @@ class BagSummaryViewModel @Inject constructor(
         _selectedVenue.value = venue
     }
 
+    fun setLocalBag(bagSummary: BagSummary) {
+        _localBag.value = Resource.Success(bagSummary)
+    }
+
+    val onServiceOptionToggleGroupListener = MaterialButtonToggleGroup.OnButtonCheckedListener { group, checkedId, isChecked ->
+        if (checkedId == R.id.btn_delivery) {
+            serviceOption.value = ServiceOption.Delivery()
+        } else {
+            serviceOption.value = ServiceOption.Pickup
+        }
+    }
+
     private fun handleError(error: Throwable) {
         if (error is HttpException) {
             if (error.code() == 404) {
@@ -149,7 +217,7 @@ class BagSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun localBag(): BagSummary? {
+    fun localBagOrNull(): BagSummary? {
         val resource = getLocalBag.value
         if (resource is Resource.Success) {
             return resource.data
@@ -184,7 +252,7 @@ class BagSummaryViewModel @Inject constructor(
     }
 
     private fun isBagEmpty(): Boolean {
-        return localBag()?.lineItems?.isEmpty() ?: true
+        return localBagOrNull()?.lineItems?.isEmpty() ?: true
     }
 
     fun setBagSummary(bagSummary: BagSummary) {
@@ -194,6 +262,7 @@ class BagSummaryViewModel @Inject constructor(
 
     private fun clearBag() {
         orderRepository.clearLocalBag()
+        venueRepository.clearSelectedVenue()
         _localBag.value = Resource.Success(BagSummary(emptyList(), 0f, OrderStatus.UNKNOWN, ""))
     }
 
@@ -210,9 +279,13 @@ class BagSummaryViewModel @Inject constructor(
                     _onRemovingItems.value = Resource.InProgress
                 }
                 .subscribe({ bagSummary ->
-                    _onRemovingItems.value = Resource.Success(true)
+                    _onRemovingItems.value = Resource.Success(bagSummary)
                     _removeModeToggle.value = false
                     _localBag.value = Resource.Success(bagSummary)
+
+                    if (bagSummary.lineItems.isEmpty()) {
+                        clearBag()
+                    }
                 }, { error ->
                     _onRemovingItems.value = Resource.Error(error)
                     error.printStackTrace()
@@ -241,6 +314,25 @@ class BagSummaryViewModel @Inject constructor(
             itemsForRemoval.remove(item)
             _itemsForRemovalList.value = itemsForRemoval
         }
+    }
+
+    fun onClickPlaceOrder() {
+        compositeDisposable.add(orderRepository.checkout(
+                customerName = "Customer",
+                serviceOption = serviceOption.value ?: ServiceOption.Pickup,
+                venueId = venueRepository.getSelectedVenue()?.id ?: "")
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                _checkoutObservable.value = Resource.InProgress
+            }
+            .subscribe({ bagSummary ->
+                venueRepository.clearSelectedVenue()
+                _checkoutObservable.value = Resource.Success(bagSummary)
+            }, { error ->
+                _checkoutObservable.value = Resource.Error(error)
+            })
+        )
     }
 
     fun notifyCheckoutSuccess() {

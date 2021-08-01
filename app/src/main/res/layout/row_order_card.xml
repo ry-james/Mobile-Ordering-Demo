@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -14,140 +13,66 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/colorBackgroundGray"
+        android:elevation="8dp"
+        app:cardBackgroundColor="@color/colorWhite"
         app:cardCornerRadius="16dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.priceText}"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="@+id/tvDateLabel"
-                app:layout_constraintTop_toBottomOf="@+id/tvPriceLabel"
-                tools:text="$20.00" />
-
-            <TextView
-                android:id="@+id/tvPriceLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/texgyreheros_bold"
-                android:text="@string/total_price"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvDateAndTime" />
-
-            <TextView
-                android:id="@+id/tvCustomerName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.customerNameText}"
-                android:textColor="@android:color/white"
-                app:layout_constraintBaseline_toBaselineOf="@+id/tvOrderForLabel"
-                app:layout_constraintStart_toEndOf="@+id/tvOrderForLabel"
-                tools:text="Ryan" />
-
-            <TextView
-                android:id="@+id/tvItems"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.itemsText}"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toStartOf="@+id/tvOrderForLabel"
-                app:layout_constraintTop_toBottomOf="@+id/tvOrderForLabel"
-                tools:text="Items : 3" />
-
-            <TextView
-                android:id="@+id/tvOrderForLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView
+                circleCrop="@{true}"
+                fallback="@{viewModel.placeholder}"
+                imageUrl="@{viewModel.imageUrl}"
+                android:id="@+id/iv_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/texgyreheros_bold"
-                android:text="Order for : "
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvOrderId" />
-
-            <TextView
-                android:id="@+id/tvOrderIdLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/texgyreheros_bold"
-                android:text="@string/order_id"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvOrderId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.orderId}"
-                android:textColor="@android:color/white"
-                app:layout_constraintStart_toStartOf="@+id/tvOrderIdLabel"
-                app:layout_constraintTop_toBottomOf="@+id/tvOrderIdLabel"
-                tools:text="abcdedededa" />
-
-            <TextView
-                android:id="@+id/tvDateLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:fontFamily="@font/texgyreheros_bold"
-                android:text="@string/date_and_time"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvDateAndTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.formattedDateText}"
-                android:textColor="@android:color/white"
-                app:layout_constraintEnd_toEndOf="@+id/tvDateLabel"
-                app:layout_constraintTop_toBottomOf="@+id/tvDateLabel"
-                tools:text="Aug. 18, 2020 - 4:00pm" />
-
-
-            <Button
-                android:id="@+id/tvViewOrder"
-                style="?android:attr/borderlessButtonStyle"
+                android:id="@+id/tv_store_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/texgyreheros_bold"
-                android:gravity="center"
-                android:text="@string/view_order"
-                android:textColor="@android:color/white"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:fontFamily="@font/freesansbold"
+                android:text="@{viewModel.storeName}"
+                android:textColor="@color/textColorBlack"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
+                app:layout_constraintStart_toEndOf="@id/iv_image"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <View
-                android:id="@+id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorLightGray"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvItems" />
+            <TextView
+                android:id="@+id/tv_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/freesans"
+                android:text="@{viewModel.description}"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="@id/tv_store_name"
+                app:layout_constraintStart_toStartOf="@id/tv_store_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_store_name" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_view_store"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/freesansbold"
+                android:text="@string/view_store"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                app:backgroundTint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_description"
+                app:layout_constraintTop_toBottomOf="@id/tv_description" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

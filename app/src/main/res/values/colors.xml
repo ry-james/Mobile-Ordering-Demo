@@ -8,4 +8,12 @@
     <color name="colorLightGray">#9f9493</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorBackgroundGray">#353130</color>
+    <color name="bgWhite">#f1f2f2</color>
+    <color name="textColorLightGray">#b8b8b8</color>
+    <color name="textColorBlack">#000000</color>
+    <color name="textColorLightRed">#f99495</color>
+    <color name="shimmerBackground">#dddddd</color>
+    <color name="grayChip">#959ba9</color>
+    <color name="yellow">#fcbf29</color>
+    <color name="yellowPressed">#ffd56d</color>
 </resources>

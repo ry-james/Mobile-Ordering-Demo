@@ -67,7 +67,15 @@ class ApiService(
         return mobilePosApi.getStores()
     }
 
+    fun getFeaturedStores(): Single<HomeResponse> {
+        return mobilePosApi.getFeaturedStores()
+    }
+
     fun getBasicMenuByStoreId(storeId: String): Single<BasicMenuResponse> {
         return mobilePosApi.getBasicMenuByStore(storeId)
+    }
+
+    fun getStoreById(storeId: String): Single<VenueResponse> {
+        return mobilePosApi.getStoreById(storeId)
     }
 }

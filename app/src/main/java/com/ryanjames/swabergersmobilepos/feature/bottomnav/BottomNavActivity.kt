@@ -22,9 +22,10 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.NotificationService
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.ActivityBottomNavBinding
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryFragment
+import com.ryanjames.swabergersmobilepos.feature.home.HomeFragment
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragment
+import com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagSummaryFragment
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryFragment
 import com.ryanjames.swabergersmobilepos.helper.FcmHelper
@@ -34,6 +35,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+
+private const val EXTRA_ORDER_ID = "order_id"
 
 class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener, MenuFragment.MenuFragmentCallback, BagSummaryFragment.BagSummaryFragmentCallback {
 
@@ -86,6 +89,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
 
         FirebaseMessaging.getInstance().subscribeToTopic(FcmHelper.TOPIC)
 
+        handleViewOrderDeeplinkIntent(intent)
         handleNotification()
     }
 
@@ -131,6 +135,19 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
             else -> return false
         }
         return true
+    }
+
+    private fun handleViewOrderDeeplinkIntent(intent: Intent?) {
+        val orderId = intent?.getStringExtra(EXTRA_ORDER_ID)
+        if (orderId != null) {
+            navigateToOrderTab()
+            OrderDetailsDialogFragment.display(supportFragmentManager, orderId)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleViewOrderDeeplinkIntent(intent)
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
@@ -179,12 +196,12 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     private fun swapFragments(@IdRes actionId: Int, key: String, bundle: Bundle? = null) {
         // Check if the tab clicked is not the current tab
         if (supportFragmentManager.findFragmentByTag(key) == null) {
-            savedFragmentState(actionId)
+            saveFragmentState(actionId)
             createFragment(key, actionId, bundle)
         }
     }
 
-    private fun savedFragmentState(actionId: Int) {
+    private fun saveFragmentState(actionId: Int) {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_content_bottom_nav)
         if (currentFragment != null) {
             savedStateSparseArray.put(
@@ -198,7 +215,7 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
     private fun createFragment(key: String, actionId: Int, bundle: Bundle? = null) {
 
         val fragment = when (actionId) {
-            R.id.navigation_menu -> MenuFragment()
+            R.id.navigation_menu -> HomeFragment()
             R.id.navigation_bag -> BagSummaryFragment()
             R.id.navigation_order -> OrderHistoryFragment()
             else -> null
@@ -218,6 +235,12 @@ class BottomNavActivity : BaseActivity(), BottomNavigationView.OnNavigationItemS
 
         fun createIntent(context: Context): Intent {
             return Intent(context, BottomNavActivity::class.java)
+        }
+
+        fun createIntentToOrderSummary(context: Context, orderId: String): Intent {
+            return createIntent(context).apply {
+                putExtra(EXTRA_ORDER_ID, orderId)
+            }
         }
 
         const val SAVED_STATE_CONTAINER_KEY = "ContainerKey"

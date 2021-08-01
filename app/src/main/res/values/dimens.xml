@@ -3,4 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="default_rv_item_margin">8dp</dimen>
+    <dimen name="tag_spacing">8dp</dimen>
+    <dimen name="rv_menu_item_margin">16dp</dimen>
+    <dimen name="rv_menu_start_end_margin">20dp</dimen>
+    <dimen name="bottom_sheet_corner_radius">16dp</dimen>
+    <dimen name="bottom_sheet_height">600dp</dimen>
+    <dimen name="rv_menu_btm_margin">50dp</dimen>
 </resources>

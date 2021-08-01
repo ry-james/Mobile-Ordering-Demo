@@ -17,6 +17,7 @@ import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderHistoryBinding
 import com.ryanjames.swabergersmobilepos.domain.Resource
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsDialogFragment
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryAdapter.OrderHistoryListener
+import com.ryanjames.swabergersmobilepos.feature.venuedetail.VenueDetailActivity
 import javax.inject.Inject
 
 class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.fragment_order_history) {
@@ -29,6 +30,10 @@ class OrderHistoryFragment : BaseFragment<FragmentOrderHistoryBinding>(R.layout.
     private val orderHistoryAdapter = OrderHistoryAdapter(listOf(), object : OrderHistoryListener {
         override fun onClickViewOrder(orderId: String) {
             activity?.supportFragmentManager?.let { OrderDetailsDialogFragment.display(it, orderId) }
+        }
+
+        override fun onClickViewStore(storeId: String) {
+            startActivity(VenueDetailActivity.createIntent(requireContext(), storeId))
         }
     })
 

@@ -3,13 +3,16 @@ package com.ryanjames.swabergersmobilepos.dagger
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.feature.checkout.CheckoutViewModel
+import com.ryanjames.swabergersmobilepos.feature.home.HomeViewModel
 import com.ryanjames.swabergersmobilepos.feature.login.LoginViewModel
 import com.ryanjames.swabergersmobilepos.feature.menu.MenuFragmentViewModel
 import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailViewModel
+import com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.feature.orderdetails.OrderDetailsViewModel
 import com.ryanjames.swabergersmobilepos.feature.orderhistory.OrderHistoryViewModel
+import com.ryanjames.swabergersmobilepos.feature.venuedetail.VenueDetailViewModel
+import com.ryanjames.swabergersmobilepos.feature.venuedetail.menuitemdetailsheet.parent.MenuItemBottomSheetViewModel
 import com.ryanjames.swabergersmobilepos.feature.venuefinder.VenueFinderViewModel
 import com.ryanjames.swabergersmobilepos.viewmodels.MainActivityViewModel
 import dagger.Binds
@@ -66,6 +69,21 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(VenueFinderViewModel::class)
     internal abstract fun bindVenueFinderViewModel(viewModel: VenueFinderViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(HomeViewModel::class)
+    internal abstract fun bindHomeViewModel(viewModel: HomeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(VenueDetailViewModel::class)
+    internal abstract fun bindVenueDetailViewModel(viewModel: VenueDetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MenuItemBottomSheetViewModel::class)
+    internal abstract fun bindMenuItemBottomSheetViewModel(viewModel: MenuItemBottomSheetViewModel): ViewModel
 
     //Add more ViewModels here
 }

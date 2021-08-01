@@ -17,7 +17,7 @@ import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentOrderDetailsBinding
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.domain.Resource
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagItemAdapter
+import com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagItemAdapter
 import com.ryanjames.swabergersmobilepos.helper.DialogManager
 import kotlinx.android.synthetic.main.fragment_order_details.*
 import javax.inject.Inject
@@ -70,8 +70,10 @@ class OrderDetailsDialogFragment : DialogFragment() {
     }
 
     private fun subscribe() {
-        viewModel.getOrderSummary.observe(viewLifecycleOwner, Observer { bagSummary ->
-            setupRecyclerView(bagSummary.lineItems)
+        viewModel.getOrderSummary.observe(viewLifecycleOwner, Observer { resource ->
+            when (resource) {
+                is Resource.Success -> setupRecyclerView(resource.data.lineItems)
+            }
         })
 
         viewModel.onOrderCancelled.observe(viewLifecycleOwner, Observer { result ->

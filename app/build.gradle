@@ -63,6 +63,10 @@ android {
             includeAndroidResources = true
         }
     }
+//
+//    packagingOptions {
+//        exclude "lib/arm64-v8a/librealm-jni.so"
+//    }
 
 }
 
@@ -82,7 +86,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0-alpha03'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.annotation:annotation:1.0.2'
     implementation 'androidx.navigation:navigation-fragment:2.0.0'
     implementation 'androidx.navigation:navigation-ui:2.0.0'
@@ -93,6 +97,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    implementation 'androidx.activity:activity-ktx:1.2.0'
+    implementation 'androidx.fragment:fragment-ktx:1.3.4'
 
     def retrofitVersion = "2.5.0"
     def rxAndroidVersion = "2.0.2"
@@ -161,4 +167,10 @@ dependencies {
 
     // Google Maps
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    implementation 'com.google.android:flexbox:2.0.1'
+
+    implementation 'jp.wasabeef:glide-transformations:4.0.0'
 }

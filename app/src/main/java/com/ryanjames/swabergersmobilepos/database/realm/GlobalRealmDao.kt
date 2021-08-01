@@ -1,9 +1,19 @@
 package com.ryanjames.swabergersmobilepos.database.realm
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.realm.Realm
 import java.util.*
 
 class GlobalRealmDao {
+
+    private var _deliveryAddress = MutableLiveData<String?>(null)
+    val deliveryAddressObservable: LiveData<String?>
+        get() = _deliveryAddress
+
+    init {
+        initializeDeliveryAddress()
+    }
 
     fun getLocalBagOrderId(): String {
         var id = NO_LOCAL_ORDER
@@ -11,6 +21,22 @@ class GlobalRealmDao {
             id = getGlobalRealmEntity(realm).localBagOrderId ?: NO_LOCAL_ORDER
         }
         return id
+    }
+
+    private fun initializeDeliveryAddress() {
+        executeRealmTransaction { realm ->
+            _deliveryAddress.value = getGlobalRealmEntity(realm).deliveryAddress
+        }
+    }
+
+    fun setDeliveryAddress(deliveryAddress: String) {
+
+        executeRealmTransaction { realm ->
+            val globalRealm = getGlobalRealmEntity(realm)
+            globalRealm.deliveryAddress = if (deliveryAddress.isNotEmpty()) deliveryAddress else null
+            _deliveryAddress.value = globalRealm.deliveryAddress
+        }
+
     }
 
     fun createLocalBagOrderId(realm: Realm): String {

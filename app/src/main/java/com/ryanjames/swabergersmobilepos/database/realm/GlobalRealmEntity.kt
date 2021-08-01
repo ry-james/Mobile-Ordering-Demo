@@ -4,7 +4,8 @@ import io.realm.RealmObject
 
 open class GlobalRealmEntity(
     var localBagOrderId: String?,
-    var currentVenue: String?
-): RealmObject() {
-    constructor() : this(null, null)
+    var currentVenue: String?,
+    var deliveryAddress: String?
+) : RealmObject() {
+    constructor() : this(null, null, null)
 }

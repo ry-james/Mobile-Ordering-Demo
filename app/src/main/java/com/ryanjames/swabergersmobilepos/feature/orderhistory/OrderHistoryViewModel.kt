@@ -99,7 +99,7 @@ class OrderHistoryViewModel @Inject constructor(val orderRepository: OrderReposi
         _loadingBinding.value = LoadingDialogBinding(
             visibility = visibility,
             loadingText = R.string.retrieving_order_history,
-            textColor = R.color.colorWhite
+            textColor = R.color.textColorBlack
         )
     }
 

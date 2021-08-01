@@ -4,6 +4,7 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
@@ -21,21 +22,27 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
 
     private val compositeDisposable = CompositeDisposable()
 
-    private val _orderSummary = MutableLiveData<BagSummary>()
-    val getOrderSummary: LiveData<BagSummary>
+    private val _orderSummary = MutableLiveData<Resource<BagSummary>>()
+    val getOrderSummary: LiveData<Resource<BagSummary>>
         get() = _orderSummary
 
-    private val _tax = MutableLiveData<String>()
-    val tax: LiveData<String>
-        get() = _tax
+    val tax: LiveData<String> = Transformations.map(getOrderSummary) { resource ->
+        resource.mapIfSuccess { bagSummary ->
+            "$".plus(bagSummary.tax().toTwoDigitString())
+        } ?: 0f.toTwoDigitString()
+    }
 
-    private val _subtotal = MutableLiveData<String>()
-    val subtotal: LiveData<String>
-        get() = _subtotal
+    val subtotal: LiveData<String> = Transformations.map(getOrderSummary) { resource ->
+        resource.mapIfSuccess { bagSummary ->
+            "$".plus(bagSummary.subtotal().toTwoDigitString())
+        } ?: 0f.toTwoDigitString()
+    }
 
-    private val _total = MutableLiveData<String>()
-    val total: LiveData<String>
-        get() = _total
+    val total: LiveData<String> = Transformations.map(getOrderSummary) { resource ->
+        resource.mapIfSuccess { bagSummary ->
+            "$".plus(bagSummary.price.toTwoDigitString())
+        } ?: 0f.toTwoDigitString()
+    }
 
     private val _loadingViewBinding = MutableLiveData<LoadingDialogBinding>()
     val loadingViewBinding: LiveData<LoadingDialogBinding>
@@ -78,10 +85,9 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
                 }
                 .subscribe(
                     { bagSummary ->
-                        _orderSummary.value = bagSummary
+                        _orderSummary.value = Resource.Success(bagSummary)
                         setLoadingViewVisibility(View.GONE)
                         _orderDetailsVisibility.value = View.VISIBLE
-                        updatePrices()
 
                         _btnCancelOrderVisibility.value = if (bagSummary.status == OrderStatus.CHECKOUT) View.VISIBLE else View.GONE
 
@@ -118,7 +124,7 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
     }
 
     fun cancelOrder() {
-        _orderSummary.value?.let {
+        _orderSummary.value?.takeIfSuccess {
             compositeDisposable.add(
                 orderRepository.cancelOrder(it.orderId)
                     .subscribeOn(Schedulers.io())
@@ -139,14 +145,8 @@ class OrderDetailsViewModel @Inject constructor(val orderRepository: OrderReposi
         _loadingViewBinding.value = LoadingDialogBinding(
             visibility = visibility,
             loadingText = R.string.fetching_order,
-            textColor = R.color.colorWhite
+            textColor = R.color.textColorBlack
         )
-    }
-
-    private fun updatePrices() {
-        _tax.value = getOrderSummary.value?.tax()?.toTwoDigitString() ?: "0.00"
-        _subtotal.value = getOrderSummary.value?.subtotal()?.toTwoDigitString() ?: "0.00"
-        _total.value = getOrderSummary.value?.price?.toTwoDigitString() ?: "0.00"
     }
 
     override fun onCleared() {

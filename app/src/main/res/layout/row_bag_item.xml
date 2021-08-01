@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagItemViewModel" />
+            type="com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagItemViewModel" />
     </data>
 
 
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
-        tools:background="@color/colorPrimary">
+        tools:background="@color/bgWhite">
 
         <TextView
             android:id="@+id/tvItemQty"
@@ -24,9 +24,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/texgyreheros_regular"
+            android:fontFamily="@font/freesans"
             android:text="@{viewModel.quantity}"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorBlack"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,9 +37,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
-            android:fontFamily="@font/texgyreheros_regular"
+            android:fontFamily="@font/freesans"
             android:text="@{viewModel.productName}"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorBlack"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvItemQty"
@@ -50,9 +50,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:fontFamily="@font/texgyreheros_regular"
+            android:fontFamily="@font/freesans"
             android:text="@{viewModel.modifiers}"
-            android:textColor="@color/colorGray"
+            android:textColor="@color/textColorLightGray"
             android:visibility="@{viewModel.modifiersVisibility}"
             app:layout_constraintStart_toStartOf="@+id/tvItemName"
             app:layout_constraintTop_toBottomOf="@id/tvItemQty"
@@ -63,10 +63,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:fontFamily="@font/texgyreheros_regular"
+            android:fontFamily="@font/freesans"
             android:text="@{viewModel.price}"
             android:textAlignment="viewEnd"
-            android:textColor="@android:color/white"
+            android:textColor="@color/textColorBlack"
             android:textSize="16sp"
             android:visibility="@{viewModel.priceVisibility}"
             app:layout_constraintBottom_toBottomOf="@+id/tvItemName"
@@ -100,7 +100,7 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:background="@color/colorGray"
+            android:background="@color/textColorLightGray"
             android:visibility="@{viewModel.lineVisibility}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/tvPrice"

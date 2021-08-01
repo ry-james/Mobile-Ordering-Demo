@@ -5,13 +5,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.jakewharton.rxbinding.view.RxView
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import io.realm.RealmList
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
@@ -20,6 +23,14 @@ import java.util.concurrent.TimeUnit
 
 fun Float.toTwoDigitString(): String {
     return String.format(Locale.US, "%.2f", this)
+}
+
+fun <T> List<T>?.toRealmList(): RealmList<T> {
+    if (this == null) return RealmList()
+
+    val realmList = RealmList<T>()
+    realmList.addAll(this)
+    return realmList
 }
 
 inline fun <VM : ViewModel> Any.viewModelFactory(crossinline f: () -> VM) =
@@ -122,5 +133,29 @@ fun Context.bitmapDescriptorFromVector(vectorResId: Int, width: Int = -1, height
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         draw(Canvas(bitmap))
         BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+}
+
+fun String.pluralize(noOfItems: Int, pluralForm: String): String {
+    return String.format("%d %s", noOfItems, if (noOfItems <= 1) this else pluralForm)
+}
+
+val Any.TAG: String
+    get() {
+        val tag = javaClass.simpleName
+        return if (tag.length <= 23) tag else tag.substring(0, 23)
+    }
+
+fun FragmentManager.display(tag: String, fragment: DialogFragment) {
+
+    val fragmentTransaction = beginTransaction()
+    val previous = findFragmentByTag(tag)
+    if (previous != null) {
+        fragmentTransaction.remove(previous)
+    }
+    fragmentTransaction.addToBackStack(null)
+
+    if (findFragmentByTag(tag)?.isVisible != true) {
+        fragment.show(this, tag)
     }
 }

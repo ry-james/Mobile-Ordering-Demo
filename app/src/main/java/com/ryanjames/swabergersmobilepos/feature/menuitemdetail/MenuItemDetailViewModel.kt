@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.ryanjames.swabergersmobilepos.R
-import com.ryanjames.swabergersmobilepos.core.StringResourceWithArgs
+import com.ryanjames.swabergersmobilepos.core.StringResourceArgs
 import com.ryanjames.swabergersmobilepos.domain.*
 import com.ryanjames.swabergersmobilepos.helper.deepEquals
 import com.ryanjames.swabergersmobilepos.helper.disposedBy
@@ -137,8 +137,8 @@ class MenuItemDetailViewModel @Inject constructor(
     val strProductDescription: LiveData<String>
         get() = _strProductDescription
 
-    private val _strAddToBagBtn = MutableLiveData<StringResourceWithArgs>()
-    val strAddToBag: LiveData<StringResourceWithArgs>
+    private val _strAddToBagBtn = MutableLiveData<StringResourceArgs>()
+    val strAddToBag: LiveData<StringResourceArgs>
         get() = _strAddToBagBtn
 
     private val _btnRemoveVisibility = MutableLiveData<Int>().apply { View.GONE }
@@ -288,10 +288,10 @@ class MenuItemDetailViewModel @Inject constructor(
 
     private fun updateAndNotifyObservers() {
         if (isModifying) {
-            _strAddToBagBtn.value = StringResourceWithArgs(R.string.update_item, lineItem.price.toTwoDigitString())
+            _strAddToBagBtn.value = StringResourceArgs(R.string.update_item, lineItem.price.toTwoDigitString())
             _btnRemoveVisibility.value = View.VISIBLE
         } else {
-            _strAddToBagBtn.value = StringResourceWithArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
+            _strAddToBagBtn.value = StringResourceArgs(R.string.add_to_bag, lineItem.price.toTwoDigitString())
             _btnRemoveVisibility.value = View.GONE
         }
         _lineItemObservable.value = Resource.Success(lineItem)

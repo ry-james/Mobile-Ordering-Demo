@@ -16,4 +16,19 @@ sealed class Resource<out T : Any> {
     }
 
     object InProgress : Resource<Nothing>()
+
+    inline fun takeIfSuccess(func: (T) -> Unit): T? {
+        if (this is Success) {
+            func.invoke(this.data)
+            return this.data
+        }
+        return null
+    }
+
+    inline fun <K> mapIfSuccess(func: (T) -> K): K? {
+        if (this is Success) {
+            return func.invoke(this.data)
+        }
+        return null
+    }
 }

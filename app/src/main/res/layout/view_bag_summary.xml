@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="subtotal"
+            type="String" />
+
+        <variable
+            name="tax"
+            type="String" />
+
+        <variable
+            name="total"
+            type="String" />
+
+        <variable
+            name="visibility"
+            type="int" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="@{visibility}">
+
+        <TextView
+            android:id="@+id/tv_summary"
+            style="@style/TextViewHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/summary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_subtotal_label"
+            style="@style/LightGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/subtotal"
+            app:layout_constraintStart_toStartOf="@id/tv_summary"
+            app:layout_constraintTop_toBottomOf="@id/tv_summary" />
+
+        <TextView
+            android:id="@+id/tv_tax_label"
+            style="@style/LightGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/tax"
+            app:layout_constraintStart_toStartOf="@id/tv_subtotal_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_subtotal_label" />
+
+        <TextView
+            android:id="@+id/tv_subtotal"
+            style="@style/BlackRegularText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="@{subtotal}"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_subtotal_label"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_tax"
+            style="@style/BlackRegularText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="@{tax}"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_tax_label"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/shape_dash_lines"
+            app:layout_constraintEnd_toEndOf="@id/tv_tax"
+            app:layout_constraintStart_toStartOf="@id/tv_tax_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_tax_label" />
+
+        <TextView
+            android:id="@+id/tv_total_label"
+            style="@style/BlackBoldText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/total_bag"
+            app:layout_constraintStart_toStartOf="@id/tv_subtotal_label"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
+
+        <TextView
+            android:id="@+id/tv_total"
+            style="@style/BlackBoldText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{total}"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_total_label"
+            app:layout_constraintEnd_toEndOf="@id/tv_subtotal" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

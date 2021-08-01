@@ -1,12 +1,8 @@
 package com.ryanjames.swabergersmobilepos.feature.orderhistory
 
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.ryanjames.swabergersmobilepos.R
 import com.ryanjames.swabergersmobilepos.databinding.RowOrderCardBinding
 import com.ryanjames.swabergersmobilepos.domain.Order
 
@@ -39,18 +35,12 @@ class OrderHistoryAdapter(orderList: List<Order>, val listener: OrderHistoryList
             binding.viewModel = viewModel
             viewModel.setup()
             binding.executePendingBindings()
-
-            val spaceForIcon = "  "
-            val buttonLabel = SpannableString(spaceForIcon + binding.root.context.getString(R.string.view_order))
-            val icon = binding.root.context.getDrawable(R.drawable.eye)
-            icon?.let {
-                it.setBounds(0, 0, binding.tvViewOrder.lineHeight, binding.tvViewOrder.lineHeight)
-                val imageSpan = ImageSpan(it)
-                buttonLabel.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }
-            binding.tvViewOrder.text = buttonLabel
-            binding.tvViewOrder.setOnClickListener {
+            binding.root.setOnClickListener {
                 listener.onClickViewOrder(orderId = viewModel.order.orderId)
+            }
+
+            binding.btnViewStore.setOnClickListener {
+                listener.onClickViewStore(storeId = viewModel.order.storeId)
             }
         }
 
@@ -58,5 +48,6 @@ class OrderHistoryAdapter(orderList: List<Order>, val listener: OrderHistoryList
 
     interface OrderHistoryListener {
         fun onClickViewOrder(orderId: String)
+        fun onClickViewStore(storeId: String)
     }
 }

@@ -1,4 +1,4 @@
-package com.ryanjames.swabergersmobilepos.feature.bagsummary
+package com.ryanjames.swabergersmobilepos.feature.old.bagsummary
 
 import android.app.Activity
 import android.content.Context

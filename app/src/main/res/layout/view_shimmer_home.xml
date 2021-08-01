@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgWhite">
+
+    <TextView
+        android:id="@+id/tvDeliveringTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/shimmerBackground"
+        android:fontFamily="@font/freesansbold"
+        android:lineSpacingMultiplier="0.9"
+        android:text="Delivering to\nCerritos"
+        android:textColor="@color/shimmerBackground"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/shimmer_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="32dp"
+        android:background="@color/shimmerBackground"
+        app:layout_constraintTop_toBottomOf="@id/tvDeliveringTo" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/shimmer_view_pager"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        android:background="@color/bgWhite"
+        app:tabIndicatorHeight="0dp"
+        app:tabMaxWidth="16dp" />
+
+    <TextView
+        android:id="@+id/tv_restaurants_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@color/shimmerBackground"
+        android:fontFamily="@font/freesansbold"
+        android:text="Restaurants"
+        android:textColor="@color/shimmerBackground"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout" />
+
+    <TextView
+        android:id="@+id/tv_see_all"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/shimmerBackground"
+        android:fontFamily="@font/freesansbold"
+        android:text="See all"
+        android:textColor="@color/shimmerBackground"
+        android:textSize="18sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/tv_restaurants_header"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/view_restaurant_card"
+        android:layout_width="280dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/shimmerBackground"
+        android:paddingStart="8dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_restaurants_header"
+        app:layout_constraintTop_toBottomOf="@id/tv_restaurants_header" />
+
+    <View
+        android:layout_width="280dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/shimmerBackground"
+        app:layout_constraintStart_toEndOf="@+id/view_restaurant_card"
+        app:layout_constraintTop_toBottomOf="@id/tv_restaurants_header" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

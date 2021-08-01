@@ -129,7 +129,10 @@ fun GetOrderLineItemResponse.toBagLineItem(): BagLineItem {
             newList.addAll(modifierResponse.modifiers.map { it.modifierId })
             modifierSelections[ProductIdModifierGroupIdKey(productResponse.productId, modifierResponse.modifierGroupId)] = newList
 
-            modifiersDisplay += modifierResponse.modifiers.joinToString(",") { it.modifierName } + "\n"
+
+            if (modifierResponse.modifiers.isNotEmpty()) {
+                modifiersDisplay += modifierResponse.modifiers.joinToString(",") { it.modifierName }.plus("\n")
+            }
         }
 
     }
@@ -234,7 +237,10 @@ fun OrderHistoryResponse.toDomain(): List<Order> {
             price = orderResponse.price,
             formattedDate = orderResponse.creationDate,
             status = orderResponse.status.toOrderStatus(),
-            customerName = orderResponse.customerName ?: "Anonymous"
+            customerName = orderResponse.customerName ?: "Anonymous",
+            storeName = orderResponse.storeName,
+            storeId = orderResponse.storeId,
+            image = orderResponse.img
         )
     }
 }

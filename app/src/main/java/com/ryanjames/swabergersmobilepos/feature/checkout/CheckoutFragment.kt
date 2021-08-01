@@ -14,7 +14,7 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.ViewModelFactory
 import com.ryanjames.swabergersmobilepos.databinding.FragmentCheckoutBinding
 import com.ryanjames.swabergersmobilepos.domain.Resource
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
+import com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.helper.DialogManager
 import javax.inject.Inject
 

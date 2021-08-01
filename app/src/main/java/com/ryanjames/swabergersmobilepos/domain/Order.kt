@@ -10,7 +10,10 @@ data class Order(
     val price: Float = 0f,
     val formattedDate: String = "",
     val customerName: String = "",
-    val status: OrderStatus? = null
+    val status: OrderStatus? = null,
+    val storeName: String = "",
+    val storeId: String,
+    val image: String? = null
 ) : Parcelable {
 
     val total: Float

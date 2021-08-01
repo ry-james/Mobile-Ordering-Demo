@@ -8,6 +8,7 @@ import com.ryanjames.swabergersmobilepos.core.MobilePosDemoApplication
 import com.ryanjames.swabergersmobilepos.core.NotificationService
 import com.ryanjames.swabergersmobilepos.core.NotificationService.Companion.EXTRA_NOTIFICATION_TYPE
 import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity
+import com.ryanjames.swabergersmobilepos.feature.bottomnav.BottomNavActivity2
 import com.ryanjames.swabergersmobilepos.feature.login.LoginActivity
 import com.ryanjames.swabergersmobilepos.helper.LoginManager
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class SplashScreenActivity : AppCompatActivity() {
             })
         } else {
             if (loginManager.isLoggedIn()) {
-                startActivity(BottomNavActivity.createIntent(this))
+                startActivity(BottomNavActivity2.createIntent(this))
             } else {
                 startActivity(LoginActivity.createIntent(this))
             }
