@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.repository
 
+import androidx.lifecycle.LiveData
 import com.ryanjames.swabergersmobilepos.database.realm.GlobalRealmDao
 import com.ryanjames.swabergersmobilepos.database.realm.LineItemRealmEntity
 import com.ryanjames.swabergersmobilepos.database.realm.OrderRealmDao
@@ -24,6 +25,14 @@ class OrderRepository @Inject constructor(
 
     private fun getLocalLineItems(): Single<List<LineItemRealmEntity>> {
         return orderRealmDao.getLocalBag().map { it.lineItems }
+    }
+
+    fun getDeliveryAddressObservable(): LiveData<String?> {
+        return globalRealmDao.deliveryAddressObservable
+    }
+
+    fun setDeliveryAddress(deliveryAddress: String) {
+        return globalRealmDao.setDeliveryAddress(deliveryAddress)
     }
 
     fun getOrderHistory(): Single<List<Order>> {

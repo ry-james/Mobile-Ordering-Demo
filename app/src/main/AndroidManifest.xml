@@ -15,12 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".feature.bagsummary.BagSummaryActivity"></activity>
+        <activity android:name=".feature.venuedetail.VenueDetailActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${mapsApiKey}" />
 
-        <activity android:name=".feature.venuefinder.VenueFinderActivity"/>
+        <activity android:name=".feature.venuefinder.VenueFinderActivity" />
 
         <service
             android:name=".core.NotificationService"
@@ -59,6 +61,7 @@
         <activity android:name=".activity.MainActivity" />
         <activity android:name=".feature.login.LoginActivity" />
         <activity android:name=".core.BaseActivity" />
+        <activity android:name=".feature.bottomnav.BottomNavActivity2" />
     </application>
 
 </manifest>

@@ -40,6 +40,12 @@ interface MobilePosApi {
     @GET("/stores")
     fun getStores(): Single<VenueListResponse>
 
+    @GET("/home")
+    fun getFeaturedStores(): Single<HomeResponse>
+
     @GET("/basicmenu/{store_id}")
     fun getBasicMenuByStore(@Path(value = "store_id", encoded = true) storeId: String): Single<BasicMenuResponse>
+
+    @GET("/store/{store_id}")
+    fun getStoreById(@Path(value = "store_id", encoded = true) storeId: String): Single<VenueResponse>
 }

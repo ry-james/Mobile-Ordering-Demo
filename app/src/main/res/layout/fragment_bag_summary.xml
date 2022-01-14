@@ -3,13 +3,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".feature.bagsummary.BagSummaryFragment">
+    tools:context=".feature.old.bagsummary.BagSummaryFragment">
 
     <data>
 
         <variable
             name="viewModel"
-            type="com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel" />
+            type="com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagSummaryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -5,7 +5,7 @@ import com.ryanjames.swabergersmobilepos.core.RxImmediateSchedulerRule
 import com.ryanjames.swabergersmobilepos.core.getOrAwaitValue
 import com.ryanjames.swabergersmobilepos.domain.BagLineItem
 import com.ryanjames.swabergersmobilepos.domain.BagSummary
-import com.ryanjames.swabergersmobilepos.feature.bagsummary.BagSummaryViewModel
+import com.ryanjames.swabergersmobilepos.feature.old.bagsummary.BagSummaryViewModel
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
 import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.Single

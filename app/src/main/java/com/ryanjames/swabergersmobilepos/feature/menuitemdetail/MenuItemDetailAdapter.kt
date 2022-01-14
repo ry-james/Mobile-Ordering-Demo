@@ -33,7 +33,7 @@ class MenuItemDetailAdapter(
 
     private fun notifyChange() {
         data = createRowDataHolders()
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, data.count())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

@@ -10,7 +10,10 @@ data class OrderHistoryItemResponse(
     val price: Float,
     val creationDate: String,
     val status: String,
-    val customerName: String?
+    val customerName: String?,
+    val storeName: String,
+    val storeId: String,
+    val img: String?
 )
 
 data class LineItemResponse(

@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:onTextChanged="@{checkoutViewModel.onCustomerNameTextChanged}"
+                android:onTextChanged="@{checkoutViewModel::onCustomerNameTextChanged}"
                 android:text="@={checkoutViewModel.customerName}"
                 android:textColor="@color/colorWhite" />
 
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress"
-                android:onTextChanged="@{checkoutViewModel.onDeliveryAddressTextChanged}"
+                android:onTextChanged="@{checkoutViewModel::onDeliveryAddressTextChanged}"
                 android:singleLine="true"
                 android:text="@={checkoutViewModel.deliveryAddress}"
                 android:textColor="@color/colorWhite" />

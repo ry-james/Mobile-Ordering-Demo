@@ -37,7 +37,7 @@ data class GetOrderModifierSelectionResponse(
 data class GetOrderModifierResponse(
     val modifierId: String,
     val modifierName: String,
-    val priceDelta: Int
+    val priceDelta: Float
 )
 
 data class ProductDetailsResponse(

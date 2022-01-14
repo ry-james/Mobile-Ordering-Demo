@@ -1,5 +1,6 @@
 package com.ryanjames.swabergersmobilepos.database.realm
 
+import io.reactivex.Maybe
 import io.realm.Realm
 
 class VenueRealmDao {
@@ -13,8 +14,14 @@ class VenueRealmDao {
         }
     }
 
-    fun getStoreById(realm: Realm, venueId: String): VenueRealmEntity? {
-        return realm.where(VenueRealmEntity::class.java).equalTo("venueId", venueId).findFirst()
+    fun getStoreById(venueId: String): Maybe<VenueRealmEntity> {
+        return Maybe.create { emitter ->
+            val realm = Realm.getDefaultInstance()
+            val result = realm.where(VenueRealmEntity::class.java).equalTo("venueId", venueId).findFirst()
+            if (result != null) {
+                emitter.onSuccess(result)
+            }
+            realm.close()
+        }
     }
-
 }

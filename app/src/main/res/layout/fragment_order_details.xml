@@ -40,13 +40,13 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorBackgroundGray"
+            android:background="@color/bgWhite"
             android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:paddingBottom="16dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp">
 
                 <include
                     android:id="@+id/progressView"
@@ -67,65 +67,22 @@
                     android:visibility="@{viewModel.orderDetailsVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/row_bag_item" />
 
-                <TextView
-                    android:id="@+id/tvTotalLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:fontFamily="@font/texgyreheros_bold"
-                    android:text="@string/total"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintEnd_toStartOf="@+id/tvTotal"
-                    app:layout_constraintTop_toTopOf="@+id/tvTotal" />
 
-                <TextView
-                    android:id="@+id/tvTaxLabel"
-                    android:layout_width="wrap_content"
+                <include
+                    android:id="@+id/view_summary"
+                    layout="@layout/view_bag_summary"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/texgyreheros_regular"
-                    android:text="@string/tax"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvTax"
-                    app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
-                    app:layout_constraintTop_toTopOf="@+id/tvTax" />
-
-                <TextView
-                    android:id="@+id/tvSubtotalLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/texgyreheros_regular"
-                    android:text="@string/subtotal"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvSubtotal"
-                    app:layout_constraintEnd_toEndOf="@+id/tvTotalLabel"
-                    app:layout_constraintTop_toTopOf="@+id/tvSubtotal" />
-
-                <TextView
-                    android:id="@+id/tvTotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="16dp"
-                    android:fontFamily="@font/texgyreheros_bold"
-                    android:text="@{viewModel.total}"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintEnd_toEndOf="@id/tvSubtotal"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTax"
-                    tools:text="0.00" />
+                    app:visibility="@{viewModel.orderDetailsVisibility}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rv_items"
+                    app:subtotal="@{viewModel.subtotal}"
+                    app:tax="@{viewModel.tax}"
+                    app:total="@{viewModel.total}" />
 
                 <Button
                     android:id="@+id/btnCancel"
@@ -137,42 +94,11 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/cancel_order"
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/colorAccent"
                     android:visibility="@{viewModel.btnCancelOrderVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvBanner" />
-
-                <TextView
-                    android:id="@+id/tvTax"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/texgyreheros_regular"
-                    android:text="@{viewModel.tax}"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/colorLightGray"
-                    android:textSize="16sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintEnd_toEndOf="@+id/tvSubtotal"
-                    app:layout_constraintTop_toBottomOf="@id/tvSubtotal"
-                    tools:text="0.00" />
-
-                <TextView
-                    android:id="@+id/tvSubtotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/texgyreheros_regular"
-                    android:text="@{viewModel.subtotal}"
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/colorLightGray"
-                    android:textSize="16sp"
-                    android:visibility="@{viewModel.orderDetailsVisibility}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/rv_items"
-                    tools:text="0.00" />
 
                 <TextView
                     android:id="@+id/tvBanner"
@@ -190,7 +116,7 @@
                     android:visibility="@{viewModel.orderBannerVisibility}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTotalLabel" />
+                    app:layout_constraintTop_toBottomOf="@+id/view_summary" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

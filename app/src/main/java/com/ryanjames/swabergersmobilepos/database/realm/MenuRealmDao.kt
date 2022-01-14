@@ -48,7 +48,8 @@ class MenuRealmDao {
 
     fun saveBasicMenu(basicMenuRealmEntity: BasicMenuRealmEntity) {
         executeRealmTransaction { realm ->
-            realm.delete(BasicMenuRealmEntity::class.java)
+            val storeRealm = realm.where(BasicMenuRealmEntity::class.java).equalTo("storeId", basicMenuRealmEntity.storeId).findFirst()
+            storeRealm?.deleteFromRealm()
             realm.insertOrUpdate(basicMenuRealmEntity)
         }
     }

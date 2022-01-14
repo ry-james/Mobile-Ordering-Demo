@@ -35,6 +35,8 @@ class DialogManager constructor(lifecycle: Lifecycle?, private var context: Cont
     }
 
     fun showLoadingDialog(message: String? = context?.getString(R.string.loading)) {
+        if (loadingDialog?.isShowing == true) return
+
         val loadingView = LayoutInflater.from(context).inflate(R.layout.view_progress, null)
         val tvLoadingMessage = loadingView.findViewById(R.id.tvLoadingMessage) as TextView
         tvLoadingMessage.text = message
@@ -49,11 +51,12 @@ class DialogManager constructor(lifecycle: Lifecycle?, private var context: Cont
         loadingDialog?.dismiss()
     }
 
-    fun showDismissableDialog(message: String) {
+    fun showDismissableDialog(message: String, onDismiss: () -> Unit = {}) {
         AlertDialog.Builder(context)
             .setCancelable(false)
             .setMessage(message)
             .setPositiveButton(R.string.ok_cta) { dialog, _ ->
+                onDismiss.invoke()
                 dialog.dismiss()
             }.show()
     }

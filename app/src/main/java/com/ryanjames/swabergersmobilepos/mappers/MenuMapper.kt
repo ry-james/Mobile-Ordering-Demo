@@ -17,7 +17,7 @@ class BasicMenuMapper : DataMapper<BasicMenuRealmEntity, BasicMenuResponse, Menu
 
                 categoryResponse.products?.forEach { productResponse ->
                     if (productResponse.productId != null && productResponse.productName != null) {
-                        val productRealm = BasicProductRealmEntity(productResponse.productId, productResponse.productName, productResponse.price ?: 0f)
+                        val productRealm = BasicProductRealmEntity(productResponse.productId, productResponse.productName, productResponse.price ?: 0f, productResponse.imageUrl)
                         categoryRealm.products.add(productRealm)
                     }
                 }
@@ -28,7 +28,7 @@ class BasicMenuMapper : DataMapper<BasicMenuRealmEntity, BasicMenuResponse, Menu
         return BasicMenuRealmEntity(categoryList, Date(), "")
     }
 
-    fun mapRemoteToLocalDbWithStoreId(input: BasicMenuResponse, storeId: String): BasicMenuRealmEntity  {
+    fun mapRemoteToLocalDbWithStoreId(input: BasicMenuResponse, storeId: String): BasicMenuRealmEntity {
         val basicMenuRealm = mapRemoteToLocalDb(input)
         basicMenuRealm.storeId = storeId
         return basicMenuRealm
@@ -41,7 +41,7 @@ class BasicMenuMapper : DataMapper<BasicMenuRealmEntity, BasicMenuResponse, Menu
             val productList = mutableListOf<Product>()
             val category = Category(categoryEntity.categoryId, categoryEntity.categoryName, productList)
             categoryEntity.products.forEach { productEntity ->
-                val product = Product.EMPTY.copy(productId = productEntity.productId, productName = productEntity.productName, price = productEntity.price)
+                val product = Product.EMPTY.copy(productId = productEntity.productId, productName = productEntity.productName, price = productEntity.price, imageUrl = productEntity.imageUrl)
                 productList.add(product)
             }
             categoryList.add(category)
@@ -260,7 +260,7 @@ class ModifierGroupMapper : DataMapper<ModifierGroupRealmEntity, ModifierGroupRe
             input.modifierGroupId,
             input.modifierGroupName,
             input.action.toModifierGroupAction(),
-            modifierInfoMapper.mapLocalDbToDomain(input.getDefaultSelection() ?: ModifierInfoRealmEntity()),
+            input.getDefaultSelection()?.let {modifierInfoMapper.mapLocalDbToDomain(it)},
             modifierInfoMapper.mapLocalDbToDomain(input.options),
             input.min,
             input.max

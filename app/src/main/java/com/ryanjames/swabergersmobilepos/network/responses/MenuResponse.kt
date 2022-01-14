@@ -15,7 +15,8 @@ data class BasicCategoryResponse(
 data class BasicProductResponse(
     val productId: String?,
     val productName: String?,
-    val price: Float?
+    val price: Float?,
+    val imageUrl: String?
 )
 
 data class MenuResponse(

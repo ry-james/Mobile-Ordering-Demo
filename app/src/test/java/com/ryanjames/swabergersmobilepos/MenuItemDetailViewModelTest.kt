@@ -12,6 +12,7 @@ import com.ryanjames.swabergersmobilepos.feature.menuitemdetail.MenuItemDetailVi
 import com.ryanjames.swabergersmobilepos.helper.toTwoDigitString
 import com.ryanjames.swabergersmobilepos.repository.MenuRepository
 import com.ryanjames.swabergersmobilepos.repository.OrderRepository
+import com.ryanjames.swabergersmobilepos.repository.VenueRepository
 import io.reactivex.Single
 import org.junit.Assert.*
 import org.junit.Before
@@ -45,6 +46,9 @@ class MenuItemDetailViewModelTest {
 
     @Mock
     lateinit var menuRepository: MenuRepository
+
+    @Mock
+    lateinit var venueRepository: VenueRepository
 
     @InjectMocks
     lateinit var viewModel: MenuItemDetailViewModel
@@ -184,7 +188,7 @@ class MenuItemDetailViewModelTest {
     @Test
     fun test_error_adding_item() {
         viewModel.setupWithProductId(PRODUCT_CHEESE_BURGER.productId)
-        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!, "")).thenReturn(Single.error(Exception()))
         viewModel.addOrUpdateItem()
         assertTrue(viewModel.onAddItem.value is Resource.Error)
     }
@@ -192,7 +196,7 @@ class MenuItemDetailViewModelTest {
     @Test
     fun test_error_modifying_item() {
         viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
-        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        Mockito.`when`(orderRepository.addOrUpdateLineItem(viewModel.getLineItem()!!, "")).thenReturn(Single.error(Exception()))
         viewModel.addOrUpdateItem()
         assertTrue(viewModel.onUpdateItem.value is Resource.Error)
     }
@@ -200,7 +204,7 @@ class MenuItemDetailViewModelTest {
     @Test
     fun test_error_removing_item() {
         viewModel.setupWithBagLineItem(LINE_ITEM_MEAL.toBagLineItem())
-        Mockito.`when`(orderRepository.removeLineItem(viewModel.getLineItem()!!)).thenReturn(Single.error(Exception()))
+        Mockito.`when`(orderRepository.removeLineItem(viewModel.getLineItem()!!, "")).thenReturn(Single.error(Exception()))
         viewModel.removeFromBag()
         assertTrue(viewModel.onRemoveItem.value is Resource.Error)
     }

@@ -24,9 +24,10 @@ open class BasicCategoryRealmEntity(
 open class BasicProductRealmEntity(
     var productId: String,
     var productName: String,
-    var price: Float
+    var price: Float,
+    var imageUrl: String?
 ) : RealmObject() {
-    constructor() : this("", "", 0f)
+    constructor() : this("", "", 0f, null)
 }
 
 open class ProductRealmEntity(

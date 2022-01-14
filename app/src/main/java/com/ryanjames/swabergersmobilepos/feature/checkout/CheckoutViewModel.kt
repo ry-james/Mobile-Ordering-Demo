@@ -23,7 +23,7 @@ class CheckoutViewModel @Inject constructor(
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var selectedServiceOption: ServiceOption = ServiceOption.Pickup()
+    private var selectedServiceOption: ServiceOption = ServiceOption.Pickup
 
     private val _pickupServiceOption = MutableLiveData(ServiceOptionBindingModel(R.string.pickup, R.drawable.ic_store, R.drawable.bg_service_option, this::onClickPickup))
     val pickupServiceOption: LiveData<ServiceOptionBindingModel>
@@ -66,7 +66,7 @@ class CheckoutViewModel @Inject constructor(
     }
 
     private fun onClickPickup() {
-        selectOption(ServiceOption.Pickup())
+        selectOption(ServiceOption.Pickup)
     }
 
     private fun onClickDelivery() {
@@ -137,7 +137,7 @@ class CheckoutViewModel @Inject constructor(
 sealed class ServiceOption {
 
     data class Delivery(val deliveryAddress: String = "") : ServiceOption()
-    class Pickup() : ServiceOption()
+    object Pickup : ServiceOption()
 
 }
 

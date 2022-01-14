@@ -26,12 +26,14 @@
 
         <TextView
             android:id="@+id/tvSubheader"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="@font/texgyreheros_regular"
             android:textColor="@color/colorGray"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
             app:layout_constraintStart_toStartOf="@+id/tvHeader"
             app:layout_constraintTop_toBottomOf="@+id/tvHeader"
             tools:text="None selected" />

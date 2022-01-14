@@ -10,6 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="@{binding.visibility}">
@@ -33,6 +34,7 @@
             android:text="@{binding.loadingText}"
             android:textColor="@{binding.textColor}"
             android:textSize="16sp"
+            android:fontFamily="@font/freesansbold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/progressBar"
             app:layout_constraintStart_toStartOf="@+id/progressBar"
